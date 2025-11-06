@@ -1,0 +1,10 @@
+api/node_modules/*
+api/.env
+/frontend/diprolim/.vscode
+back/node_modules/*
+frontend/diprolimweb/node_modules/*
+/nosubir
+back/.env
+back/assets/productos
+back/- Hugo.env
+frontend/.vscode/tasks.json
