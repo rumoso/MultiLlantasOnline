@@ -1,0 +1,189 @@
+/* ===================================
+   HEADER ESTILO TIENDA DE LLANTAS
+   =================================== */
+
+.header-ml {
+    background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+    box-shadow: 0 2px 8px rgba(0, 51, 102, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 12px 0;
+    border-bottom: 3px solid #00b4d8;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 16px;
+}
+
+/* Logo */
+.header-logo {
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.logo-icon {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Buscador */
+.header-search {
+    flex: 1;
+    max-width: 600px;
+}
+
+.search-field {
+    width: 100%;
+    margin: 0;
+}
+
+.search-field ::ng-deep .mat-mdc-form-field-flex {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.search-field ::ng-deep .mat-mdc-form-field-flex:hover {
+    border-color: #00b4d8;
+}
+
+.search-field ::ng-deep .mat-mdc-text-field-wrapper {
+    padding: 0;
+}
+
+.search-field ::ng-deep .mat-mdc-form-field-infix {
+    padding: 10px 0;
+    min-height: 44px;
+    border: none;
+}
+
+.search-field ::ng-deep input {
+    font-size: 14px;
+    padding-left: 12px;
+    color: #333;
+}
+
+.search-field ::ng-deep input::placeholder {
+    color: #999;
+}
+
+.search-button {
+    color: #90e0ef;
+    transition: all 0.2s ease;
+}
+
+.search-button:hover {
+    color: #caf0f8;
+    transform: scale(1.1);
+}
+
+/* Botones de acción */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.action-button {
+    color: #ffffff;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.action-button:hover {
+    background-color: rgba(0, 180, 216, 0.15);
+    border-color: #00b4d8;
+    transform: translateY(-1px);
+}
+
+.action-button mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #90e0ef;
+}
+
+.action-text {
+    font-weight: 500;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    color: #ffffff;
+}
+
+.cart-button {
+    color: #ffffff;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.cart-button mat-icon {
+    color: #90e0ef;
+}
+
+.cart-button:hover {
+    background-color: rgba(72, 202, 228, 0.15);
+    transform: scale(1.05);
+}
+
+.cart-button ::ng-deep .mat-badge-content {
+    background-color: #00b4d8;
+    color: white;
+}
+
+/* Menú dropdown de usuario */
+::ng-deep .user-dropdown {
+    margin-top: 8px;
+}
+
+::ng-deep .user-dropdown .mat-mdc-menu-content {
+    padding: 8px 0;
+}
+
+::ng-deep .user-dropdown .mat-mdc-menu-item {
+    min-height: 40px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .action-text {
+        display: none;
+    }
+
+    .action-button {
+        padding: 8px;
+    }
+
+    .header-search {
+        max-width: 400px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-container {
+        gap: 8px;
+    }
+
+    .header-search {
+        flex: 1;
+        max-width: none;
+    }
+
+    .search-field ::ng-deep input {
+        font-size: 13px;
+    }
+}

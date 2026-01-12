@@ -1,0 +1,40 @@
+<div style="padding: 20px; text-align: center;">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            @if (data.type == 'W') {
+                <img width="60"
+                class="manitaSobre"
+                src="img/icons/warning.gif"
+                alt=""> 
+            }
+
+            @if( data.type == 'S' )
+            {
+                <img width="60"
+                class="manitaSobre"
+                src="img/icons/aceptado.gif"
+                alt="">
+            }
+
+            <h1>{{ data.header }}</h1>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <h2>{{ data.message }}</h2>
+
+        </div>
+
+    </div>
+    
+    <button mat-raised-button (click)="close()">Cerrar</button>
+    
+</div>

@@ -1,59 +1,113 @@
-# MultiLlantasOnline
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.9.
+# GENERACION DE COMPILADO Y LEVANTAR SERVIDOR POR AMBIENTE
 
-## Development server
+Para desarrollo:
 
-To start a local development server, run:
+ng serve --configuration=development
 
-```bash
+o simplemente:
+
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Para producción:
 
-## Code scaffolding
+ng serve --configuration=production
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Para construir la aplicación:
 
-```bash
-ng generate component component-name
-```
+Desarrollo:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+ng build --configuration=development
 
-```bash
-ng generate --help
-```
+Producción:
 
-## Building
+ng build --configuration=production
 
-To build the project run:
+o simplemente:
 
-```bash
 ng build
+
+# Servir la aplicación en modo QA
+ng serve --configuration=qa
+
+# Construir la aplicación para QA
+ng build --configuration=qa
+
+---
+
+## COMPILACIÓN CON COMPRESIÓN AUTOMÁTICA
+
+Los siguientes comandos compilan el proyecto y automáticamente generan un archivo .tar.gz comprimido en la carpeta `dist/`:
+
+### Desarrollo (con compresión):
+```bash
+npm run build:dev
+```
+Genera: `dist/diprolimweb-dev.tar.gz`
+
+### Producción (con compresión):
+```bash
+npm run build:prod
+```
+Genera: `dist/diprolimweb-prod.tar.gz`
+
+### QA (con compresión):
+```bash
+npm run build:qa
+```
+Genera: `dist/diprolimweb-qa.tar.gz`
+
+**Nota:** El archivo .tar.gz contiene todos los archivos compilados de la carpeta `dist/diprolimWeb/browser/` listos para desplegar en el servidor.
+
+---
+
+## DESPLIEGUE EN SERVIDOR LINUX
+
+Se incluye un script automatizado (`deploy.sh`) para desplegar la aplicación en el servidor Linux de forma segura.
+
+### Características del script:
+- ✅ Crea respaldo automático de la versión actual
+- ✅ Comprime los respaldos para ahorrar espacio
+- ✅ Descomprime y despliega la nueva versión
+- ✅ Configura permisos automáticamente
+- ✅ Mantiene historial de los últimos 5 respaldos
+- ✅ Validaciones de seguridad antes de desplegar
+
+### Uso del script:
+
+1. **Transferir archivos al servidor:**
+```bash
+# Transferir el archivo compilado y el script
+scp dist/diprolimweb-prod.tar.gz usuario@servidor:/ruta/temporal/
+scp deploy.sh usuario@servidor:/ruta/temporal/
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+2. **Conectar al servidor y ejecutar:**
+```bash
+ssh usuario@servidor
+cd /ruta/temporal/
+chmod +x deploy.sh
+sudo ./deploy.sh diprolimweb-prod.tar.gz
+```
 
-## Running unit tests
+### Configuración del script:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Editar las siguientes variables en `deploy.sh` según tu servidor:
 
 ```bash
-ng test
+DEPLOY_DIR="/var/www/diprolimweb"      # Directorio de la aplicación
+BACKUP_DIR="/var/www/diprolimweb_backups"  # Directorio de respaldos
 ```
 
-## Running end-to-end tests
+### Restaurar un respaldo:
 
-For end-to-end (e2e) testing, run:
+Si necesitas restaurar una versión anterior:
 
 ```bash
-ng e2e
+cd /var/www/diprolimweb_backups
+# Listar respaldos disponibles
+ls -lh backup_*.tar.gz
+
+# Restaurar un respaldo específico
+sudo ./deploy.sh backup_YYYYMMDD_HHMMSS.tar.gz
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

@@ -1,0 +1,8 @@
+nohup: ignoring input
+Servidor corriendo en el puerto: 8080
+Executing (default): SELECT 1+1 AS result
+Database online
+Executing (default): SELECT count(*) AS `count` FROM `productos` AS `Producto` WHERE `Producto`.`precio` BETWEEN 0 AND 999999 AND `Producto`.`activo` = true;
+Executing (default): SELECT `id`, `nombre`, `descripcion`, `marca`, `modelo`, `ancho`, `perfil`, `rin`, `precio`, `stock`, `imagen_url`, `activo`, `created_at`, `updated_at` FROM `productos` AS `Producto` WHERE `Producto`.`precio` BETWEEN 0 AND 999999 AND `Producto`.`activo` = true ORDER BY `Producto`.`created_at` DESC LIMIT 0, 2;
+Executing (default): SELECT count(*) AS `count` FROM `productos` AS `Producto` WHERE `Producto`.`precio` BETWEEN 0 AND 999999 AND `Producto`.`activo` = true;
+Executing (default): SELECT `id`, `nombre`, `descripcion`, `marca`, `modelo`, `ancho`, `perfil`, `rin`, `precio`, `stock`, `imagen_url`, `activo`, `created_at`, `updated_at` FROM `productos` AS `Producto` WHERE `Producto`.`precio` BETWEEN 0 AND 999999 AND `Producto`.`activo` = true ORDER BY `Producto`.`created_at` DESC LIMIT 0, 2;

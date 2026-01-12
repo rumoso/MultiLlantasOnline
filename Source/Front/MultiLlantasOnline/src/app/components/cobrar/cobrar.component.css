@@ -1,0 +1,112 @@
+:host {
+  display: block;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.payment-method {
+  margin: 20px 0;
+}
+
+.payment-method label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.payment-method input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.total-section {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.total-amount {
+  font-size: 24px;
+  color: #28a745;
+  font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cobrar {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-cobrar:hover {
+  background: #218838;
+}
+
+.btn-cancelar {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background: #c82333;
+}
+
+.summary {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.summary div {
+  margin: 5px 0;
+}
+
+.error {
+  color: #dc3545;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.insufficient {
+  border-color: #dc3545;
+}
+
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label {
+  color: rgba(0, 0, 0, 0.6) !important; /* Color normal de la etiqueta */
+}
+
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-outline {
+  color: rgba(0, 0, 0, 0.12) !important; /* Color normal del borde */
+}
+
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-ripple {
+  background-color: rgba(0, 0, 0, 0.38) !important; /* Color normal del ripple */
+}
+
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-input-element {
+  caret-color: auto !important; /* Color normal del cursor */
+}
+

@@ -1,48 +1,56 @@
 {
-  "name": "multi-llantas-online",
+  "name": "prime-control",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
+    "test": "ng test",
+    "build:dev": "ng build --configuration=development && tar -czf dist/diprolimweb-dev.tar.gz -C dist/diprolimWeb/browser .",
+    "build:prod": "ng build --configuration=production && tar -czf dist/diprolimweb-prod.tar.gz -C dist/diprolimWeb/browser .",
+    "build:qa": "ng build --configuration=qa && tar -czf dist/diprolimweb-qa.tar.gz -C dist/diprolimWeb/browser ."
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^20.3.0",
-    "@angular/compiler": "^20.3.0",
-    "@angular/core": "^20.3.0",
-    "@angular/forms": "^20.3.0",
-    "@angular/platform-browser": "^20.3.0",
-    "@angular/router": "^20.3.0",
+    "@angular/animations": "^19.0.0",
+    "@angular/cdk": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/compiler": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "@angular/material": "^19.0.0",
+    "@angular/material-moment-adapter": "^19.2.18",
+    "@angular/platform-browser": "^19.0.0",
+    "@angular/platform-browser-dynamic": "^19.0.0",
+    "@angular/router": "^19.0.0",
+    "@types/uuid": "^10.0.0",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "chart.js": "^4.3.0",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "material-icons": "^1.13.12",
+    "moment": "^2.30.1",
+    "ng2-charts": "^8.0.0",
+    "ngx-mask": "^19.0.7",
+    "numero-a-letras": "^1.0.6",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "uuid": "^13.0.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.9",
-    "@angular/cli": "^20.3.9",
-    "@angular/compiler-cli": "^20.3.0",
+    "@angular-devkit/build-angular": "^19.0.1",
+    "@angular/cli": "^19.0.1",
+    "@angular/compiler-cli": "^19.0.0",
     "@types/jasmine": "~5.1.0",
-    "jasmine-core": "~5.9.0",
+    "jasmine-core": "~5.4.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.6.2"
   }
 }

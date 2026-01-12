@@ -1,0 +1,93 @@
+
+<div class="row">
+
+  <div class="col-md-4">
+    <mat-form-field fxLayout.xs="column" appearance="outline"
+        style="width: 100%;">
+        <mat-label>Código postal:</mat-label>
+        <input matInput
+                autocomplete="off"
+                type="text"
+                [(ngModel)]="codigoPostal"
+                (keyup.enter)="onCodigoPostalEnter($event)"
+                (blur)="onCodigoPostalEnter($event)">
+    </mat-form-field>
+  </div>
+  <div class="col-md-4">
+    <mat-form-field fxLayout.xs="column" appearance="outline" style="width: 100%;">
+      <mat-label>Estado:</mat-label>
+      <input matInput
+        autocomplete="off"
+        [formControl]="estadoControl"
+        [matAutocomplete]="cbxEstado"
+        (focus)="onFocusEstado()">
+      <mat-autocomplete #cbxEstado="matAutocomplete"
+        [displayWith]="displayFnEstado"
+        (optionSelected)="emitEstado($event.option.value)"
+        >
+        <mat-option *ngFor="let estado of cbxEstados" [value]="estado">
+          {{ estado.nombre }}
+        </mat-option>
+        <mat-option value="" *ngIf="cbxEstados.length == 0">
+          No se encontró nada...
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+  <div class="col-md-4">
+    <mat-form-field fxLayout.xs="column" appearance="outline" style="width: 100%;">
+      <mat-label>Municipio:</mat-label>
+      <input matInput
+        [readonly]="municipioReadOnly" autocomplete="off"
+        [formControl]="municipioControl"
+        [matAutocomplete]="cbxMunicipio"
+        (focus)="onFocusMunicipio()"
+        [matAutocomplete]="cbxMunicipio">
+      <mat-autocomplete #cbxMunicipio="matAutocomplete"
+        [displayWith]="displayFnMunicipio"
+        (optionSelected)="emitMunicipio($event.option.value)">
+        <mat-option *ngFor="let municipio of cbxMunicipios" [value]="municipio">
+          {{municipio.nombre}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <mat-form-field fxLayout.xs="column" appearance="outline" style="width: 100%;">
+      <mat-label>Ciudad:</mat-label>
+      <input matInput
+        [readonly]="ciudadReadOnly" autocomplete="off"
+        [formControl]="ciudadControl"
+        [matAutocomplete]="cbxCiudad"
+        (focus)="onFocusCiudad()">
+      <mat-autocomplete #cbxCiudad="matAutocomplete"
+        [displayWith]="displayFnCiudad"
+        (optionSelected)="emitCiudad($event.option.value)">
+        <mat-option *ngFor="let ciudad of cbxCiudades" [value]="ciudad">
+          {{ciudad.nombre}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+
+  <div class="col-md-4">
+    <mat-form-field fxLayout.xs="column" appearance="outline" style="width: 100%;">
+      <mat-label>Colonia/Localidad:</mat-label>
+      <input matInput
+      [readonly]="coloniaReadOnly" autocomplete="off"
+        [formControl]="coloniaControl"
+        [matAutocomplete]="cbxColonia"
+        (focus)="onFocusColonia()">
+      <mat-autocomplete #cbxColonia="matAutocomplete"
+        [displayWith]="displayFnColonia"
+        (optionSelected)="emitColonia($event.option.value)">
+        <mat-option *ngFor="let colonia of cbxColonias" [value]="colonia">
+          {{colonia.nombre}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+</div>

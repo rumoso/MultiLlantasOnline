@@ -4,8 +4,6 @@ const moment = require('moment');
 
 const { dbConnection } = require('../database/config');
 
-const User = require('../models/user');
-
 const getUsersListWithPage = async(req, res = response) => {
 
     const {

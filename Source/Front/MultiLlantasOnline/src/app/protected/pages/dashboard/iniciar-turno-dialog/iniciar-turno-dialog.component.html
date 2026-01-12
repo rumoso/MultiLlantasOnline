@@ -1,0 +1,91 @@
+<h2 mat-dialog-title>Iniciar Turno de Caja</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="iniciarTurnoForm" class="turno-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Caja</mat-label>
+        <input
+          matInput
+          [value]="getNombreCajaSeleccionada()"
+          readonly
+          tabindex="-1"
+          style="cursor: default;">
+        <mat-hint>Caja asignada según configuración del sistema</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Saldo Inicial</mat-label>
+        <span matPrefix>$ &nbsp;</span>
+        <input
+          matInput
+          formControlName="saldoinicial"
+          type="number"
+          step="1"
+          min="0"
+          placeholder="0.00"
+          required>
+        <mat-error *ngIf="iniciarTurnoForm.get('saldoinicial')?.hasError('required')">
+          Debe ingresar el saldo inicial
+        </mat-error>
+        <mat-error *ngIf="iniciarTurnoForm.get('saldoinicial')?.hasError('min')">
+          El saldo inicial debe ser mayor o igual a 0
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="mostrarSugerencia" class="sugerencia-container">
+      <div class="sugerencia-content">
+        <mat-icon class="sugerencia-icon">lightbulb</mat-icon>
+        <div class="sugerencia-text">
+          <p class="sugerencia-titulo">Saldo sugerido basado en último corte:</p>
+          <p class="sugerencia-monto">${{saldoSugerido | number:'1.2-2'}}</p>
+        </div>
+        <button 
+          type="button" 
+          mat-stroked-button
+          color="primary"
+          class="btn-aplicar-sugerencia"
+          (click)="aplicarSugerencia()">
+          <mat-icon>check</mat-icon>
+          Aplicar
+        </button>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-row">
+            <mat-icon class="info-icon">person</mat-icon>
+            <span class="info-label">Usuario:</span>
+            <span class="info-value">{{ nombreUsuario }}</span>
+          </div>
+          <div class="info-row">
+            <mat-icon class="info-icon">access_time</mat-icon>
+            <span class="info-label">Fecha y Hora:</span>
+            <span class="info-value">{{ fechaActual | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close class="cancel-btn">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button
+    mat-raised-button
+    [disabled]="iniciarTurnoForm.invalid || loading"
+    (click)="onIniciarTurno()"
+    class="confirm-btn">
+    <mat-icon *ngIf="!loading">play_circle</mat-icon>
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    {{ loading ? 'Iniciando...' : 'Iniciar Turno' }}
+  </button>
+</mat-dialog-actions>

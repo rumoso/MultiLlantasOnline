@@ -1,0 +1,836 @@
+/* ===================================
+   CATÁLOGO DE PRODUCTOS
+   =================================== */
+
+.productos-container {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header del catálogo */
+.catalogo-header {
+    background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 51, 102, 0.15);
+    color: white;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.header-title-section {
+    flex: 1;
+}
+
+.catalogo-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: white;
+}
+
+.title-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #90e0ef;
+}
+
+.catalogo-subtitle {
+    margin: 4px 0 0 32px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.header-stats {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.stat-item mat-icon {
+    color: #90e0ef;
+}
+
+/* Grid de productos */
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* Card de producto */
+.producto-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.producto-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 51, 102, 0.15) !important;
+}
+
+/* Imagen del producto */
+.producto-imagen-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.producto-imagen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.producto-card:hover .producto-imagen {
+    transform: scale(1.05);
+}
+
+/* Badges */
+.producto-badge-marca {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0, 51, 102, 0.3);
+    text-transform: uppercase;
+}
+
+.producto-badge-stock {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(16, 185, 129, 0.95);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    backdrop-filter: blur(10px);
+}
+
+.producto-badge-stock.bajo-stock {
+    background: rgba(239, 68, 68, 0.95);
+}
+
+.producto-badge-stock mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Contenido del producto */
+.producto-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px !important;
+}
+
+.producto-header {
+    margin-bottom: 12px;
+}
+
+.producto-nombre {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+}
+
+.producto-modelo {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Especificaciones */
+.producto-specs {
+    margin: 12px 0;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.spec-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #00b4d8;
+}
+
+.spec-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.spec-value {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+/* Descripción */
+.producto-descripcion {
+    margin: 12px 0;
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.producto-divider {
+    margin: 16px 0 !important;
+}
+
+/* Footer del producto */
+.producto-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.producto-precio-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.precio-label {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.producto-precio {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #00b4d8;
+}
+
+/* Acciones */
+.producto-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-detalle {
+    color: #666;
+}
+
+.btn-detalle:hover {
+    background-color: rgba(0, 180, 216, 0.1);
+    color: #00b4d8;
+}
+
+.btn-agregar-carrito {
+    background: linear-gradient(135deg, #00b4d8 0%, #0096c7 100%);
+    color: white;
+    font-weight: 500;
+    padding: 0 16px;
+    text-transform: none;
+}
+
+.btn-agregar-carrito:not([disabled]):hover {
+    background: linear-gradient(135deg, #0096c7 0%, #0077b6 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+}
+
+.btn-agregar-carrito[disabled] {
+    background: #e0e0e0;
+    color: #999;
+}
+
+.btn-agregar-carrito mat-icon {
+    margin-right: 4px;
+}
+
+/* Estado de carga */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+}
+
+.loading-text {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Sin productos */
+.sin-productos {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.sin-productos-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+}
+
+.sin-productos h3 {
+    margin: 16px 0 8px 0;
+    color: #333;
+}
+
+.sin-productos p {
+    color: #999;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+    }
+
+    .catalogo-title {
+        font-size: 1.5rem;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .producto-imagen-container {
+        height: 180px;
+    }
+
+    .producto-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .producto-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .btn-agregar-carrito {
+        flex: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .productos-container {
+        padding: 16px;
+    }
+
+    .productos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Header del dashboard */
+.dashboard-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-title {
+  color: #333;
+  font-weight: 600;
+  margin: 0;
+  font-size: 2rem;
+}
+
+.dashboard-subtitle {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+/* Container para acciones del dashboard */
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Indicador de carga para validaciones */
+.carga-validaciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.carga-text {
+  font-weight: 500;
+}
+
+/* Responsive: En pantallas pequeñas, los elementos se apilan verticalmente */
+@media (max-width: 768px) {
+  .dashboard-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .dashboard-actions button {
+    width: 100%;
+  }
+}
+
+/* Botón simple y elegante para iniciar turno */
+.iniciar-turno-btn-simple {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  font-weight: 500;
+  padding: 0 24px;
+  height: 48px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+  text-transform: none;
+  font-size: 14px;
+}
+
+.iniciar-turno-btn-simple:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.iniciar-turno-btn-simple:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.iniciar-turno-btn-simple .mat-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+/* Botón para iniciar jornada/turno general */
+.iniciar-jornada-btn-simple {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  font-weight: 500;
+  padding: 0 24px;
+  height: 48px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  transition: all 0.3s ease;
+  text-transform: none;
+  font-size: 14px;
+}
+
+.iniciar-jornada-btn-simple:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.iniciar-jornada-btn-simple:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.iniciar-jornada-btn-simple .mat-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+/* Indicador de turno activo */
+.turno-activo-indicator {
+  display: flex;
+  align-items: center;
+  background-color: #f0f9f4;
+  border: 2px solid #10b981;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #059669;
+}
+
+.turno-activo-icon {
+  color: #10b981;
+  margin-right: 12px;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.turno-activo-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.turno-activo-text {
+  font-weight: 600;
+  font-size: 14px;
+  color: #FFF;
+}
+
+.turno-activo-details {
+  font-size: 12px;
+  color: #fdfdfd;
+  margin-top: 2px;
+}
+
+/* Indicador de jornada activa */
+.jornada-activa-indicator {
+  display: flex;
+  align-items: center;
+  background-color: #fffbeb;
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #d97706;
+}
+
+.jornada-activa-icon {
+  color: #f59e0b;
+  margin-right: 12px;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.jornada-activa-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.jornada-activa-text {
+  font-weight: 600;
+  font-size: 14px;
+  color: #d97706;
+}
+
+.jornada-activa-details {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Styling for individual cards (previously .divAutoDashBoard) */
+.divAutoDashBoard {
+    background-color: white;
+    border-radius: 8px; /* Material Design often uses slightly larger border-radius */
+    transition: transform 0.2s linear, box-shadow 0.2s linear; /* Keep hover effects */
+    cursor: pointer;
+}
+
+.divAutoDashBoard:hover {
+    transform: scale(1.02);
+}
+
+/* Estilos para cards deshabilitados */
+.divAutoDashBoard.disabled {
+    background-color: #f5f5f5;
+    opacity: 0.6;
+    cursor: not-allowed;
+    /* Removemos pointer-events: none para permitir el click y mostrar el modal */
+}
+
+.divAutoDashBoard.disabled:hover {
+    transform: none;
+}
+
+.divAutoDashBoard.disabled mat-card-content {
+    color: #9e9e9e;
+}
+
+.divAutoDashBoard.disabled mat-icon {
+    color: #bdbdbd !important;
+}
+
+/* Adjusted for consistency */
+.LabelCountInvoicingDashboard {
+    font-size: 14px;
+    color: #6c757d; /* Standard muted text color */
+}
+
+/* General Material Icon styling */
+.material-icons {
+  color:#004D40;
+  font-size: 45px;
+}
+.mat-icon {
+  width: 50px;
+  height: 50px;
+}
+.menu-section-title {
+    font-size: 1.5em; /* Adjust as needed */
+    text-align: center;
+    font-weight: 500;
+    color: #333; /* Adjust color as needed */
+    margin-bottom: 0.5rem;
+}
+
+/* Container for the submenu items (cards) */
+.submenu-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Spacing between cards */
+    padding-top: 16px; /* Add some padding when the panel is open */
+    justify-content: flex-start;
+}
+
+.submenu-items-container .divAutoDashBoard {
+    flex-basis: calc(33.333% - 11px); /* (100% / 3) - (2/3 * gap). Adjust if gap changes. (16px * 2/3 ~= 10.67) */
+    max-width: calc(33.333% - 11px);
+    box-sizing: border-box;
+    display: flex; /* To help align content within the card */
+    flex-direction: column; /* Stack content vertically if needed */
+    justify-content: center; /* Center content vertically */
+}
+
+/* Responsive adjustments for submenu items */
+@media (min-width: 1401px) {
+    .submenu-items-container .divAutoDashBoard {
+        flex-basis: calc(25% - 12px); /* 4 items: (100% / 4) - (3/4 * 16px gap) */
+        max-width: calc(25% - 12px);
+    }
+}
+
+@media (max-width: 992px) {
+    .submenu-items-container .divAutoDashBoard {
+        flex-basis: calc(50% - 8px); /* (100% / 2) - (1/2 * gap) */
+        max-width: calc(50% - 8px);
+    }
+}
+
+@media (max-width: 768px) {
+    .submenu-items-container .divAutoDashBoard {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+    .submenu-items-container {
+        justify-content: center;
+    }
+    .divAutoDashBoard mat-card-content { /* Adjust padding for smaller screens */
+        padding: 16px;
+    }
+    .dashboard-card-icon {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 576px) {
+    .divAutoDashBoard mat-card-content {
+        padding: 12px;
+    }
+    .LabelCountInvoicingDashboard {
+        font-size: 13px;
+    }
+}
+
+/* Ensure Bootstrap columns work as expected if still used within cards */
+.divAutoDashBoard .row {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.divAutoDashBoard .col-md-3,
+.divAutoDashBoard .col-md-9,
+.divAutoDashBoard .col-12,
+.divAutoDashBoard .col-md-12 {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* Utility for vertical alignment if needed */
+.d-flex {
+    display: flex !important;
+}
+.align-items-center {
+    align-items: center !important;
+}
+.text-center {
+    text-align: center !important;
+}
+.mb-1 {
+    margin-bottom: 0.25rem !important;
+}
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+.h6 { /* Basic styling for h6 if you use it for titles */
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: .5rem;
+}
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Hide element on medium and down if d-none d-md-block is used */
+@media (max-width: 767.98px) {
+  .d-md-block {
+    display: block !important; /* This seems counterintuitive, usually d-none d-md-block means hide on small, show on md+ */
+  }
+  /* If you want to hide on small screens and show on medium and up: */
+  .hide-on-small-screen {
+      display: none;
+  }
+}
+@media (min-width: 768px) {
+    .hide-on-small-screen {
+        display: block; /* Or inline, flex, etc., depending on the element */
+    }
+}
+
+/* Correcting the d-none d-md-block logic for Bootstrap-like behavior */
+/* Hide by default */
+.d-md-block-custom {
+    display: none;
+}
+/* Show when screen is md or larger */
+@media (min-width: 768px) {
+    .d-md-block-custom {
+        display: block !important; /* Or flex, inline-block, etc. as needed */
+    }
+}
+
+/* Apply this class to the icon div if you want it to hide on smaller screens */
+/* <div class="col-md-3 d-md-block-custom text-center"> */
+
+/* Estilos para el indicador de turno activo */
+.turno-activo-indicator {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #10b981;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.turno-activo-indicator:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.turno-activo-icon {
+  margin-right: 12px;
+  font-size: 24px;
+  animation: pulse 2s infinite;
+}
+
+.turno-activo-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.turno-activo-text {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.turno-activo-details {
+  font-size: 12px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}

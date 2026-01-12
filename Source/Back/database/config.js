@@ -24,7 +24,7 @@ const dbSPConnection = mysql.createPool({
   queueLimit: 0
 });
 
-  module.exports={
-    dbConnection,
-    dbSPConnection
-  }
+module.exports={
+  dbConnection,
+  dbSPConnection
+}

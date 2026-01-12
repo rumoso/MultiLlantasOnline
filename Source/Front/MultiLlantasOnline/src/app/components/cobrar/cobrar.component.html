@@ -1,0 +1,231 @@
+<div class="container-fluid mt-3" style="padding: 16px;">
+  <div class="row">
+    <!-- Métodos de pago -->
+    <div class="col-md-7 col-12 mb-3">
+      <div class="card w-100 shadow-sm">
+        <div class="card-header bg-light">
+          <h4 class="mb-0 fw-bold"><mat-icon class="me-1" color="primary">payments</mat-icon>Métodos de pago</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Efectivo -->
+            <div class="col-md-4 col-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>
+                  <mat-icon class="me-1" color="accent">attach_money</mat-icon>
+                  Efectivo:
+                </mat-label>
+                <input
+                  #efectivoInput
+                  style="text-align: center;"
+                  matInput
+                  mask="separator.2"
+                  prefix="$"
+                  thousandSeparator=","
+                  [dropSpecialCharacters]="true"
+                  [(ngModel)]="efectivoValue"
+                  autocomplete="off"
+                  maxlength="15"
+                  placeholder="$0.00"
+                  (ngModelChange)="onEfectivoChange($event)"
+                  (keydown)="onEfectivoKeyDown($event)">
+              </mat-form-field>
+              <div class="mt-2 fs-6">
+                <label class="fw-bold"><mat-icon class="me-1" color="primary">change_circle</mat-icon>Cambio:</label>
+                <span class="fw-bold">{{ cambio | currency }}</span>
+              </div>
+            </div>
+            <!-- Tarjeta -->
+            <div class="col-md-4 col-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>
+                  <mat-icon class="me-1" color="accent">credit_card</mat-icon>
+                  Tarjeta:
+                </mat-label>
+                <input
+                  #tarjetaInput
+                  style="text-align: center;"
+                  matInput
+                  mask="separator.2"
+                  prefix="$"
+                  thousandSeparator=","
+                  [dropSpecialCharacters]="true"
+                  [max]="total - transferencia"
+                  [(ngModel)]="tarjetaValue"
+                  autocomplete="off"
+                  maxlength="15"
+                  placeholder="$0.00"
+                  (ngModelChange)="onTarjetaChange($event)"
+                  (keydown)="onTarjetaKeyDown($event)">
+              </mat-form-field>
+              <mat-form-field *ngIf="tarjeta > 0" appearance="outline" class="w-100">
+                <mat-label>
+                  <mat-icon class="me-1" color="accent">confirmation_number</mat-icon>
+                  Referencia de tarjeta
+                </mat-label>
+                <input #referenciaTarjetaInput style="text-align: center;" matInput type="text" [(ngModel)]="referenciaTarjeta" maxlength="50" autocomplete="off"
+                  placeholder="Folio o referencia"
+                  (keydown)="onReferenciaTarjetaKeyDown($event)">
+              </mat-form-field>
+            </div>
+            <!-- Transferencia -->
+            <div class="col-md-4 col-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100" hideRequiredMarker="true">
+                <mat-label>
+                  <mat-icon class="me-1" color="accent">sync_alt</mat-icon>
+                  Transferencia:
+                </mat-label>
+                <input
+                  #transferenciaInput
+                  style="text-align: center;"
+                  matInput
+                  mask="separator.2"
+                  prefix="$"
+                  thousandSeparator=","
+                  [dropSpecialCharacters]="true"
+                  [max]="total - tarjeta"
+                  [(ngModel)]="transferenciaValue"
+                  autocomplete="off"
+                  maxlength="15"
+                  placeholder="$0.00"
+                  (ngModelChange)="onTransferenciaChange($event)"
+                  (keydown)="onTransferenciaKeyDown($event)">
+              </mat-form-field>
+              <mat-form-field *ngIf="transferencia > 0" appearance="outline" class="w-100">
+                <mat-label>
+                  <mat-icon class="me-1" color="accent">confirmation_number</mat-icon>
+                  Referencia de transferencia
+                </mat-label>
+                <input #referenciaTransferenciaInput style="text-align: center;" matInput type="text" [(ngModel)]="referenciaTransferencia" maxlength="50" autocomplete="off"
+                  placeholder="Folio o referencia"
+                  (keydown)="onReferenciaTransferenciaKeyDown($event)">
+              </mat-form-field>
+              <mat-form-field class="with100" appearance="outline">
+                <mat-label>Fecha de transferencia:</mat-label>
+                <input class="textAlingCenter"
+                matInput
+                [matDatepicker]="pickerFechaTransferencia"
+                placeholder="DD/MM/YYYY"
+                [(ngModel)]="fechaTransferencia" readonly
+                (focus)="pickerFechaTransferencia.open()">
+                <mat-datepicker-toggle matSuffix [for]="pickerFechaTransferencia"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFechaTransferencia></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <!-- Cheque -->
+            <div class="col-md-4 col-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>
+                  <mat-icon class="me-1" color="accent">receipt_long</mat-icon>
+                  Cheque:
+                </mat-label>
+                <input
+                  #chequeInput
+                  style="text-align: center;"
+                  matInput
+                  mask="separator.2"
+                  prefix="$"
+                  thousandSeparator=","
+                  [dropSpecialCharacters]="true"
+                  [(ngModel)]="chequeValue"
+                  autocomplete="off"
+                  maxlength="15"
+                  placeholder="$0.00"
+                  (ngModelChange)="onChequeChange($event)"
+                  (keydown)="onChequeKeyDown($event)">
+              </mat-form-field>
+
+              <mat-form-field *ngIf="cheque > 0" class="with100" appearance="outline">
+                <mat-label>Depósito:</mat-label>
+                <input class="textAlingCenter"
+                  matInput
+                  [matDatepicker]="pickerFechaDeposito"
+                  placeholder="DD/MM/YYYY"
+                  [(ngModel)]="fechaDeposito"
+                  readonly
+                  (focus)="pickerFechaDeposito.open()">
+                <mat-datepicker-toggle matSuffix [for]="pickerFechaDeposito"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFechaDeposito></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <!-- Dinero electrónico -->
+            <div class="col-md-4 col-12 mb-3" *ngIf="OData.idClienteDiElect > 0">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>
+                  <mat-icon class="me-1" color="accent">account_balance_wallet</mat-icon>
+                  Dinero electrónico:
+                </mat-label>
+                <input
+                  #dineroElectronicoInput
+                  style="text-align: center;"
+                  matInput
+                  mask="separator.2"
+                  prefix="$"
+                  thousandSeparator=","
+                  [dropSpecialCharacters]="true"
+                  [(ngModel)]="dineroElectronicoValue"
+                  autocomplete="off"
+                  maxlength="15"
+                  placeholder="$0.00"
+                  (ngModelChange)="onDineroElectronicoChange($event)"
+                  (keydown)="onDineroElectronicoKeyDown($event)">
+              </mat-form-field>
+              <div class="mt-2 fs-6">
+                <label class="fw-bold"><mat-icon class="me-1" color="primary">account_balance_wallet</mat-icon></label>
+                <span class="fw-bold">{{ montoDiElect | currency }}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="pagoElectronicoExcedido" class="alert alert-danger mt-3">
+            <mat-icon class="me-1">error</mat-icon>
+            El pago electrónico no puede exceder el total de la venta
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Resumen -->
+    <div class="col-md-5 col-12 d-flex flex-column justify-content-between mb-3">
+      <div class="card w-100 shadow-sm">
+        <div class="card-header bg-light">
+          <h3 class="mb-0 fw-bold"><mat-icon class="me-1" color="primary">summarize</mat-icon>Resumen</h3>
+        </div>
+        <div class="card-body bg-light">
+          <div class="mb-2">
+            <b class="text-dark fs-6">Total a cobrar:</b>
+            <span class="fs-5 fw-bold text-success">{{ total | currency }}</span>
+          </div>
+          <div class="mb-2">
+            <b class="text-dark fs-6">Total métodos de pago:</b>
+            <span class="fs-5 fw-bold text-success">{{ totalPagado | currency }}</span>
+          </div>
+          <div class="mb-2">
+            <b class="text-dark fs-6">Pendiente por cubrir:</b>
+            <span class="fs-5 fw-bold"
+              [ngClass]="{'text-danger': (total - totalPagado) > 0, 'text-success': (total - totalPagado) <= 0}">
+              {{ (total - totalPagado) | currency }}
+            </span>
+          </div>
+          <hr>
+          <div *ngIf="bCredito && bVenta" class="mt-2">
+            <mat-icon color="accent" class="me-1">credit_score</mat-icon>
+            <b class="text-dark fs-6">Venta a crédito: puedes cobrar menos del total, pero el pago debe ser mayor a $0.</b>
+          </div>
+          <div *ngIf="!bCredito && bVenta" class="mt-2">
+            <mat-icon color="primary" class="me-1">paid</mat-icon>
+            <b class="text-dark fs-6">Venta de contado: el pago debe cubrir exactamente el total.</b>
+          </div>
+          <div *ngIf="!bVenta" class="mt-2">
+            <mat-icon color="primary" class="me-1">paid</mat-icon>
+            <b class="text-dark fs-6">El pago debe cubrir exactamente el total.</b>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-3">
+        <button mat-raised-button class="me-2" (click)="cancelar()">Cancelar</button>
+        <button id="cobrarButton" #cobrarButton mat-raised-button color="primary"
+          [disabled]="!pagoValido"
+          (click)="cerrarMetodosPago()">Cobrar</button>
+      </div>
+    </div>
+  </div>
+</div>

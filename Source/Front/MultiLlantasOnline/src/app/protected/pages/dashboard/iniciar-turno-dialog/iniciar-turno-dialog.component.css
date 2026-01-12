@@ -1,0 +1,130 @@
+.turno-form {
+  padding: 16px 0;
+  min-width: 400px;
+}
+
+.form-row {
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.info-section {
+  margin-top: 20px;
+}
+
+.info-card {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-icon {
+  color: #6c757d;
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.info-label {
+  font-weight: 500;
+  margin-right: 8px;
+  color: #495057;
+  min-width: 100px;
+}
+
+.info-value {
+  color: #212529;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px 24px;
+  margin: 0;
+}
+
+.cancel-btn {
+  margin-right: 8px;
+  color: #6c757d;
+}
+
+.confirm-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.confirm-btn:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+}
+
+.confirm-btn mat-spinner {
+  margin-right: 8px;
+}
+
+/* Estilos para la sugerencia de saldo inicial */
+.sugerencia-container {
+  margin: 16px 0;
+  padding: 12px;
+  background-color: #e8f5e8;
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sugerencia-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sugerencia-icon {
+  color: #4caf50;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.sugerencia-text {
+  flex: 1;
+}
+
+.sugerencia-titulo {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.sugerencia-monto {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.btn-aplicar-sugerencia {
+  flex-shrink: 0;
+  min-width: auto;
+}
+
+.btn-aplicar-sugerencia mat-icon {
+  margin-right: 4px;
+  font-size: 18px;
+}
+
+mat-dialog-title {
+  display: flex;
+  align-items: center;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}

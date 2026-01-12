@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+.mdc-notched-outline, input[readonly] {
+  background-color: #f0f0f0;  /* gris claro */
+  color: #666;  /* texto en gris oscuro */
+  cursor: not-allowed;
+}

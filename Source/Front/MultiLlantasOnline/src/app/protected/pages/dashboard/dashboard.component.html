@@ -1,0 +1,99 @@
+<!-- Catálogo de Productos -->
+<div class="productos-container">
+    <!-- Header del catálogo -->
+    <div class="catalogo-header">
+        <div class="header-content">
+            <div class="header-title-section">
+                <h1 class="catalogo-title">
+                    <mat-icon class="title-icon">tire_repair</mat-icon>
+                    Catálogo de Llantas
+                </h1>
+                <p class="catalogo-subtitle">Encuentra las mejores llantas para tu vehículo</p>
+            </div>
+            <div class="header-stats">
+                <span class="stat-item">
+                    <mat-icon>inventory_2</mat-icon>
+                    {{ totalProductos }} productos disponibles
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de productos -->
+    <div class="productos-grid" *ngIf="!loadingProductos && productos.length > 0">
+        <mat-card class="producto-card" *ngFor="let producto of productos">
+            <div class="producto-imagen-container">
+                <img
+                    [src]="producto.imagen_url || 'assets/img/default-tire.png'"
+                    [alt]="producto.nombre"
+                    class="producto-imagen"
+                    (error)="$any($event.target).src='assets/img/default-tire.png'"
+                />
+                <div class="producto-badge-marca">{{ producto.marca }}</div>
+                <div class="producto-badge-stock" [class.bajo-stock]="producto.stock < 5">
+                    <mat-icon>{{ producto.stock > 10 ? 'check_circle' : 'warning' }}</mat-icon>
+                    {{ producto.stock }} disponibles
+                </div>
+            </div>
+
+            <mat-card-content class="producto-content">
+                <div class="producto-header">
+                    <h3 class="producto-nombre" [title]="producto.nombre">{{ producto.nombre }}</h3>
+                    <p class="producto-modelo">{{ producto.modelo }}</p>
+                </div>
+
+                <div class="producto-specs">
+                    <div class="spec-item">
+                        <mat-icon class="spec-icon">straighten</mat-icon>
+                        <span class="spec-label">Medida:</span>
+                        <span class="spec-value">{{ producto.ancho }}/{{ producto.perfil }} R{{ producto.rin }}</span>
+                    </div>
+                </div>
+
+                <div class="producto-descripcion">
+                    {{ producto.descripcion }}
+                </div>
+
+                <mat-divider class="producto-divider"></mat-divider>
+
+                <div class="producto-footer">
+                    <div class="producto-precio-section">
+                        <span class="precio-label">Precio</span>
+                        <span class="producto-precio">{{ producto.precio | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
+                    </div>
+
+                    <div class="producto-actions">
+                        <button
+                            mat-icon-button
+                            class="btn-detalle"
+                            (click)="verDetalleProducto(producto)"
+                            matTooltip="Ver detalles">
+                            <mat-icon>visibility</mat-icon>
+                        </button>
+                        <button
+                            mat-raised-button
+                            class="btn-agregar-carrito"
+                            (click)="agregarAlCarrito(producto)"
+                            [disabled]="producto.stock < 1">
+                            <mat-icon>shopping_cart</mat-icon>
+                            Agregar
+                        </button>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <!-- Estado de carga -->
+    <div class="loading-container" *ngIf="loadingProductos">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="loading-text">Cargando productos...</p>
+    </div>
+
+    <!-- Sin productos -->
+    <div class="sin-productos" *ngIf="!loadingProductos && productos.length === 0">
+        <mat-icon class="sin-productos-icon">search_off</mat-icon>
+        <h3>No se encontraron productos</h3>
+        <p>Intenta ajustar tus criterios de búsqueda</p>
+    </div>
+</div>

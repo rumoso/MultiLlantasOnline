@@ -1,0 +1,42 @@
+<div class="confirm-dialog-container">
+  <!-- Header del diálogo -->
+  <div class="dialog-header">
+    <!-- Ícono dinámico según el tipo de confirmación -->
+    <div class="dialog-icon" [ngClass]="getIconClass()">
+      <mat-icon>{{ getIconName() }}</mat-icon>
+    </div>
+    <h2 class="dialog-title">{{ getTitle() }}</h2>
+  </div>
+
+  <!-- Contenido del mensaje -->
+  <div class="dialog-content">
+    <p class="dialog-message">{{ getMessage() }}</p>
+
+    <!-- Pregunta adicional (si existe) -->
+    <p *ngIf="getQuestion()" class="dialog-question">{{ getQuestion() }}</p>
+
+    <!-- Detalles adicionales (si existen) -->
+    <div *ngIf="getDetails().length > 0" class="dialog-details">
+      <ul class="details-list">
+        <li *ngFor="let detail of getDetails()" class="detail-item">{{ detail }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="dialog-actions">
+    <button
+      mat-raised-button
+      class="cancel-button"
+      (click)="close()">
+      {{ getCancelText() }}
+    </button>
+    <button
+      mat-raised-button
+      class="confirm-button"
+      [ngClass]="{ 'success': isSuccessAction() }"
+      (click)="delete()">
+      {{ getConfirmText() }}
+    </button>
+  </div>
+</div>
