@@ -80,6 +80,7 @@ export default class DashboardComponent {
     });
   }
 
+
   onSearchProducts(searchTerm: string): void {
     this.pagination.search = searchTerm;
     this.pagination.pageIndex = 0;
@@ -92,15 +93,33 @@ export default class DashboardComponent {
   }
 
   agregarAlCarrito(producto: any): void {
-    console.log('Agregar al carrito:', producto);
-    this.snackBar.open(`${producto.nombre} agregado al carrito`, 'Cerrar', {
-      duration: 3000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top'
+    this.loadingProductos = true;
+
+    let data = {
+      sIdP: producto.sIdP,
+      idUsuario: this.idUserLogON,
+      cantidad: 1
+    };
+
+    this.productosService.agregarAlCarrito(data).subscribe({
+      next: (response: any) => {
+        if (response.status == 0) {
+          this.productos = response.data.rows || [];
+          this.totalProductos = response.data.count || 0;
+        }
+        this.loadingProductos = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al cargar productos:', error);
+        this.loadingProductos = false;
+        this.servicesGServ.showAlert('E', 'Error', 'No se pudieron cargar los productos');
+      }
     });
   }
 
-  changeRoute( route: string ): void {
+
+  changeRoute(route: string): void {
     // Rutas que requieren turno activo
     const rutasRestringidas = ['cajaPuntoVenta', 'ventaClientes', 'cobranzaCredito', 'corteIndividual'];
 
@@ -131,7 +150,7 @@ export default class DashboardComponent {
     }
 
     // Navegar normalmente si no hay restricciones o si hay turno activo
-    this.servicesGServ.changeRoute( `/${ this._appMain }/${ route }` );
+    this.servicesGServ.changeRoute(`/${this._appMain}/${route}`);
   }
 
 }

@@ -1,5 +1,6 @@
 const response_express = require('express');
 const Op_sequelize = require('sequelize');
+const bcryptjs = require('bcryptjs');
 const { dbConnection, dbSPConnection } = require('../database/config');
 
 const getProductsPag = async (req, res) => {
@@ -9,16 +10,28 @@ const getProductsPag = async (req, res) => {
         , start = 0
         , idUserLogON
     } = req.body;
-console.log(req.body);
+    console.log(req.body);
     try {
 
-        const result = await dbConnection.query(`CALL getProductsPag(
-            '${ search }'
-            , ${ start }
-            , ${ limiter }
+        var result = await dbConnection.query(`CALL getProductsPag(
+            '${search}'
+            , ${start}
+            , ${limiter}
             )`);
         console.log(result);
-        const iRows = result.length > 0 ? result[0].iRows: 0;
+        const iRows = result.length > 0 ? result[0].iRows : 0;
+
+        //encript pwd
+        if (iRows > 0) {
+            const salt = bcryptjs.genSaltSync();
+            for (let i = 0; i < result.length; i++) {
+                var sIdEcript = bcryptjs.hashSync(result[i].idProducto.toString(), salt);
+                result[i].sIdP = sIdEcript;
+                delete result[i].idProducto;
+            }
+        }
+
+        console.log('RESUUUU', result);
 
         res.json({
             status: 0,
@@ -189,10 +202,60 @@ const getMarcas = async (req, res = response_express.response) => {
     }
 };
 
+const agregarAlCarrito = async (req, res) => {
+
+    // si no funciona cambialo a Var
+    let {
+        sIdP,
+        cantidad,
+        idUsuario,
+        guest_id
+
+    } = req.body;
+
+    //console.log(req.body)
+
+    const oGetDateNow = moment().format('YYYY-MM-DD HH:mm:ss');
+
+    try {
+
+        var idProducto = bcryptjs.hashSync(sIdP, salt);
+
+        var OSQL = await dbConnection.query(`call agregarAlCarrito(
+            '${oGetDateNow}'
+            ,${idCart}
+            ,${idItem}
+            ,${idProducto}
+            , ${cantidad}
+            , ${idUsuario}
+            ,'${guest_id}'
+            
+        )`)
+        //	SELECT p_idCart AS idCart, @out_id AS idItem, @message AS message;
+
+        res.json({
+            status: OSQL[0].idItem > 0 ? 0 : 1,
+            message: OSQL[0].message,
+            idItem: OSQL[0].idItem,
+            idCart: OSQL[0].idCart
+        });
+
+    } catch (error) {
+
+        res.json({
+            status: 2,
+            message: "Sucedió un error inesperado",
+            data: error.message
+        });
+
+    }
+}
+
 
 module.exports = {
     getProductsPag,
     getProductById,
     getProductsByMarca,
-    getMarcas
+    getMarcas,
+    agregarAlCarrito
 };

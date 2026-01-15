@@ -69,4 +69,9 @@ export class ProductosService {
   getMarcas(): Observable<ResponseGet> {
     return this.http.get<ResponseGet>(`${this.baseURL}/${this._api}/getMarcas`);
   }
+
+  agregarAlCarrito(data: any): Observable<ResponseGet> {
+    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/agregarAlCarrito`, data);
+  }
+
 }

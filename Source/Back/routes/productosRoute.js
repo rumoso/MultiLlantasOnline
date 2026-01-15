@@ -7,7 +7,8 @@ const {
     getProductsPag,
     getProductById,
     getProductsByMarca,
-    getMarcas
+    getMarcas,
+    agregarAlCarrito,
 } = require('../controllers/productosController');
 
 const router = Router();
@@ -47,6 +48,15 @@ router.post('/getProductsByMarca', [
  * Obtener lista de marcas
  * GET /api/productos/getMarcas
  */
+
+router.post('/agregarAlCarrito', [
+    check('sIdP', 'El ID del producto es obligatorio').notEmpty(),
+    check('cantidad', 'La cantidad es obligatoria').notEmpty(),
+    check('idUsuario', 'El ID del usuario es obligatorio').notEmpty(),
+    validarCampos
+], agregarAlCarrito);
+
+
 router.get('/getMarcas', getMarcas);
 
 module.exports = router;
