@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Detalle de Orden #{{ data.idOrder }}</h2>
+<mat-dialog-content>
+    <div *ngIf="loading" class="text-center p-4">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <div *ngIf="!loading && details.length === 0" class="text-center p-4">
+        <p>No se encontraron detalles para esta orden.</p>
+    </div>
+
+    <div *ngIf="!loading && details.length > 0">
+        <div class="list-group">
+            <div *ngFor="let item of details"
+                class="list-group-item d-flex justify-content-between align-items-center mb-2 border rounded p-2">
+                <div class="d-flex align-items-center">
+                    <img [src]="baseUrl + item.imagen" alt="Product" class="img-fluid rounded me-3"
+                        style="width: 50px; height: 50px; object-fit: cover;">
+                    <div>
+                        <h6 class="mb-0">{{ item.nombre }}</h6>
+                        <small class="text-muted">{{ item.cantidad }} x {{ item.precio | currency:'MXN' }}</small>
+                    </div>
+                </div>
+                <span class="fw-bold">{{ item.subtotal | currency:'MXN' }}</span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3 pt-3 border-top">
+            <h5>Total: {{ data.total | currency:'MXN' }}</h5>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cerrar</button>
+</mat-dialog-actions>

@@ -19,6 +19,10 @@ export class ProductosService {
    * @param pagination Objeto con pageIndex, pageSize y search
    * @returns Observable con la respuesta del servidor
    */
+  getProductById(id: number): Observable<ResponseGet> {
+    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/getProductById`, { idProducto: id });
+  }
+
   getProductsPag(pagination: Pagination): Observable<ResponseGet> {
     const start = pagination.pageIndex * pagination.pageSize;
     const limiter = pagination.pageSize;
@@ -32,15 +36,7 @@ export class ProductosService {
     return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/getProductsPag`, data);
   }
 
-  /**
-   * Obtiene un producto por su ID
-   * @param id ID del producto
-   * @returns Observable con la respuesta del servidor
-   */
-  getProductById(id: number): Observable<ResponseGet> {
-    const data = { idProducto: id };
-    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/getProductById`, data);
-  }
+
 
   /**
    * Obtiene productos por marca

@@ -4,6 +4,9 @@ import { MaterialModule } from '../../../shared/material.module';
 import { SharedModule } from '../../../shared/Shared.module';
 import { CartService } from '../../services/cart.service';
 import { ServicesGService } from '../../../servicesG/servicesG.service';
+import { GuestService } from '../../../shared/services/guest.service';
+import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-cart-overlay',
@@ -16,8 +19,15 @@ export class CartOverlayComponent implements OnInit {
 
     @Output() close = new EventEmitter<void>();
 
+    private _appMain: string = environment.appMain;
+
     cartService = inject(CartService);
     servicesGServ = inject(ServicesGService);
+    guestService = inject(GuestService);
+
+    get isGuest(): boolean {
+        return this.guestService.isGuest();
+    }
 
     cartItems: any[] = [];
     loading: boolean = false;
@@ -66,7 +76,42 @@ export class CartOverlayComponent implements OnInit {
     }
 
     processCheckout(): void {
-        this.servicesGServ.showAlert('I', 'Próximamente', 'La funcionalidad de pago estará disponible pronto.');
+        if (!this.cartItems.length) return;
+
+        if (this.isGuest) {
+            if (confirm('Debes iniciar sesión para procesar tu compra. ¿Quieres ir al login?')) {
+                this.closeCart();
+                this.servicesGServ.changeRoute('/login');
+            }
+            return;
+        }
+
+        if (!confirm('¿Estás seguro de procesar la compra?')) return;
+
+        this.loading = true;
+        this.cartService.processPurchase().subscribe({
+            next: (resp) => {
+                this.loading = false;
+                if (resp.status === 0) {
+                    this.servicesGServ.showAlert('S', 'Éxito', 'Compra procesada correctamente');
+                    this.cartService.openCart();
+                    this.closeCart();
+                    this.servicesGServ.changeRoute(`/${this._appMain}/my-purchases`);
+                } else {
+                    this.servicesGServ.showAlert('E', 'Error', resp.message || 'Error al procesar la compra');
+                }
+            },
+            error: (err) => {
+                this.loading = false;
+                console.error(err);
+                this.servicesGServ.showAlert('E', 'Error', 'Ocurrió un error al procesar la compra');
+            }
+        });
+    }
+
+    goToFullCart(): void {
+        this.closeCart();
+        this.servicesGServ.changeRoute(`/${this._appMain}/cart`);
     }
 
 }

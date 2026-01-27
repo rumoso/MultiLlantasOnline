@@ -26,6 +26,12 @@
                 <img [src]="producto.imagen_url || 'assets/img/default-tire.png'" [alt]="producto.nombre"
                     class="producto-imagen" (error)="$any($event.target).src='assets/img/default-tire.png'" />
                 <div class="producto-badge-marca">{{ producto.marca }}</div>
+
+                <button class="producto-btn-favorito" [class.is-favorite]="producto.isFavorite"
+                    (click)="$event.stopPropagation(); toggleFavorite(producto)">
+                    <mat-icon>{{ producto.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+                </button>
+
                 <div class="producto-badge-stock" [class.bajo-stock]="producto.stock < 5">
                     <mat-icon>{{ producto.stock > 10 ? 'check_circle' : 'warning' }}</mat-icon>
                     {{ producto.stock }} disponibles

@@ -4,9 +4,14 @@
             <mat-icon>shopping_cart</mat-icon>
             <h2>Mi Carrito</h2>
         </div>
-        <button mat-icon-button (click)="closeCart()">
-            <mat-icon>close</mat-icon>
-        </button>
+        <div class="header-actions">
+            <button mat-icon-button (click)="goToFullCart()" matTooltip="Ver carrito completo">
+                <mat-icon>open_in_new</mat-icon>
+            </button>
+            <button mat-icon-button (click)="closeCart()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
     </div>
 
     <mat-divider></mat-divider>
@@ -60,8 +65,9 @@
             </div>
 
             <div class="footer-actions">
-                <button mat-raised-button color="primary" class="checkout-btn" (click)="processCheckout()">
-                    Procesar Compra
+                <button mat-raised-button color="primary" class="checkout-btn" (click)="processCheckout()"
+                    [disabled]="loading" [matTooltip]="isGuest ? 'Inicia sesión para procesar tu compra' : ''">
+                    {{ isGuest ? 'Inicia sesión para comprar' : 'Procesar Compra' }}
                 </button>
                 <button mat-button (click)="closeCart()">
                     Seguir comprando

@@ -1,0 +1,122 @@
+<div class="product-details-container animate__animated animate__fadeIn">
+
+    <!-- Botón de cierre para Diálogo -->
+    <button *ngIf="dialogRef" class="btn-close-dialog" (click)="goBack()">
+        <mat-icon>close</mat-icon>
+    </button>
+
+    <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <div class="product-grid" *ngIf="!loading && producto">
+
+        <!-- Columna Imagen -->
+        <div class="image-column">
+            <button mat-icon-button class="btn-back-mobile" (click)="goBack()" *ngIf="!dialogRef">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+
+            <div class="main-image-wrapper">
+                <img [src]="producto.imagen_url || 'assets/img/default-tire.png'" [alt]="producto.descripcion"
+                    (error)="$any($event.target).src='assets/img/default-tire.png'">
+            </div>
+        </div>
+
+        <!-- Columna Info -->
+        <div class="info-column">
+
+            <!-- Breadcrumbs / Navegación (Solo si no es diálogo) -->
+            <div class="breadcrumbs" *ngIf="!dialogRef">
+                <span class="crumb-link" (click)="goBack()">Catálogo</span>
+                <mat-icon>chevron_right</mat-icon>
+                <span class="crumb-current">{{ producto.marca }}</span>
+            </div>
+
+            <div class="product-header-detail">
+                <span class="badget-condition">Nuevo</span>
+                <h1 class="product-title">{{ producto.descripcion }}</h1>
+                <div class="rating-row">
+                    <div class="stars">
+                        <mat-icon>star</mat-icon>
+                        <mat-icon>star</mat-icon>
+                        <mat-icon>star</mat-icon>
+                        <mat-icon>star</mat-icon>
+                        <mat-icon>star_half</mat-icon>
+                    </div>
+                    <span class="reviews-count">4.8 (12 opiniones)</span>
+                </div>
+            </div>
+
+            <div class="price-card-section">
+                <span class="original-price" *ngIf="producto.precioOriginal">{{ producto.precioOriginal | currency:'MXN'
+                    }}</span>
+                <div class="current-price-row">
+                    <span class="current-price">{{ producto.precio | currency:'MXN' }}</span>
+                    <span class="discount-pill" *ngIf="producto.descuento">{{ producto.descuento }}% OFF</span>
+                </div>
+                <p class="installments">en 12x {{ (producto.precio / 12) | currency:'MXN' }} sin interés</p>
+                <p class="shipping-info"><mat-icon>local_shipping</mat-icon> Envío gratis a todo el país</p>
+            </div>
+
+            <!-- Especificaciones Rápidas -->
+            <div class="specs-preview">
+                <div class="spec-chip">
+                    <mat-icon>straighten</mat-icon>
+                    <span>{{ producto.ancho }}/{{ producto.perfil }} R{{ producto.rin }}</span>
+                </div>
+                <div class="spec-chip">
+                    <mat-icon>speed</mat-icon>
+                    <span>Índice Vel: {{ producto.indice_velocidad || 'H' }}</span>
+                </div>
+                <div class="spec-chip">
+                    <mat-icon>scale</mat-icon>
+                    <span>Índice Carga: {{ producto.indice_carga || '91' }}</span>
+                </div>
+            </div>
+
+            <!-- Selector de Cantidad y Botones -->
+            <div class="actions-panel">
+                <div class="stock-status">
+                    <span class="status-dot"></span>
+                    Stock disponible ({{ producto.stock }} unidades)
+                </div>
+
+                <div class="qty-selector-row">
+                    <span class="qty-label">Cantidad:</span>
+                    <div class="qty-control">
+                        <button mat-icon-button (click)="updateQuantity(-1)" [disabled]="cantidad <= 1">
+                            <mat-icon>remove</mat-icon>
+                        </button>
+                        <span class="qty-value">{{ cantidad }}</span>
+                        <button mat-icon-button (click)="updateQuantity(1)" [disabled]="cantidad >= producto.stock">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                    <span class="qty-available">({{ producto.stock }} disponibles)</span>
+                </div>
+
+                <div class="main-buttons">
+                    <button class="btn-buy-now">Comprar ahora</button>
+                    <button class="btn-add-cart" (click)="addToCart()">Agregar al carrito</button>
+                </div>
+
+                <div class="secondary-actions">
+                    <button mat-button color="primary" (click)="toggleFavorite()">
+                        <mat-icon>{{ producto.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+                        {{ producto.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Descripción -->
+            <div class="description-section">
+                <h3>Descripción</h3>
+                <p>{{ producto.detalles || producto.descripcion_larga || 'Excelente llanta de alto rendimiento, diseñada
+                    para brindar seguridad y confort en todo tipo de caminos.' }}</p>
+            </div>
+
+        </div>
+
+    </div>
+</div>

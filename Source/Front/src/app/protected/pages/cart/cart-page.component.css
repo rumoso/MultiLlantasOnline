@@ -1,0 +1,333 @@
+.cart-page-container {
+    padding: 24px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    font-family: 'Proxima Nova', -apple-system, Roboto, Arial, sans-serif;
+}
+
+.cart-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+/* Columna Izquierda */
+.products-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.section-header {
+    margin-bottom: 8px;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+/* Promo Banner */
+.promo-card {
+    background: #fff;
+    border-radius: 4px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.promo-icon {
+    color: #00a650;
+}
+
+/* Lista */
+.products-list-header {
+    margin-bottom: 8px;
+}
+
+.label-products {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Tarjeta de Producto */
+.cart-card {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+    padding: 32px 24px;
+    /* Increased vertical padding */
+    border: 1px solid #e6e6e6;
+    margin-bottom: 12px;
+}
+
+/* Row Layout */
+.cart-item-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px 140px;
+    gap: 16px;
+    align-items: center;
+    /* Vertically center items */
+}
+
+/* Image */
+.col-image img {
+    width: 72px;
+    /* Slightly larger */
+    height: 72px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+/* Info */
+.col-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item-title {
+    font-size: 1rem;
+    font-weight: 600;
+    /* Bold title as per mockup */
+    color: #333;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.detail-link {
+    color: #009688;
+    /* Teal-ish color like 'Detalles del producto' often is, or blue */
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.detail-link:hover {
+    color: #00796b;
+}
+
+/* Quantity */
+.col-qty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.quantity-box-simple {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: #fff;
+    height: 32px;
+}
+
+.qty-btn {
+    border: none;
+    background: transparent;
+    color: #3483fa;
+    width: 32px;
+    height: 100%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 4px;
+    /* Adjust visual align */
+}
+
+.qty-btn:disabled {
+    color: #ccc;
+}
+
+.qty-display {
+    width: 30px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Price & Actions */
+.col-price-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 24px;
+    /* Space between X and Price */
+}
+
+/* Price & Actions styles handled above */
+.current-price {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .cart-item-row {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 12px;
+        position: relative;
+    }
+
+    .col-check {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .col-image {
+        text-align: center;
+    }
+
+    /* Center image in mobile */
+    .col-price-actions {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .btn-close-x {
+        order: 2;
+    }
+
+    .price-wrapper {
+        order: 1;
+    }
+}
+
+
+
+/* Columna Derecha: Resumen */
+.summary-card {
+    background: white;
+    border-radius: 4px;
+    padding: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+    position: sticky;
+    top: 24px;
+}
+
+.summary-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.sum-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.sum-row.shipping .free-text {
+    color: #00a650;
+    font-weight: 600;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.btn-checkout {
+    width: 100%;
+    background-color: #3483fa;
+    color: white;
+    height: 48px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-checkout:hover {
+    background-color: #2968c8;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.empty-icon-circle {
+    background: #f5f5f5;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-icon-circle mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #ddd;
+}
+
+.btn-delete-icon {
+    background: transparent;
+    border: none;
+    color: #e02b2b;
+    /* Red color by default */
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.btn-delete-icon:hover {
+    background-color: #fcebeb;
+    /* Light red background on hover */
+    color: #d32f2f;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .cart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-column {
+        order: -1;
+        /* Poner resumen arriba en mobile o dejarlo abajo según preferencia */
+    }
+}

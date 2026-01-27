@@ -9,6 +9,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductosService } from '../../services/productos.service';
 import { Pagination } from '../../interfaces/global.interfaces';
 import { CartService } from '../../services/cart.service';
+import { FavoritesService } from '../../services/favorites.service';
+import ProductDetailsComponent from '../product-details/product-details.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -48,6 +50,7 @@ export default class DashboardComponent {
     , private authServ: AuthService
     , private productosService: ProductosService
     , private cartService: CartService
+    , private favoritesService: FavoritesService
   ) { }
 
   async ngOnInit() {
@@ -70,6 +73,11 @@ export default class DashboardComponent {
         if (response.status == 0) {
           this.productos = response.data.rows || [];
           this.totalProductos = response.data.count || 0;
+
+          // Verify initial favorites state
+          this.productos.forEach(p => {
+            p.isFavorite = this.favoritesService.isFavorite(p.idProducto);
+          });
         }
         this.loadingProductos = false;
         this.cdr.detectChanges();
@@ -78,6 +86,16 @@ export default class DashboardComponent {
         console.error('Error al cargar productos:', error);
         this.loadingProductos = false;
         this.servicesGServ.showAlert('E', 'Error', 'No se pudieron cargar los productos');
+      }
+    });
+
+    // Subscribe to favorites changes to update UI real-time
+    this.favoritesService.favorites$.subscribe(() => {
+      if (this.productos.length > 0) {
+        this.productos.forEach(p => {
+          p.isFavorite = this.favoritesService.isFavorite(p.idProducto);
+        });
+        this.cdr.detectChanges();
       }
     });
   }
@@ -90,8 +108,26 @@ export default class DashboardComponent {
   }
 
   verDetalleProducto(producto: any): void {
-    console.log('Ver detalle producto:', producto);
-    // Aquí puedes implementar la navegación a detalle del producto
+    const dialogRef = this.dialog.open(ProductDetailsComponent, {
+      width: '100%',
+      maxWidth: '100vw',
+      panelClass: 'product-details-dialog-panel',
+      position: { top: '0' },
+      data: { producto }
+    });
+  }
+
+
+  toggleFavorite(producto: any): void {
+    const isAdded = this.favoritesService.toggleFavorite(producto);
+    producto.isFavorite = isAdded;
+
+    // Use non-blocking snackbar (no action, shorter duration)
+    if (isAdded) {
+      this.servicesGServ.showSnakbar('Agregado a favoritos', undefined, 2000);
+    } else {
+      this.servicesGServ.showSnakbar('Eliminado de favoritos', undefined, 2000);
+    }
   }
 
   agregarAlCarrito(producto: any): void {
@@ -100,7 +136,8 @@ export default class DashboardComponent {
     this.cartService.addToCart(producto.idProducto, 1).subscribe({
       next: (response: any) => {
         if (response.status == 0) {
-          this.servicesGServ.showAlert('S', 'Éxito', 'Producto agregado al carrito');
+          // Changed from intrusive alert to subtle snackbar
+          this.servicesGServ.showSnakbar('Producto agregado al carrito', 'Cerrar', 3000);
         }
         this.loadingProductos = false;
         this.cdr.detectChanges();

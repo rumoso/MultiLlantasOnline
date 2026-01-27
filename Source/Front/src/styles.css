@@ -336,6 +336,10 @@ body {
   position: absolute;
   z-index: 1000;
   overflow: auto;
+  pointer-events: none !important;
+}
+
+.cdk-overlay-pane {
   pointer-events: auto !important;
 }
 
@@ -467,9 +471,11 @@ tr:hover {
 .currency-cell {
   position: relative;
   text-align: right;
-  padding-left: 18px; /* Ajusta según el ancho del símbolo */
+  padding-left: 18px;
+  /* Ajusta según el ancho del símbolo */
   min-width: 120px;
 }
+
 .currency-symbol {
   position: absolute;
   left: 1;
@@ -479,14 +485,17 @@ tr:hover {
   align-items: center;
   font-weight: normal;
 }
+
 .currency-value {
   text-align: right;
 }
 
 
 .promo-row {
-  background-color: #e6f8e6; /* verde claro, por ejemplo */
+  background-color: #e6f8e6;
+  /* verde claro, por ejemplo */
 }
+
 .promo-badge {
   background: #4caf50;
   color: white;

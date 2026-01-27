@@ -16,7 +16,10 @@ class Server {
         this.usersPath = '/api/users';
         this.rolesPath = '/api/roles';
         this.productosPath = '/api/productos';
+        this.productosPath = '/api/productos';
         this.cartPath = '/api/cart';
+        this.ordersPath = '/api/orders';
+        this.favoritesPath = '/api/favorites';
 
         //CONEXION A LA BASE DE DATOS
         this.dbConnection();
@@ -41,7 +44,8 @@ class Server {
         //CORS
         this.app.use(cors({
             origin: ['http://localhost:4200', 'http://127.0.0.1:4200'], // Permitir origen específico para credenciales
-            credentials: true // Permitir envío de cookies
+            credentials: true, // Permitir envío de cookies
+            allowedHeaders: ['Content-Type', 'Authorization', 'x-token', 'x-guest-id'] // Permitir headers personalizados
         }));
 
         // COOKIE PARSER - Para manejar cookies (guest_id)
@@ -72,6 +76,8 @@ class Server {
         this.app.use(this.rolesPath, require('../routes/rolesRoute'));
         this.app.use(this.productosPath, require('../routes/productosRoute'));
         this.app.use(this.cartPath, require('../routes/cartRoute'));
+        this.app.use(this.ordersPath, require('../routes/ordersRoute'));
+        this.app.use(this.favoritesPath, require('../routes/favoritesRoute'));
     }
 
     listen() {

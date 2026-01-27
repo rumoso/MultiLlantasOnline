@@ -57,20 +57,28 @@ const login = async (req, res = response) => {
         //Generar el JWT
         const token = await generarJWT(user.idUser || user.iduser);
 
-        // ASOCIACIÓN DE CARRITO: Vincular el carrito del guest actual al usuario logueado
-        // Esto permite que el SP getCart (que filtra por idUser) encuentre los items agregados como invitado.
+        // ASOCIACIÓN DE DATOS (CARRITO Y FAVORITOS): Vincular datos del guest al usuario
         try {
-            const currentGuestId = req.guestId || req.cookies.guest_id;
+            // guestId middleware should populate this, or we check body/headers if not
+            const currentGuestId = req.guestId || req.headers['x-guest-id'] || req.body.guest_id;
+
             if (currentGuestId) {
-                console.log(`Asociando carrito de guest ${currentGuestId} al usuario ${user.idUser || user.iduser}`);
-                // Actualizamos la tabla 'carts' (tabla real del usuario)
-                await dbConnection.query('UPDATE carts SET idUser = ? WHERE guest_id = ?', {
-                    replacements: [user.idUser || user.iduser, currentGuestId]
-                });
+                console.log(`Fusionando datos de guest ${currentGuestId} al usuario ${user.idUser || user.iduser}`);
+                try {
+                    await dbConnection.query('CALL fromGuestToUser(?, ?)', {
+                        replacements: [user.idUser || user.iduser, currentGuestId]
+                    });
+                    console.log('Fusionado correcto.');
+                } catch (e) {
+                    console.error('Error ejecutando SP fromGuestToUser:', e);
+                    throw e;
+                }
+            } else {
+                console.warn('Login exitoso pero SIN guest-id para fusionar.');
             }
-        } catch (cartError) {
-            console.error('Error al asociar carrito:', cartError);
-            // No bloqueamos el login si falla esto, pero lo logueamos
+        } catch (mergeError) {
+            console.error('Error al fusionar datos de invitado:', mergeError);
+            // No bloqueamos el login si falla esto
         }
 
         res.json({

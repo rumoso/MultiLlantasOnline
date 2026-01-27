@@ -21,11 +21,23 @@ const { v4: uuidv4 } = require('uuid');
  */
 const guestId = (req, res, next) => {
     try {
-        // Verificar si ya existe guest_id en cookies
-        let currentGuestId = req.cookies.guest_id;
+        // Skip for OPTIONS requests (CORS preflight)
+        if (req.method === 'OPTIONS') {
+            return next();
+        }
 
-        // Si no existe, generar nuevo UUID
+        // console.log('DEBUG: Headers received:', req.headers); // Descomentar para depurar
+
+        // 1. Prioridad: Header 'x-guest-id' (enviado por frontend desde localStorage)
+        let currentGuestId = req.headers['x-guest-id'];
+
+        // 2. Si no hay header, buscar en cookies
         if (!currentGuestId) {
+            currentGuestId = req.cookies.guest_id;
+        }
+
+        // Si no existe en ninguno, generar nuevo UUID
+        if (!currentGuestId || currentGuestId === 'null' || currentGuestId === 'undefined') {
             currentGuestId = uuidv4();
 
             // Configuración de la cookie
@@ -42,7 +54,7 @@ const guestId = (req, res, next) => {
 
             console.log(`🆕 Nuevo guest_id creado: ${currentGuestId}`);
         } else {
-            console.log(`✅ Guest_id existente: ${currentGuestId}`);
+            // console.log(`✅ Guest_id recibido: ${currentGuestId}`);
         }
 
         // Adjuntar guest_id al objeto request para usarlo en controllers

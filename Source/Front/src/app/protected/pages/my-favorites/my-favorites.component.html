@@ -1,0 +1,58 @@
+<div class="row p-4">
+    <div class="col-12 mb-4">
+        <h2><mat-icon>favorite</mat-icon> Mis Favoritos</h2>
+        <p class="text-muted">Gestiona tu lista de productos deseados</p>
+    </div>
+
+    <div class="col-12" *ngIf="loading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <div class="col-12" *ngIf="!loading && favorites.length === 0">
+        <div class="text-center p-5 bg-light rounded">
+            <mat-icon style="font-size: 64px; height: 64px; width: 64px;"
+                class="text-muted mb-3">favorite_border</mat-icon>
+            <h3>No tienes favoritos aún</h3>
+            <p>Guarda los productos que más te gusten para verlos aquí.</p>
+            <button mat-raised-button color="primary" class="mt-3" (click)="goToCatalog()">
+                Explorar Catálogo
+            </button>
+        </div>
+    </div>
+
+    <div class="col-12" *ngIf="!loading && favorites.length > 0">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 mb-4" *ngFor="let item of favorites">
+                <mat-card class="h-100 product-card">
+                    <div class="product-image-container">
+                        <img [src]="item.imagen_url || 'assets/img/default-tire.png'" [alt]="item.nombre"
+                            (error)="$any($event.target).src='assets/img/default-tire.png'">
+                        <button mat-icon-button class="remover-btn" (click)="removeFavorite(item)"
+                            matTooltip="Eliminar de favoritos">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+
+                    <mat-card-content class="p-3">
+                        <span class="badge-marca mb-2">{{ item.marca }}</span>
+                        <h3 class="product-title">{{ item.nombre }}</h3>
+                        <p class="product-model text-muted">{{ item.modelo }}</p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="product-price">{{ item.precio | currency:'MXN' }}</span>
+                            <span class="stock-badge" [class.low-stock]="item.stock < 5">
+                                {{ item.stock }} disp.
+                            </span>
+                        </div>
+                    </mat-card-content>
+
+                    <mat-card-actions class="p-3 pt-0">
+                        <button mat-raised-button color="primary" class="w-100" (click)="addToCart(item)">
+                            <mat-icon>shopping_cart</mat-icon> Agregar al Carrito
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

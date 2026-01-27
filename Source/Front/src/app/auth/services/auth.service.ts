@@ -26,7 +26,11 @@ export class AuthService {
 
   CLogin(login: any): Observable<ResponseGet> {
 
-    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/login`, login)
+    const headers = {
+      'x-guest-id': this.guestService.getGuestId()
+    };
+
+    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/login`, login, { headers })
       .pipe(
         tap(async userLogin => {
           if (userLogin.status == 0) {

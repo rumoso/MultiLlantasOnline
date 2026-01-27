@@ -1,0 +1,105 @@
+<div class="cart-page-container">
+
+    <div class="cart-grid" *ngIf="cartItems.length > 0; else emptyCartComp">
+
+        <!-- Columna Izquierda: Productos -->
+        <div class="products-column">
+
+            <div class="section-header">
+                <h1 class="page-title">Carrito</h1>
+            </div>
+
+            <!-- Lista de Productos -->
+            <div class="products-list">
+
+                <div class="products-list-header">
+                    <span class="label-products">Productos</span>
+                </div>
+
+                <div class="cart-card" *ngFor="let item of cartItems">
+
+                    <div class="cart-item-row">
+                        <!-- 1. Checkbox -->
+
+
+                        <!-- 2. Imagen -->
+                        <div class="col-image">
+                            <img [src]="item.imagen_url || 'assets/img/default-tire.png'" [alt]="item.descripcion"
+                                (error)="$any($event.target).src='assets/img/default-tire.png'">
+                        </div>
+
+                        <!-- 3. Información (Título + Link) -->
+                        <div class="col-info">
+                            <h3 class="item-title">{{ item.descripcion }}</h3>
+                            <span class="detail-link">Detalles del producto</span>
+                        </div>
+
+                        <!-- 4. Cantidad -->
+                        <div class="col-qty">
+                            <div class="quantity-box-simple">
+                                <button class="qty-btn" (click)="updateQuantity(item, -1)"
+                                    [disabled]="loading || item.cantidad <= 1">-</button>
+                                <span class="qty-display">{{ item.cantidad }}</span>
+                                <button class="qty-btn" (click)="updateQuantity(item, 1)"
+                                    [disabled]="loading">+</button>
+                            </div>
+                        </div>
+
+                        <!-- 5. Precio y Eliminar -->
+                        <div class="col-price-actions">
+                            <button class="btn-delete-icon" (click)="removeItem(item)" matTooltip="Eliminar">
+                                <mat-icon>delete_outline</mat-icon>
+                            </button>
+                            <div class="price-wrapper">
+                                <span class="current-price">{{ (item.precio * item.cantidad) | currency:'MXN' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resumen Sticky -->
+        <div class="summary-column">
+            <div class="summary-card">
+                <h2 class="summary-title">Resumen de compra</h2>
+
+                <div class="summary-detail">
+                    <div class="sum-row">
+                        <span>Productos ({{cartItems.length}})</span>
+                        <span>{{ total | currency:'MXN' }}</span>
+                    </div>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="total-row">
+                    <span>Total</span>
+                    <span class="total-value">{{ total | currency:'MXN' }}</span>
+                </div>
+
+                <div class="actions-block">
+                    <button class="btn-checkout" (click)="processCheckout()" [disabled]="loading">
+                        Continuar compra
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Template Vacío -->
+    <ng-template #emptyCartComp>
+        <div class="empty-state">
+            <div class="empty-icon-circle">
+                <mat-icon>shopping_bag</mat-icon>
+            </div>
+            <h2>Tu carrito está vacío</h2>
+            <p>¿No sabes qué comprar? ¡Miles de productos te esperan!</p>
+            <button mat-flat-button color="primary" (click)="goBack()">Volver</button>
+        </div>
+    </ng-template>
+
+</div>

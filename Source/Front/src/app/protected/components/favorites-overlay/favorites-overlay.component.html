@@ -1,0 +1,50 @@
+<div class="favorites-container">
+    <div class="favorites-header">
+        <h2><mat-icon>favorite</mat-icon> Mis Favoritos</h2>
+        <div class="header-actions">
+            <button mat-icon-button (click)="viewAll()" matTooltip="Ver todos" *ngIf="favorites.length > 0">
+                <mat-icon>open_in_new</mat-icon>
+            </button>
+            <button mat-icon-button (click)="closeSidebar()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="favorites-content" *ngIf="favorites.length > 0; else emptyFavorites">
+        <div class="favorites-list">
+            <mat-card class="favorite-item-card" *ngFor="let item of favorites">
+                <div class="item-layout">
+                    <div class="item-image">
+                        <img [src]="item.imagen_url || 'assets/img/default-tire.png'" [alt]="item.nombre"
+                            (error)="$any($event.target).src='assets/img/default-tire.png'">
+                    </div>
+
+                    <div class="item-details">
+                        <h3 class="item-name">{{ item.nombre }}</h3>
+                        <p class="item-model">{{ item.modelo }}</p>
+                        <p class="item-price">{{ item.precio | currency:'MXN' }}</p>
+                    </div>
+
+                    <div class="item-actions">
+                        <button mat-icon-button color="primary" (click)="addToCart(item)"
+                            matTooltip="Agregar al carrito">
+                            <mat-icon>shopping_cart</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="removeFavorite(item)" matTooltip="Eliminar">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+
+    <ng-template #emptyFavorites>
+        <div class="empty-favorites-message">
+            <mat-icon class="empty-icon">favorite_border</mat-icon>
+            <h3>No tienes favoritos aún</h3>
+            <p>Guarda los productos que más te gusten aquí.</p>
+        </div>
+    </ng-template>
+</div>

@@ -19,12 +19,12 @@
 
         <!-- Sección de botones -->
         <div class="header-actions">
-            <button mat-button class="action-button" routerLink="./mis-compras">
+            <button mat-button class="action-button" routerLink="./my-purchases">
                 <mat-icon>shopping_bag</mat-icon>
                 <span class="action-text">Mis compras</span>
             </button>
 
-            <button mat-button class="action-button" routerLink="./favoritos">
+            <button mat-button class="action-button" (click)="toggleFavorites()">
                 <mat-icon>favorite_border</mat-icon>
                 <span class="action-text">Favoritos</span>
             </button>
@@ -63,11 +63,11 @@
             <mat-icon>settings</mat-icon>
             <span>Mi perfil</span>
         </button>
-        <button mat-menu-item routerLink="./mis-compras">
+        <button mat-menu-item routerLink="./my-purchases">
             <mat-icon>receipt_long</mat-icon>
             <span>Mis compras</span>
         </button>
-        <button mat-menu-item routerLink="./favoritos">
+        <button mat-menu-item (click)="toggleFavorites()">
             <mat-icon>favorite</mat-icon>
             <span>Mis favoritos</span>
         </button>
@@ -79,7 +79,11 @@
     </mat-menu>
 </header>
 
-<mat-sidenav-container class="main-sidenav-container">
+<mat-sidenav-container class="main-sidenav-container" [hasBackdrop]="showBackdrop">
+    <mat-sidenav #favoritesSidenav mode="over" position="start" class="favorites-sidenav">
+        <app-favorites-overlay (close)="toggleFavorites()"></app-favorites-overlay>
+    </mat-sidenav>
+
     <mat-sidenav #cartSidenav mode="over" position="end" class="cart-sidenav">
         <app-cart-overlay (close)="toggleCart()"></app-cart-overlay>
     </mat-sidenav>

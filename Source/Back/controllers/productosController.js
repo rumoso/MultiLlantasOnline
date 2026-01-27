@@ -59,7 +59,7 @@ const getProductById = async (req, res = response_express.response) => {
 
         const query = `
             SELECT
-                id_producto,
+                idProducto,
                 nombre,
                 descripcion,
                 marca,
@@ -71,9 +71,9 @@ const getProductById = async (req, res = response_express.response) => {
                 stock,
                 imagen_url,
                 activo,
-                fecha_creacion
+                createDate
             FROM productos
-            WHERE id_producto = ? AND activo = 1
+            WHERE idProducto = ? AND activo = 1
         `;
 
         const [rows] = await dbSPConnection.query(query, [idProducto]);
@@ -110,7 +110,7 @@ const getProductsByMarca = async (req, res = response_express.response) => {
 
         const query = `
             SELECT
-                id_producto,
+                idProducto,
                 nombre,
                 descripcion,
                 marca,
@@ -122,7 +122,7 @@ const getProductsByMarca = async (req, res = response_express.response) => {
                 stock,
                 imagen_url,
                 activo,
-                fecha_creacion
+                createDate
             FROM productos
             WHERE activo = 1
                 AND marca = ?

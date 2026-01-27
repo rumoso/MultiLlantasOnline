@@ -1,0 +1,48 @@
+<div class="row p-4">
+    <div class="col-12 mb-4">
+        <h2>Mis Compras</h2>
+        <p class="text-muted">Historial de tus pedidos realizados</p>
+    </div>
+
+    <div class="col-12" *ngIf="loading">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <div class="col-12" *ngIf="!loading && orders.length === 0">
+        <div class="text-center p-5 bg-light rounded">
+            <mat-icon style="font-size: 48px; height: 48px; width: 48px;"
+                class="text-muted mb-3">shopping_bag</mat-icon>
+            <h3>No tienes compras registradas</h3>
+            <p>Aún no has realizado ninguna compra en nuestra tienda.</p>
+        </div>
+    </div>
+
+    <div class="col-12" *ngIf="!loading && orders.length > 0">
+        <mat-card class="order-card" *ngFor="let order of orders">
+            <div class="order-header">
+                <div>
+                    <strong>Orden #{{ order.idOrder }}</strong>
+                    <br>
+                    <small class="text-muted">{{ order.createDate | date:'medium' }}</small>
+                </div>
+                <div>
+                    <span class="status-badge me-2" [style.background-color]="order.colorPago || 'gray'">
+                        {{ order.statusPago }}
+                    </span>
+                    <span class="status-badge" [style.background-color]="order.colorOrden || 'gray'">
+                        {{ order.statusOrden }}
+                    </span>
+                </div>
+            </div>
+            <mat-card-content class="p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1"><strong>Total:</strong> {{ order.total | currency:'MXN' }}</p>
+                        <p class="mb-0 text-muted">{{ order.itemsCount }} producto(s)</p>
+                    </div>
+                    <button mat-stroked-button color="primary" (click)="openDetail(order)">Ver Detalle</button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

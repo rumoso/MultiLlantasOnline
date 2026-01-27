@@ -1,0 +1,138 @@
+.favorites-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    width: 350px;
+    max-width: 100vw;
+}
+
+.favorites-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+    /* Red gradient for Favorites */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.favorites-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.favorites-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f8f9fa;
+}
+
+.favorite-item-card {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.favorite-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.item-layout {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #eee;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.item-details {
+    flex: 1;
+    min-width: 0;
+    /* Prevent text overflow */
+}
+
+.item-name {
+    margin: 0 0 4px 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-model {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0 0 4px 0;
+}
+
+.item-price {
+    margin: 0;
+    color: #00b4d8;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.item-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.empty-favorites-message {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+    color: #666;
+}
+
+.empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ddd;
+    margin-bottom: 16px;
+}
+
+.empty-favorites-message h3 {
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.empty-favorites-message p {
+    margin-bottom: 24px;
+    color: #888;
+}
+
+@media (max-width: 480px) {
+    .favorites-container {
+        width: 100%;
+    }
+}

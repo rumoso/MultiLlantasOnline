@@ -36,7 +36,7 @@ export default class CartComponent implements OnInit {
         const newQuantity = item.cantidad + change;
         if (newQuantity < 1) return;
 
-        const itemId = item.idItem || item.idcartDetail;
+        const itemId = item.idItem || item.idcartDetail || item.keyx;
         this.loading = true;
         this.cartService.updateQuantity(itemId, newQuantity).subscribe({
             next: () => this.loading = false,
@@ -53,7 +53,7 @@ export default class CartComponent implements OnInit {
             return;
         }
 
-        const itemId = item.idItem || item.idcartDetail;
+        const itemId = item.idItem || item.idcartDetail || item.keyx;
         this.loading = true;
         this.cartService.removeFromCart(itemId).subscribe({
             next: () => this.loading = false,
@@ -69,7 +69,28 @@ export default class CartComponent implements OnInit {
     }
 
     processCheckout(): void {
-        this.servicesGServ.showAlert('I', 'Próximamente', 'La funcionalidad de pago estará disponible pronto.');
+        if (!this.cartItems.length) return;
+
+        if (!confirm('¿Estás seguro de procesar la compra?')) return;
+
+        this.loading = true;
+        this.cartService.processPurchase().subscribe({
+            next: (resp) => {
+                this.loading = false;
+                if (resp.status === 0) {
+                    this.servicesGServ.showAlert('S', 'Éxito', 'Compra procesada correctamente');
+                    this.cartService.openCart(); // O cerrar el carrito si se prefiere
+                    this.servicesGServ.changeRoute(`/${this._appMain}/my-purchases`); // Redirigir a mis compras
+                } else {
+                    this.servicesGServ.showAlert('E', 'Error', resp.message || 'Error al procesar la compra');
+                }
+            },
+            error: (err) => {
+                this.loading = false;
+                console.error(err);
+                this.servicesGServ.showAlert('E', 'Error', 'Ocurrió un error al procesar la compra');
+            }
+        });
     }
 
 }

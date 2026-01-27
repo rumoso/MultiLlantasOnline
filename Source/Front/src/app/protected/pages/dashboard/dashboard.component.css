@@ -164,6 +164,43 @@
     height: 16px;
 }
 
+/* Botón de favorito */
+.producto-btn-favorito {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    z-index: 2;
+    border: none;
+    color: #ccc;
+}
+
+.producto-btn-favorito:hover {
+    transform: scale(1.1);
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.producto-btn-favorito.is-favorite {
+    color: #ef4444;
+    /* Red color for active state */
+}
+
+.producto-btn-favorito mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
 /* Contenido del producto */
 .producto-content {
     flex: 1;
@@ -282,6 +319,19 @@
 
 .btn-detalle {
     color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    /* Definir ancho fijo */
+    height: 36px;
+    /* Altura igual o estandarizada */
+    border-radius: 4px;
+    /* Un poco de borde para shape */
+    padding: 0;
+    /* Quitar padding extra de mat-button */
+    min-width: 0;
+    /* Override mat-button min-width */
 }
 
 .btn-detalle:hover {
@@ -399,209 +449,211 @@
 
 /* Header del dashboard */
 .dashboard-header {
-  padding: 20px 24px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 12px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard-title {
-  color: #333;
-  font-weight: 600;
-  margin: 0;
-  font-size: 2rem;
+    color: #333;
+    font-weight: 600;
+    margin: 0;
+    font-size: 2rem;
 }
 
 .dashboard-subtitle {
-  margin: 5px 0 0 0;
-  font-size: 14px;
-  color: #6c757d;
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    color: #6c757d;
 }
 
 /* Container para acciones del dashboard */
 .dashboard-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 /* Indicador de carga para validaciones */
 .carga-validaciones {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  color: #6c757d;
-  font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 14px;
 }
 
 .carga-text {
-  font-weight: 500;
+    font-weight: 500;
 }
 
 /* Responsive: En pantallas pequeñas, los elementos se apilan verticalmente */
 @media (max-width: 768px) {
-  .dashboard-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
+    .dashboard-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
 
-  .dashboard-actions button {
-    width: 100%;
-  }
+    .dashboard-actions button {
+        width: 100%;
+    }
 }
 
 /* Botón simple y elegante para iniciar turno */
 .iniciar-turno-btn-simple {
-  background-color: #10b981;
-  color: white;
-  border: none;
-  font-weight: 500;
-  padding: 0 24px;
-  height: 48px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-  transition: all 0.3s ease;
-  text-transform: none;
-  font-size: 14px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    font-weight: 500;
+    padding: 0 24px;
+    height: 48px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+    text-transform: none;
+    font-size: 14px;
 }
 
 .iniciar-turno-btn-simple:hover {
-  background-color: #059669;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    background-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .iniciar-turno-btn-simple:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
 }
 
 .iniciar-turno-btn-simple .mat-icon {
-  margin-right: 8px;
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-  color: white;
+    margin-right: 8px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: white;
 }
 
 /* Botón para iniciar jornada/turno general */
 .iniciar-jornada-btn-simple {
-  background-color: #f59e0b;
-  color: white;
-  border: none;
-  font-weight: 500;
-  padding: 0 24px;
-  height: 48px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-  transition: all 0.3s ease;
-  text-transform: none;
-  font-size: 14px;
+    background-color: #f59e0b;
+    color: white;
+    border: none;
+    font-weight: 500;
+    padding: 0 24px;
+    height: 48px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    transition: all 0.3s ease;
+    text-transform: none;
+    font-size: 14px;
 }
 
 .iniciar-jornada-btn-simple:hover {
-  background-color: #d97706;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    background-color: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
 }
 
 .iniciar-jornada-btn-simple:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
 }
 
 .iniciar-jornada-btn-simple .mat-icon {
-  margin-right: 8px;
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-  color: white;
+    margin-right: 8px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: white;
 }
 
 /* Indicador de turno activo */
 .turno-activo-indicator {
-  display: flex;
-  align-items: center;
-  background-color: #f0f9f4;
-  border: 2px solid #10b981;
-  border-radius: 8px;
-  padding: 12px 16px;
-  color: #059669;
+    display: flex;
+    align-items: center;
+    background-color: #f0f9f4;
+    border: 2px solid #10b981;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #059669;
 }
 
 .turno-activo-icon {
-  color: #10b981;
-  margin-right: 12px;
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
+    color: #10b981;
+    margin-right: 12px;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
 }
 
 .turno-activo-content {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .turno-activo-text {
-  font-weight: 600;
-  font-size: 14px;
-  color: #FFF;
+    font-weight: 600;
+    font-size: 14px;
+    color: #FFF;
 }
 
 .turno-activo-details {
-  font-size: 12px;
-  color: #fdfdfd;
-  margin-top: 2px;
+    font-size: 12px;
+    color: #fdfdfd;
+    margin-top: 2px;
 }
 
 /* Indicador de jornada activa */
 .jornada-activa-indicator {
-  display: flex;
-  align-items: center;
-  background-color: #fffbeb;
-  border: 2px solid #f59e0b;
-  border-radius: 8px;
-  padding: 12px 16px;
-  color: #d97706;
+    display: flex;
+    align-items: center;
+    background-color: #fffbeb;
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #d97706;
 }
 
 .jornada-activa-icon {
-  color: #f59e0b;
-  margin-right: 12px;
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
+    color: #f59e0b;
+    margin-right: 12px;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
 }
 
 .jornada-activa-content {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .jornada-activa-text {
-  font-weight: 600;
-  font-size: 14px;
-  color: #d97706;
+    font-weight: 600;
+    font-size: 14px;
+    color: #d97706;
 }
 
 .jornada-activa-details {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 2px;
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
 }
 
 /* Styling for individual cards (previously .divAutoDashBoard) */
 .divAutoDashBoard {
     background-color: white;
-    border-radius: 8px; /* Material Design often uses slightly larger border-radius */
-    transition: transform 0.2s linear, box-shadow 0.2s linear; /* Keep hover effects */
+    border-radius: 8px;
+    /* Material Design often uses slightly larger border-radius */
+    transition: transform 0.2s linear, box-shadow 0.2s linear;
+    /* Keep hover effects */
     cursor: pointer;
 }
 
@@ -632,23 +684,28 @@
 /* Adjusted for consistency */
 .LabelCountInvoicingDashboard {
     font-size: 14px;
-    color: #6c757d; /* Standard muted text color */
+    color: #6c757d;
+    /* Standard muted text color */
 }
 
 /* General Material Icon styling */
 .material-icons {
-  color:#004D40;
-  font-size: 45px;
+    color: #004D40;
+    font-size: 45px;
 }
+
 .mat-icon {
-  width: 50px;
-  height: 50px;
+    width: 50px;
+    height: 50px;
 }
+
 .menu-section-title {
-    font-size: 1.5em; /* Adjust as needed */
+    font-size: 1.5em;
+    /* Adjust as needed */
     text-align: center;
     font-weight: 500;
-    color: #333; /* Adjust color as needed */
+    color: #333;
+    /* Adjust color as needed */
     margin-bottom: 0.5rem;
 }
 
@@ -656,31 +713,39 @@
 .submenu-items-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px; /* Spacing between cards */
-    padding-top: 16px; /* Add some padding when the panel is open */
+    gap: 16px;
+    /* Spacing between cards */
+    padding-top: 16px;
+    /* Add some padding when the panel is open */
     justify-content: flex-start;
 }
 
 .submenu-items-container .divAutoDashBoard {
-    flex-basis: calc(33.333% - 11px); /* (100% / 3) - (2/3 * gap). Adjust if gap changes. (16px * 2/3 ~= 10.67) */
+    flex-basis: calc(33.333% - 11px);
+    /* (100% / 3) - (2/3 * gap). Adjust if gap changes. (16px * 2/3 ~= 10.67) */
     max-width: calc(33.333% - 11px);
     box-sizing: border-box;
-    display: flex; /* To help align content within the card */
-    flex-direction: column; /* Stack content vertically if needed */
-    justify-content: center; /* Center content vertically */
+    display: flex;
+    /* To help align content within the card */
+    flex-direction: column;
+    /* Stack content vertically if needed */
+    justify-content: center;
+    /* Center content vertically */
 }
 
 /* Responsive adjustments for submenu items */
 @media (min-width: 1401px) {
     .submenu-items-container .divAutoDashBoard {
-        flex-basis: calc(25% - 12px); /* 4 items: (100% / 4) - (3/4 * 16px gap) */
+        flex-basis: calc(25% - 12px);
+        /* 4 items: (100% / 4) - (3/4 * 16px gap) */
         max-width: calc(25% - 12px);
     }
 }
 
 @media (max-width: 992px) {
     .submenu-items-container .divAutoDashBoard {
-        flex-basis: calc(50% - 8px); /* (100% / 2) - (1/2 * gap) */
+        flex-basis: calc(50% - 8px);
+        /* (100% / 2) - (1/2 * gap) */
         max-width: calc(50% - 8px);
     }
 }
@@ -690,12 +755,16 @@
         flex-basis: 100%;
         max-width: 100%;
     }
+
     .submenu-items-container {
         justify-content: center;
     }
-    .divAutoDashBoard mat-card-content { /* Adjust padding for smaller screens */
+
+    .divAutoDashBoard mat-card-content {
+        /* Adjust padding for smaller screens */
         padding: 16px;
     }
+
     .dashboard-card-icon {
         font-size: 40px;
     }
@@ -705,6 +774,7 @@
     .divAutoDashBoard mat-card-content {
         padding: 12px;
     }
+
     .LabelCountInvoicingDashboard {
         font-size: 13px;
     }
@@ -729,40 +799,51 @@
 .d-flex {
     display: flex !important;
 }
+
 .align-items-center {
     align-items: center !important;
 }
+
 .text-center {
     text-align: center !important;
 }
+
 .mb-1 {
     margin-bottom: 0.25rem !important;
 }
+
 .mb-2 {
     margin-bottom: 0.5rem !important;
 }
-.h6 { /* Basic styling for h6 if you use it for titles */
+
+.h6 {
+    /* Basic styling for h6 if you use it for titles */
     font-size: 1rem;
     font-weight: 500;
     margin-bottom: .5rem;
 }
+
 .text-muted {
     color: #6c757d !important;
 }
 
 /* Hide element on medium and down if d-none d-md-block is used */
 @media (max-width: 767.98px) {
-  .d-md-block {
-    display: block !important; /* This seems counterintuitive, usually d-none d-md-block means hide on small, show on md+ */
-  }
-  /* If you want to hide on small screens and show on medium and up: */
-  .hide-on-small-screen {
-      display: none;
-  }
+    .d-md-block {
+        display: block !important;
+        /* This seems counterintuitive, usually d-none d-md-block means hide on small, show on md+ */
+    }
+
+    /* If you want to hide on small screens and show on medium and up: */
+    .hide-on-small-screen {
+        display: none;
+    }
 }
+
 @media (min-width: 768px) {
     .hide-on-small-screen {
-        display: block; /* Or inline, flex, etc., depending on the element */
+        display: block;
+        /* Or inline, flex, etc., depending on the element */
     }
 }
 
@@ -771,10 +852,12 @@
 .d-md-block-custom {
     display: none;
 }
+
 /* Show when screen is md or larger */
 @media (min-width: 768px) {
     .d-md-block-custom {
-        display: block !important; /* Or flex, inline-block, etc. as needed */
+        display: block !important;
+        /* Or flex, inline-block, etc. as needed */
     }
 }
 
@@ -783,54 +866,78 @@
 
 /* Estilos para el indicador de turno activo */
 .turno-activo-indicator {
-  display: flex;
-  align-items: center;
-  padding: 12px 20px;
-  background-color: #10b981;
-  color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-  font-weight: 500;
-  transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    background-color: #10b981;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .turno-activo-indicator:hover {
-  background-color: #059669;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    background-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .turno-activo-icon {
-  margin-right: 12px;
-  font-size: 24px;
-  animation: pulse 2s infinite;
+    margin-right: 12px;
+    font-size: 24px;
+    animation: pulse 2s infinite;
 }
 
 .turno-activo-content {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .turno-activo-text {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.2;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
 .turno-activo-details {
-  font-size: 12px;
-  opacity: 0.9;
-  margin-top: 2px;
+    font-size: 12px;
+    opacity: 0.9;
+    margin-top: 2px;
 }
 
 @keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-  100% {
-    opacity: 1;
-  }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+/* Product Details Overlay Styles */
+::ng-deep .product-details-dialog-panel {
+    max-width: 100vw !important;
+}
+
+::ng-deep .product-details-dialog-panel .mat-mdc-dialog-container {
+    padding: 0 !important;
+    border-radius: 0 0 16px 16px !important;
+    overflow: hidden;
+    animation: slideInDown 0.4s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

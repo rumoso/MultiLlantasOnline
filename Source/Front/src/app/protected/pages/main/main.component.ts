@@ -9,6 +9,8 @@ import { CajaInfoService } from '../../../shared/services/caja-info.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ResponseGet } from '../../interfaces/global.interfaces';
 import { FormsModule } from '@angular/forms';
+import { FavoritesService } from '../../services/favorites.service';
+import { FavoritesOverlayComponent } from '../../components/favorites-overlay/favorites-overlay.component';
 import { CartService } from '../../services/cart.service';
 import { CartOverlayComponent } from '../../components/cart-overlay/cart-overlay.component';
 import { MatSidenav } from '@angular/material/sidenav';
@@ -21,12 +23,14 @@ import { MatSidenav } from '@angular/material/sidenav';
     SharedModule,
     MaterialModule,
     FormsModule,
-    CartOverlayComponent
+    CartOverlayComponent,
+    FavoritesOverlayComponent
   ]
 })
 export default class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild('cartSidenav') cartSidenav!: MatSidenav;
+  @ViewChild('favoritesSidenav') favoritesSidenav!: MatSidenav;
 
   public isCartOpen: boolean = false;
 
@@ -37,12 +41,17 @@ export default class MainComponent implements OnInit, OnDestroy {
   private cdref = inject(ChangeDetectorRef);
   private cajaInfoService = inject(CajaInfoService);
   private cartService = inject(CartService);
+  private favoritesService = inject(FavoritesService);
   private cajaInfoSubscription!: Subscription;
   private cartSubscription!: Subscription;
   private cartToggleSubscription!: Subscription;
+  private favoritesToggleSubscription!: Subscription;
 
   public cartCount: number = 0;
   public cartAnimated: boolean = false;
+
+  // Control de backdrop para sidenavs
+  public showBackdrop: boolean = true;
 
   public configLocal: any = {};
 
@@ -85,7 +94,13 @@ export default class MainComponent implements OnInit, OnDestroy {
       this.cdref.detectChanges();
     });
 
-    // Suscribirse a la notificación de adición al carrito
+    // Subscribe to favorites toggle
+    this.favoritesToggleSubscription = this.favoritesService.toggleFavorites$.subscribe(open => {
+      if (open) {
+        this.toggleFavorites();
+      }
+    });
+
     this.cartToggleSubscription = this.cartService.toggleCart$.subscribe(open => {
       if (open) {
         this.animateCart();
@@ -109,6 +124,9 @@ export default class MainComponent implements OnInit, OnDestroy {
     if (this.cartToggleSubscription) {
       this.cartToggleSubscription.unsubscribe();
     }
+    if (this.favoritesToggleSubscription) {
+      this.favoritesToggleSubscription.unsubscribe();
+    }
   }
 
   getInfoCaja() {
@@ -131,7 +149,16 @@ export default class MainComponent implements OnInit, OnDestroy {
 
   toggleCart(): void {
     if (this.cartSidenav) {
-      this.cartSidenav.toggle();
+      this.showBackdrop = true; // El carrito sí usa backdrop
+      // Pequeño timeout para asegurar que el cambio de propiedad se detecte antes de abrir
+      setTimeout(() => this.cartSidenav.toggle(), 0);
+    }
+  }
+
+  toggleFavorites(): void {
+    if (this.favoritesSidenav) {
+      this.showBackdrop = false; // Favoritos no usa backdrop (click outside permitido)
+      setTimeout(() => this.favoritesSidenav.toggle(), 0);
     }
   }
 

@@ -29,17 +29,31 @@ export class CartService {
     }
 
     /**
+     * Helper to get headers with guest-id
+     */
+    private getHeaders() {
+        const tokenString = localStorage.getItem('token');
+        const token = tokenString ? JSON.parse(tokenString) : '';
+
+        return {
+            'x-guest-id': this.guestService.getGuestId(),
+            'x-token': token
+        };
+    }
+
+    /**
      * Obtiene los productos del carrito actual
      */
     getCart(): Observable<ResponseGet> {
         const idUser = this.authService.getIdUserSession();
         const data = { idUser };
 
-        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/get`, data, { withCredentials: true }).pipe(
+        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/get`, data, {
+            withCredentials: true,
+            headers: this.getHeaders()
+        }).pipe(
             tap(resp => {
-                console.log('CartService getCart response:', resp); // DEBUG
                 if (resp.status === 0 && resp.data) {
-                    console.log('CartService updating subject with:', resp.data); // DEBUG
                     this.cartSubject.next(resp.data);
                 }
             })
@@ -50,7 +64,10 @@ export class CartService {
         const idUser = this.authService.getIdUserSession();
         const data = { idProducto, cantidad, idUser };
 
-        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/add`, data, { withCredentials: true }).pipe(
+        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/add`, data, {
+            withCredentials: true,
+            headers: this.getHeaders()
+        }).pipe(
             tap(resp => {
                 if (resp.status === 0) {
                     this.getCart().subscribe();
@@ -66,7 +83,10 @@ export class CartService {
 
     updateQuantity(idItem: number, cantidad: number): Observable<ResponseGet> {
         const data = { idItem, cantidad };
-        return this.http.put<ResponseGet>(`${this.baseURL}/${this._api}/update`, data, { withCredentials: true }).pipe(
+        return this.http.put<ResponseGet>(`${this.baseURL}/${this._api}/update`, data, {
+            withCredentials: true,
+            headers: this.getHeaders()
+        }).pipe(
             tap(resp => {
                 if (resp.status === 0) {
                     this.getCart().subscribe();
@@ -78,10 +98,27 @@ export class CartService {
     removeFromCart(idItem: number): Observable<ResponseGet> {
         return this.http.delete<ResponseGet>(`${this.baseURL}/${this._api}/remove`, {
             body: { idItem },
-            withCredentials: true
+            withCredentials: true,
+            headers: this.getHeaders()
         }).pipe(
             tap(resp => {
                 if (resp.status === 0) {
+                    this.getCart().subscribe();
+                }
+            })
+        );
+    }
+
+    processPurchase(): Observable<ResponseGet> {
+        const idUser = this.authService.getIdUserSession();
+        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/process`, { idUser }, {
+            withCredentials: true,
+            headers: this.getHeaders()
+        }).pipe(
+            tap(resp => {
+                if (resp.status === 0) {
+                    this.clearLocalCart();
+                    // Opcional: Recargar el carrito (debería estar vacío)
                     this.getCart().subscribe();
                 }
             })
