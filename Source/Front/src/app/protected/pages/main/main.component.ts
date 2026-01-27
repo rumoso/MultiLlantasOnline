@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ServicesGService } from '../../../servicesG/servicesG.service';
@@ -9,6 +9,9 @@ import { CajaInfoService } from '../../../shared/services/caja-info.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ResponseGet } from '../../interfaces/global.interfaces';
 import { FormsModule } from '@angular/forms';
+import { CartService } from '../../services/cart.service';
+import { CartOverlayComponent } from '../../components/cart-overlay/cart-overlay.component';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-main',
@@ -17,10 +20,15 @@ import { FormsModule } from '@angular/forms';
   imports: [
     SharedModule,
     MaterialModule,
-    FormsModule
+    FormsModule,
+    CartOverlayComponent
   ]
 })
 export default class MainComponent implements OnInit, OnDestroy {
+
+  @ViewChild('cartSidenav') cartSidenav!: MatSidenav;
+
+  public isCartOpen: boolean = false;
 
   private _appMain: string = environment.appMain;
   public _IconApp: string = environment.iconApp;
@@ -28,7 +36,13 @@ export default class MainComponent implements OnInit, OnDestroy {
   public _cajaInfo: any = null;
   private cdref = inject(ChangeDetectorRef);
   private cajaInfoService = inject(CajaInfoService);
+  private cartService = inject(CartService);
   private cajaInfoSubscription!: Subscription;
+  private cartSubscription!: Subscription;
+  private cartToggleSubscription!: Subscription;
+
+  public cartCount: number = 0;
+  public cartAnimated: boolean = false;
 
   public configLocal: any = {};
 
@@ -41,7 +55,6 @@ export default class MainComponent implements OnInit, OnDestroy {
     return this.authService.userLogin;
   }
 
-  _userLogin: any;
   _menuList: any = [];
 
   MenusList: any[] = [];
@@ -66,16 +79,35 @@ export default class MainComponent implements OnInit, OnDestroy {
       this.cdref.detectChanges();
     });
 
-    var idUserLogOn = localStorage.getItem('idUser');
-    if (!(idUserLogOn?.length! > 0)) {
-      this.servicesGServ.changeRoute('/');
-    }
+    // Suscribirse al conteo del carrito
+    this.cartSubscription = this.cartService.cart$.subscribe(items => {
+      this.cartCount = items.length;
+      this.cdref.detectChanges();
+    });
+
+    // Suscribirse a la notificación de adición al carrito
+    this.cartToggleSubscription = this.cartService.toggleCart$.subscribe(open => {
+      if (open) {
+        this.animateCart();
+      }
+    });
+
+    // var idUserLogOn = localStorage.getItem('idUser');
+    // if (!(idUserLogOn?.length! > 0)) {
+    //   this.servicesGServ.changeRoute('/');
+    // }
 
   }
 
   ngOnDestroy(): void {
     if (this.cajaInfoSubscription) {
       this.cajaInfoSubscription.unsubscribe();
+    }
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
+    if (this.cartToggleSubscription) {
+      this.cartToggleSubscription.unsubscribe();
     }
   }
 
@@ -97,6 +129,31 @@ export default class MainComponent implements OnInit, OnDestroy {
     this.servicesGServ.changeRoute(`/${this._appMain}/${route}`);
   }
 
+  toggleCart(): void {
+    if (this.cartSidenav) {
+      this.cartSidenav.toggle();
+    }
+  }
+
+  animateCart(): void {
+    this.cartAnimated = true;
+    setTimeout(() => {
+      this.cartAnimated = false;
+      this.cdref.detectChanges();
+    }, 1000);
+    this.cdref.detectChanges();
+  }
+
+  handleUserAction() {
+    if (this.userLogin) {
+      // Si está logueado, ir al perfil (o menú de usuario)
+      this.servicesGServ.changeRoute(`/${this.configLocal.sRutaInicial}/usuario`);
+    } else {
+      // Si no, ir al login
+      this.servicesGServ.changeRoute('/auth/login');
+    }
+  }
+
   logout() {
     this.authService.logout(true);
   }
@@ -106,7 +163,7 @@ export default class MainComponent implements OnInit, OnDestroy {
     if (this.searchQuery.trim()) {
       console.log('Buscando:', this.searchQuery);
       // TODO: Implementar lógica de búsqueda
-      // this.router.navigate(['/DiprolimWeb/productos'], {
+      // this.router.navigate(['/Multillantas/productos'], {
       //   queryParams: { q: this.searchQuery }
       // });
     }

@@ -30,7 +30,9 @@ const login = async (req, res = response) => {
         }
 
         var user = OSQL[0];
-        user.sIdU = bcryptjs.hashSync(user.iduser.toString(), salt);
+        console.log("Usuario encontrado:", user); // DEBUG: Ver estructura exacta
+        const salt = bcryptjs.genSaltSync();
+        user.sIdU = bcryptjs.hashSync((user.idUser || user.iduser).toString(), salt);
 
         //Si el usuario está activo
         if (!user.active) {
@@ -53,10 +55,23 @@ const login = async (req, res = response) => {
         }
 
         //Generar el JWT
-        const token = await generarJWT(user.iduser);
+        const token = await generarJWT(user.idUser || user.iduser);
 
-        //const salt = bcryptjs.genSaltSync();
-        //const token = bcryptjs.hashSync( '112501184', salt);
+        // ASOCIACIÓN DE CARRITO: Vincular el carrito del guest actual al usuario logueado
+        // Esto permite que el SP getCart (que filtra por idUser) encuentre los items agregados como invitado.
+        try {
+            const currentGuestId = req.guestId || req.cookies.guest_id;
+            if (currentGuestId) {
+                console.log(`Asociando carrito de guest ${currentGuestId} al usuario ${user.idUser || user.iduser}`);
+                // Actualizamos la tabla 'carts' (tabla real del usuario)
+                await dbConnection.query('UPDATE carts SET idUser = ? WHERE guest_id = ?', {
+                    replacements: [user.idUser || user.iduser, currentGuestId]
+                });
+            }
+        } catch (cartError) {
+            console.error('Error al asociar carrito:', cartError);
+            // No bloqueamos el login si falla esto, pero lo logueamos
+        }
 
         res.json({
             status: 0,

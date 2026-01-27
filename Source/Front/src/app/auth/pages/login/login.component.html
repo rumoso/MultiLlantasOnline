@@ -1,43 +1,34 @@
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <mat-icon class="login-icon">tire_repair</mat-icon>
+            <h2>Bienvenido</h2>
+            <p>Inicia sesión para continuar</p>
+        </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <mat-form-field fxLayout.xs="column" style="width: 90%;">
-            <mat-label>Usuario:</mat-label>
-            <input matInput
-                    id="tbxUsuario"
-                    name="tbxUsuario"
-                    placeholder="Usuario"
-                    type="text"
-                    [(ngModel)]="myLogin.username"
-                    (keydown.enter)="focusNext('tbxPwd')">
-        </mat-form-field>
-    </div>
-    </div>
-    <div class="row">
-    <div class="col-md-12">
-        <mat-form-field fxLayout.xs="column" style="width: 90%;">
-            <mat-label>Contraseña:</mat-label>
-            <input matInput
-                    id="tbxPwd"
-                    name="tbxPwd"
-                    placeholder="Contraseña"
-                    [type]="hidePwd ? 'password' : 'text'"
-                    [(ngModel)]="myLogin.pwd"
-                    (keydown.enter)="fn_login()">
-            <mat-icon matSuffix (click)="hidePwd = !hidePwd">{{hidePwd ? 'visibility_off' : 'visibility'}}</mat-icon>
-        </mat-form-field>
-    </div>
-    </div>
-    <div class="row">
-    <div class="col-md-12">
+        <form class="login-form">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Usuario</mat-label>
+                <input matInput id="tbxUsuario" name="tbxUsuario" placeholder="Ingresa tu usuario"
+                    [(ngModel)]="myLogin.username" (keydown.enter)="focusNext('tbxPwd')">
+                <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
 
-        <button class="btnLogin"
-                type="submit"
-                (click)="fn_login()">
-            Login
-        </button>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Contraseña</mat-label>
+                <input matInput id="tbxPwd" name="tbxPwd" [type]="hidePwd ? 'password' : 'text'"
+                    placeholder="Ingresa tu contraseña" [(ngModel)]="myLogin.pwd" (keydown.enter)="fn_login()">
+                <button mat-icon-button matSuffix (click)="hidePwd = !hidePwd" [attr.aria-label]="'Ocultar contraseña'"
+                    type="button">
+                    <mat-icon>{{hidePwd ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
 
+            <button mat-raised-button color="primary" class="btn-login" (click)="fn_login()"
+                [disabled]="bShowSpinner || !myLogin.username || !myLogin.pwd">
+                <span *ngIf="!bShowSpinner">INGRESAR</span>
+                <mat-spinner diameter="20" *ngIf="bShowSpinner" color="accent"></mat-spinner>
+            </button>
+        </form>
     </div>
 </div>
-
-<app-spinner *ngIf="bShowSpinner"></app-spinner>

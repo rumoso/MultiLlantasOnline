@@ -23,12 +23,8 @@
     <div class="productos-grid" *ngIf="!loadingProductos && productos.length > 0">
         <mat-card class="producto-card" *ngFor="let producto of productos">
             <div class="producto-imagen-container">
-                <img
-                    [src]="producto.imagen_url || 'assets/img/default-tire.png'"
-                    [alt]="producto.nombre"
-                    class="producto-imagen"
-                    (error)="$any($event.target).src='assets/img/default-tire.png'"
-                />
+                <img [src]="producto.imagen_url || 'assets/img/default-tire.png'" [alt]="producto.nombre"
+                    class="producto-imagen" (error)="$any($event.target).src='assets/img/default-tire.png'" />
                 <div class="producto-badge-marca">{{ producto.marca }}</div>
                 <div class="producto-badge-stock" [class.bajo-stock]="producto.stock < 5">
                     <mat-icon>{{ producto.stock > 10 ? 'check_circle' : 'warning' }}</mat-icon>
@@ -59,22 +55,17 @@
                 <div class="producto-footer">
                     <div class="producto-precio-section">
                         <span class="precio-label">Precio</span>
-                        <span class="producto-precio">{{ producto.precio | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
+                        <span class="producto-precio">{{ producto.precio | currency:'MXN':'symbol-narrow':'1.2-2'
+                            }}</span>
                     </div>
 
                     <div class="producto-actions">
-                        <button
-                            mat-icon-button
-                            class="btn-detalle"
-                            (click)="verDetalleProducto(producto)"
+                        <button mat-icon-button class="btn-detalle" (click)="verDetalleProducto(producto)"
                             matTooltip="Ver detalles">
                             <mat-icon>visibility</mat-icon>
                         </button>
-                        <button
-                            mat-raised-button
-                            class="btn-agregar-carrito"
-                            (click)="agregarAlCarrito(producto)"
-                            [disabled]="producto.stock < 1">
+                        <button mat-raised-button type="button" class="btn-agregar-carrito"
+                            (click)="agregarAlCarrito(producto)" [disabled]="producto.stock < 1">
                             <mat-icon>shopping_cart</mat-icon>
                             Agregar
                         </button>

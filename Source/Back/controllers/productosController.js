@@ -27,7 +27,7 @@ const getProductsPag = async (req, res) => {
             for (let i = 0; i < result.length; i++) {
                 var sIdEcript = bcryptjs.hashSync(result[i].idProducto.toString(), salt);
                 result[i].sIdP = sIdEcript;
-                delete result[i].idProducto;
+                // result[i].idProducto = result[i].idProducto; // Mantenemos el ID original para operaciones internas como el carrito
             }
         }
 

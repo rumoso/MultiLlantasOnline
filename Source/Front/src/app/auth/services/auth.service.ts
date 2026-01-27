@@ -96,13 +96,11 @@ export class AuthService {
   }
 
   async checkSession() {
-
-    let idUser = this.getIdUserSession();
-
-    if (idUser == 0) {
-      this.logout(false);
-      this.servicesGServ.changeRoute('/');
-    }
+    // let idUser = this.getIdUserSession();
+    // if (idUser == 0) {
+    //   this.logout(false);
+    //   this.servicesGServ.changeRoute('/');
+    // }
   }
 
   getIdUserSession(): number {

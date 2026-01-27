@@ -1,0 +1,80 @@
+<div class="cart-overlay-container">
+    <div class="cart-header">
+        <div class="header-title">
+            <mat-icon>shopping_cart</mat-icon>
+            <h2>Mi Carrito</h2>
+        </div>
+        <button mat-icon-button (click)="closeCart()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="cart-content" *ngIf="cartItems.length > 0; else emptyCart">
+        <div class="cart-items-list">
+            <div class="cart-item" *ngFor="let item of cartItems">
+                <div class="item-image">
+                    <img [src]="item.imagen_url || 'assets/img/default-tire.png'" [alt]="item.descripcion"
+                        (error)="$any($event.target).src='assets/img/default-tire.png'">
+                </div>
+
+                <div class="item-info">
+                    <h3 class="item-name">{{ item.descripcion }}</h3>
+                    <p class="item-price">{{ item.precio | currency:'MXN' }}</p>
+
+                    <div class="item-controls">
+                        <div class="quantity-selector">
+                            <button mat-icon-button size="small" (click)="updateQuantity(item, -1)"
+                                [disabled]="loading || item.cantidad <= 1">
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                            <span class="quantity">{{ item.cantidad }}</span>
+                            <button mat-icon-button size="small" (click)="updateQuantity(item, 1)" [disabled]="loading">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+
+                        <button mat-icon-button color="warn" (click)="removeItem(item)" [disabled]="loading">
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="item-subtotal">
+                    {{ (item.precio * item.cantidad) | currency:'MXN' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-footer">
+            <div class="summary">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>{{ total | currency:'MXN' }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>{{ total | currency:'MXN' }}</span>
+                </div>
+            </div>
+
+            <div class="footer-actions">
+                <button mat-raised-button color="primary" class="checkout-btn" (click)="processCheckout()">
+                    Procesar Compra
+                </button>
+                <button mat-button (click)="closeCart()">
+                    Seguir comprando
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #emptyCart>
+        <div class="empty-cart">
+            <mat-icon class="empty-icon">shopping_basket</mat-icon>
+            <h3>Tu carrito está vacío</h3>
+            <p>Agrega algunos productos para comenzar tu compra.</p>
+        </div>
+    </ng-template>
+</div>

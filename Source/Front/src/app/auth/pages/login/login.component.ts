@@ -11,10 +11,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { SharedModule } from '../../../shared/Shared.module';
 import { MaterialModule } from '../../../shared/material.module';
+import { CartService } from '../../../protected/services/cart.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
   imports: [
     SharedModule,
     MaterialModule,
@@ -33,58 +35,61 @@ export default class LoginComponent {
     pwd: ''
   };
 
-  constructor( private fb: FormBuilder
+  constructor(private fb: FormBuilder
     , private authServ: AuthService
     , private servicesGServ: ServicesGService
-    ) {
-       var idUserLogOn = this.authServ.getIdUserSession();
+    , private cartService: CartService // Inyección correcta
+  ) {
+    var idUserLogOn = this.authServ.getIdUserSession();
 
-       if(idUserLogOn > 0){
-         this.servicesGServ.changeRoute( `/${ this._appMain }/dashboard` );
-       }else{
-         this.authServ.logout(false);
-       }
-
+    if (idUserLogOn > 0) {
+      this.servicesGServ.changeRoute(`/${this._appMain}/dashboard`);
+    } else {
+      this.authServ.logout(false);
     }
 
-    ngAfterViewInit() {
-      this.focusNext('tbxUsuario')
-    }
+  }
 
-    focusNext(field: string) {
-      setTimeout(() => {
-        const iInput = document.getElementById(field);
-        if (iInput) {
-          iInput.focus();
-        }
-      }, 300);
-    }
+  ngAfterViewInit() {
+    this.focusNext('tbxUsuario')
+  }
 
-    fn_login() {
-
-      if( this.myLogin.username.length > 0 && this.myLogin.pwd.length > 0 ){
-        this.bShowSpinner = true;
-
-        //console.log(this.myLogin.value)
-        //this.servicesGService.showSnakbar( this.myLogin.value.username + ", " + this.myLogin.value.pwd);
-
-        this.authServ.CLogin( this.myLogin )
-          .subscribe({
-            next: (resp) => {
-              if( resp.status === 0 ){
-                this.servicesGServ.changeRoute( `/${ this._appMain }/dashboard` );
-              }else{
-                this.servicesGServ.showSnakbar(resp.message);
-              }
-              this.bShowSpinner = false;
-            },
-            error: (ex) => {
-              console.log(ex)
-              this.servicesGServ.showSnakbar( "Problemas con el servicio" );
-              this.bShowSpinner = false;
-            }
-          })
+  focusNext(field: string) {
+    setTimeout(() => {
+      const iInput = document.getElementById(field);
+      if (iInput) {
+        iInput.focus();
       }
+    }, 300);
+  }
+
+  fn_login() {
+
+    if (this.myLogin.username.length > 0 && this.myLogin.pwd.length > 0) {
+      this.bShowSpinner = true;
+
+      //console.log(this.myLogin.value)
+      //this.servicesGService.showSnakbar( this.myLogin.value.username + ", " + this.myLogin.value.pwd);
+
+      this.authServ.CLogin(this.myLogin)
+        .subscribe({
+          next: (resp) => {
+            if (resp.status === 0) {
+              // Actualizar carrito
+              this.cartService.getCart().subscribe();
+              this.servicesGServ.changeRoute(`/${this._appMain}/dashboard`);
+            } else {
+              this.servicesGServ.showSnakbar(resp.message);
+            }
+            this.bShowSpinner = false;
+          },
+          error: (ex) => {
+            console.log(ex)
+            this.servicesGServ.showSnakbar("Problemas con el servicio");
+            this.bShowSpinner = false;
+          }
+        })
     }
+  }
 
 }

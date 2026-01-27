@@ -7,7 +7,7 @@ const { dbConnection } = require('../database/config');
 
 class Server {
 
-    constructor(){
+    constructor() {
         this.app = express();
         this.port = process.env.PORT;
 
@@ -16,6 +16,7 @@ class Server {
         this.usersPath = '/api/users';
         this.rolesPath = '/api/roles';
         this.productosPath = '/api/productos';
+        this.cartPath = '/api/cart';
 
         //CONEXION A LA BASE DE DATOS
         this.dbConnection();
@@ -32,29 +33,29 @@ class Server {
             console.log('Database online');
 
         } catch (err) {
-            throw new Error( err );
+            throw new Error(err);
         }
     }
 
-    middlewares(){
+    middlewares() {
         //CORS
-        this.app.use( cors({
-            origin: true, // Permitir origen del frontend
+        this.app.use(cors({
+            origin: ['http://localhost:4200', 'http://127.0.0.1:4200'], // Permitir origen específico para credenciales
             credentials: true // Permitir envío de cookies
-        }) );
+        }));
 
         // COOKIE PARSER - Para manejar cookies (guest_id)
-        this.app.use( cookieParser() );
+        this.app.use(cookieParser());
 
         // Middleware para asignar guest_id a todos los usuarios
         const guestIdMiddleware = require('../middlewares/guestId');
-        this.app.use( guestIdMiddleware );
+        this.app.use(guestIdMiddleware);
 
         // LECTURA Y PARSEO DEL BODY
-        this.app.use( express.json() );
+        this.app.use(express.json());
 
         //DIRECTORIO PÚBLICO
-        this.app.use( express.static('public') );
+        this.app.use(express.static('public'));
 
         this.app.use(fileUpload({
             createParentPath: true,
@@ -70,12 +71,13 @@ class Server {
         this.app.use(this.usersPath, require('../routes/usersRoute'));
         this.app.use(this.rolesPath, require('../routes/rolesRoute'));
         this.app.use(this.productosPath, require('../routes/productosRoute'));
+        this.app.use(this.cartPath, require('../routes/cartRoute'));
     }
 
     listen() {
-        this.app.listen( this.port, () => {
-            console.log('Servidor corriendo en el puerto:', this.port );
-        } );
+        this.app.listen(this.port, () => {
+            console.log('Servidor corriendo en el puerto:', this.port);
+        });
     }
 
 }

@@ -4,20 +4,12 @@ import LoginComponent from './pages/login/login.component';
 
 export const routes: Routes = [
     {
+        path: 'login',
+        component: LoginComponent
+    },
+    {
         path: '',
-        //loadComponent: () => import('./pages/main/main.component'),
-        component: MainComponent,
-        children: [
-            {
-                path: 'login',
-                //loadComponent: () => import('./pages/login/login.component'),
-                component: LoginComponent
-            },
-            {
-                path: '**',
-                redirectTo: 'home'
-            }
-        ]
-
+        redirectTo: 'login',
+        pathMatch: 'full'
     }
 ];

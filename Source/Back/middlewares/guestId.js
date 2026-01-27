@@ -27,19 +27,19 @@ const guestId = (req, res, next) => {
         // Si no existe, generar nuevo UUID
         if (!currentGuestId) {
             currentGuestId = uuidv4();
-            
+
             // Configuración de la cookie
             const cookieOptions = {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 días en milisegundos
                 httpOnly: true,                    // No accesible desde JavaScript del navegador
-                sameSite: 'lax',                   // Protección CSRF (permite en navegación normal)
-                secure: process.env.NODE_ENV === 'production', // HTTPS solo en producción
+                sameSite: 'lax',                   // Lax es el mejor compromiso para desarrollo local
+                secure: false,                     // FORZAR false para desarrollo en HTTP (localhost)
                 path: '/'                          // Disponible en toda la aplicación
             };
 
             // Crear cookie con el guest_id
             res.cookie('guest_id', currentGuestId, cookieOptions);
-            
+
             console.log(`🆕 Nuevo guest_id creado: ${currentGuestId}`);
         } else {
             console.log(`✅ Guest_id existente: ${currentGuestId}`);

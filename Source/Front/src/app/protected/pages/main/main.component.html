@@ -1,78 +1,92 @@
 <!-- Header estilo Tienda de Llantas -->
-    <header class="header-ml">
-        <div class="header-container">
-            <!-- Logo/Icono -->
-            <div class="header-logo" routerLink="./dashboard">
-                <img [src]="_IconApp" alt="Logo" class="logo-icon" width="200" height="100"/>
-            </div>
-
-            <!-- Buscador -->
-            <div class="header-search">
-                <mat-form-field appearance="outline" class="search-field">
-                    <input
-                        matInput
-                        placeholder="Buscar productos, marcas y más..."
-                        [(ngModel)]="searchQuery"
-                        (keyup.enter)="onSearch()"
-                    />
-                    <button mat-icon-button matSuffix (click)="onSearch()" class="search-button">
-                        <mat-icon>search</mat-icon>
-                    </button>
-                </mat-form-field>
-            </div>
-
-            <!-- Sección de botones -->
-            <div class="header-actions">
-                <button mat-button class="action-button" routerLink="./mis-compras">
-                    <mat-icon>shopping_bag</mat-icon>
-                    <span class="action-text">Mis compras</span>
-                </button>
-
-                <button mat-button class="action-button" routerLink="./favoritos">
-                    <mat-icon>favorite_border</mat-icon>
-                    <span class="action-text">Favoritos</span>
-                </button>
-
-                <button mat-button class="action-button" [matMenuTriggerFor]="userMenu">
-                    <mat-icon>account_circle</mat-icon>
-                    <span class="action-text">{{ userLogin?.name || 'Usuario' }}</span>
-                </button>
-
-                <button mat-icon-button class="cart-button" routerLink="./carrito" matBadge="3" matBadgeColor="warn">
-                    <mat-icon>shopping_cart</mat-icon>
-                </button>
-            </div>
+<header class="header-ml">
+    <div class="header-container">
+        <!-- Logo/Icono -->
+        <div class="header-logo" routerLink="./dashboard">
+            <img [src]="_IconApp" alt="Logo" class="logo-icon" width="200" height="100" />
         </div>
 
-        <!-- Menú de usuario -->
-        <mat-menu #userMenu="matMenu" class="user-dropdown">
-            <button mat-menu-item disabled>
-                <mat-icon>person</mat-icon>
-                <span>{{ userLogin?.name || 'Usuario' }}</span>
-            </button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item routerLink="./perfil">
-                <mat-icon>settings</mat-icon>
-                <span>Mi perfil</span>
-            </button>
-            <button mat-menu-item routerLink="./mis-compras">
-                <mat-icon>receipt_long</mat-icon>
-                <span>Mis compras</span>
-            </button>
-            <button mat-menu-item routerLink="./favoritos">
-                <mat-icon>favorite</mat-icon>
-                <span>Mis favoritos</span>
-            </button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item (click)="logout()">
-                <mat-icon color="warn">logout</mat-icon>
-                <span>Cerrar sesión</span>
-            </button>
-        </mat-menu>
-    </header>
+        <!-- Buscador -->
+        <div class="header-search">
+            <mat-form-field appearance="outline" class="search-field">
+                <input matInput placeholder="Buscar productos, marcas y más..." [(ngModel)]="searchQuery"
+                    (keyup.enter)="onSearch()" />
+                <button mat-icon-button matSuffix (click)="onSearch()" class="search-button">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
 
-<div class="container" style="margin-bottom: 50px;">
-    <router-outlet/>
-</div>
+        <!-- Sección de botones -->
+        <div class="header-actions">
+            <button mat-button class="action-button" routerLink="./mis-compras">
+                <mat-icon>shopping_bag</mat-icon>
+                <span class="action-text">Mis compras</span>
+            </button>
 
+            <button mat-button class="action-button" routerLink="./favoritos">
+                <mat-icon>favorite_border</mat-icon>
+                <span class="action-text">Favoritos</span>
+            </button>
 
+            <!-- Botón de Usuario (Logueado) -->
+            <button mat-button class="action-button" [matMenuTriggerFor]="userMenu" *ngIf="userLogin">
+                <mat-icon>account_circle</mat-icon>
+                <span class="action-text">{{ userLogin.name || 'Usuario' }}</span>
+            </button>
+
+            <!-- Botón de Iniciar Sesión (No Logueado) -->
+            <button mat-button class="action-button" (click)="handleUserAction()" *ngIf="!userLogin">
+                <mat-icon>login</mat-icon>
+                <span class="action-text">Iniciar Sesión</span>
+            </button>
+
+            <button mat-icon-button class="cart-button" [class.animate-cart]="cartAnimated" (click)="toggleCart()"
+                [matBadge]="cartCount" matBadgeColor="warn" *ngIf="cartCount > 0">
+                <mat-icon>shopping_cart</mat-icon>
+            </button>
+            <button mat-icon-button class="cart-button" [class.animate-cart]="cartAnimated" (click)="toggleCart()"
+                *ngIf="cartCount === 0">
+                <mat-icon>shopping_cart</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Menú de usuario -->
+    <mat-menu #userMenu="matMenu" class="user-dropdown">
+        <button mat-menu-item disabled>
+            <mat-icon>person</mat-icon>
+            <span>{{ userLogin?.name || 'Usuario' }}</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item routerLink="./perfil">
+            <mat-icon>settings</mat-icon>
+            <span>Mi perfil</span>
+        </button>
+        <button mat-menu-item routerLink="./mis-compras">
+            <mat-icon>receipt_long</mat-icon>
+            <span>Mis compras</span>
+        </button>
+        <button mat-menu-item routerLink="./favoritos">
+            <mat-icon>favorite</mat-icon>
+            <span>Mis favoritos</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+            <mat-icon color="warn">logout</mat-icon>
+            <span>Cerrar sesión</span>
+        </button>
+    </mat-menu>
+</header>
+
+<mat-sidenav-container class="main-sidenav-container">
+    <mat-sidenav #cartSidenav mode="over" position="end" class="cart-sidenav">
+        <app-cart-overlay (close)="toggleCart()"></app-cart-overlay>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <div class="container" style="margin-bottom: 50px;">
+            <router-outlet />
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

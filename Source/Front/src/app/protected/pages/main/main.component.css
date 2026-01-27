@@ -187,3 +187,20 @@
         font-size: 13px;
     }
 }
+
+.main-sidenav-container {
+    height: calc(100vh - 97px);
+    /* Altura total menos el header */
+}
+
+.cart-sidenav {
+    width: 400px;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+    border-left: none;
+}
+
+@media (max-width: 500px) {
+    .cart-sidenav {
+        width: 100%;
+    }
+}

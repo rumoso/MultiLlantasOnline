@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductosService } from '../../services/productos.service';
 import { Pagination } from '../../interfaces/global.interfaces';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,10 +47,11 @@ export default class DashboardComponent {
     private servicesGServ: ServicesGService
     , private authServ: AuthService
     , private productosService: ProductosService
+    , private cartService: CartService
   ) { }
 
   async ngOnInit() {
-    this.authServ.checkSession();
+    // this.authServ.checkSession(); // Removed to allow guest access
     this.idUserLogON = this.authServ.getIdUserSession();
 
     // Marcar validaciones como completas para mostrar elementos UI
@@ -93,27 +95,20 @@ export default class DashboardComponent {
   }
 
   agregarAlCarrito(producto: any): void {
-    this.loadingProductos = true;
+    // this.loadingProductos = false;
 
-    let data = {
-      sIdP: producto.sIdP,
-      idUsuario: this.idUserLogON,
-      cantidad: 1
-    };
-
-    this.productosService.agregarAlCarrito(data).subscribe({
+    this.cartService.addToCart(producto.idProducto, 1).subscribe({
       next: (response: any) => {
         if (response.status == 0) {
-          this.productos = response.data.rows || [];
-          this.totalProductos = response.data.count || 0;
+          this.servicesGServ.showAlert('S', 'Éxito', 'Producto agregado al carrito');
         }
         this.loadingProductos = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
+        console.error('Error al agregar al carrito:', error);
         this.loadingProductos = false;
-        this.servicesGServ.showAlert('E', 'Error', 'No se pudieron cargar los productos');
+        this.servicesGServ.showAlert('E', 'Error', 'No se pudo agregar el producto al carrito');
       }
     });
   }

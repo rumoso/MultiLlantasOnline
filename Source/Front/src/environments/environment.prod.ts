@@ -1,12 +1,12 @@
 export const environment = {
-    production: true,
+  production: true,
 
-    appName: 'Diprolim Web',
-    iconApp: 'img/icons/diprolimIco.webp',
+  appName: 'Multillantas',
+  iconApp: 'img/icons/diprolimIco.webp',
 
-    baseUrl: 'https://api.diprolim.com.mx',
+  baseUrl: 'https://api.diprolim.com.mx',
 
-    nodeBridgeUrl: 'http://127.0.0.1:3000',
+  nodeBridgeUrl: 'http://127.0.0.1:3000',
 
-    appMain: 'DiprolimWeb'
-  };
+  appMain: 'Multillantas'
+};
