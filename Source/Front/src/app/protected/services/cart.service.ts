@@ -45,7 +45,7 @@ export class CartService {
      * Obtiene los productos del carrito actual
      */
     getCart(): Observable<ResponseGet> {
-        const idUser = this.authService.getIdUserSession();
+        const idUser = this.authService.getSIdU();
         const data = { idUser };
 
         return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/get`, data, {
@@ -60,9 +60,9 @@ export class CartService {
         );
     }
 
-    addToCart(idProducto: number, cantidad: number): Observable<ResponseGet> {
-        const idUser = this.authService.getIdUserSession();
-        const data = { idProducto, cantidad, idUser };
+    addToCart(sIdP: any, cantidad: number): Observable<ResponseGet> {
+        const idUser = this.authService.getSIdU();
+        const data = { sIdP, cantidad, idUser };
 
         return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/add`, data, {
             withCredentials: true,
@@ -110,7 +110,7 @@ export class CartService {
     }
 
     processPurchase(): Observable<ResponseGet> {
-        const idUser = this.authService.getIdUserSession();
+        const idUser = this.authService.getSIdU();
         return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/process`, { idUser }, {
             withCredentials: true,
             headers: this.getHeaders()

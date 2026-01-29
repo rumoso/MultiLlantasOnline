@@ -39,7 +39,7 @@ export class FavoritesService {
     }
 
     public loadFavorites() {
-        const idUser = this.authService.getIdUserSession();
+        const idUser = this.authService.getSIdU();
         // Allow if user is logged in OR if there is a guest session (guest-id always exists via service)
 
         const requestBody = { idUser };
@@ -62,17 +62,17 @@ export class FavoritesService {
     }
 
     toggleFavorite(product: any): boolean {
-        const idUser = this.authService.getIdUserSession();
+        const idUser = this.authService.getSIdU();
         const guestId = this.guestService.getGuestId();
 
-        if (idUser <= 0 && !guestId) {
+        if (!idUser && !guestId) {
             console.warn('Usuario no logueado y sin guest-id');
             return false;
         }
 
         // Optimistic UI Update first
         const currentFavorites = this.favoritesSubject.value || [];
-        const index = currentFavorites.findIndex(f => f.idProducto === product.idProducto);
+        const index = currentFavorites.findIndex(f => f.sIdP === product.sIdP);
         let newFavorites;
         let added = false;
 
@@ -80,13 +80,13 @@ export class FavoritesService {
             newFavorites = [...currentFavorites, { ...product, isFavorite: true }];
             added = true;
         } else {
-            newFavorites = currentFavorites.filter(f => f.idProducto !== product.idProducto);
+            newFavorites = currentFavorites.filter(f => f.sIdP !== product.sIdP);
             added = false;
         }
         this.favoritesSubject.next(newFavorites);
 
         // Call API
-        this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/toggle`, { idUser, idProducto: product.idProducto }, {
+        this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/toggle`, { idUser, idProducto: product.sIdP }, {
             withCredentials: true,
             headers: this.getHeaders()
         }).subscribe({
@@ -103,9 +103,10 @@ export class FavoritesService {
         return added;
     }
 
-    isFavorite(idProducto: number): boolean {
+    isFavorite(sIdP: any): boolean {
         const currentFavorites = this.favoritesSubject.value || [];
-        return currentFavorites.some(f => f.idProducto === idProducto);
+        // Note: Favorites array items should now have sIdP from backend or optimistic update
+        return currentFavorites.some(f => f.sIdP === sIdP);
     }
 
     openFavorites() {

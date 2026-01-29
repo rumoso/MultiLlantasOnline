@@ -21,7 +21,7 @@
 
     <!-- Grid de productos -->
     <div class="productos-grid" *ngIf="!loadingProductos && productos.length > 0">
-        <mat-card class="producto-card" *ngFor="let producto of productos">
+        <mat-card class="producto-card" *ngFor="let producto of productos" [class.disabled]="producto.activo === 0">
             <div class="producto-imagen-container">
                 <img [src]="producto.imagen_url || 'assets/img/default-tire.png'" [alt]="producto.nombre"
                     class="producto-imagen" (error)="$any($event.target).src='assets/img/default-tire.png'" />
@@ -32,15 +32,16 @@
                     <mat-icon>{{ producto.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
                 </button>
 
-                <div class="producto-badge-stock" [class.bajo-stock]="producto.stock < 5">
-                    <mat-icon>{{ producto.stock > 10 ? 'check_circle' : 'warning' }}</mat-icon>
-                    {{ producto.stock }} disponibles
-                </div>
+
             </div>
 
             <mat-card-content class="producto-content">
                 <div class="producto-header">
-                    <h3 class="producto-nombre" [title]="producto.nombre">{{ producto.nombre }}</h3>
+                    <div class="producto-header-top">
+                        <h3 class="producto-nombre" [title]="producto.nombre">{{ producto.nombre }}</h3>
+                        <span class="producto-precio-header">{{ producto.precio | currency:'MXN':'symbol-narrow':'1.2-2'
+                            }}</span>
+                    </div>
                     <p class="producto-modelo">{{ producto.modelo }}</p>
                 </div>
 
@@ -59,19 +60,13 @@
                 <mat-divider class="producto-divider"></mat-divider>
 
                 <div class="producto-footer">
-                    <div class="producto-precio-section">
-                        <span class="precio-label">Precio</span>
-                        <span class="producto-precio">{{ producto.precio | currency:'MXN':'symbol-narrow':'1.2-2'
-                            }}</span>
-                    </div>
-
                     <div class="producto-actions">
                         <button mat-icon-button class="btn-detalle" (click)="verDetalleProducto(producto)"
                             matTooltip="Ver detalles">
                             <mat-icon>visibility</mat-icon>
                         </button>
                         <button mat-raised-button type="button" class="btn-agregar-carrito"
-                            (click)="agregarAlCarrito(producto)" [disabled]="producto.stock < 1">
+                            (click)="agregarAlCarrito(producto)">
                             <mat-icon>shopping_cart</mat-icon>
                             Agregar
                         </button>

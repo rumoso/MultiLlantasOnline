@@ -76,7 +76,7 @@ export default class DashboardComponent {
 
           // Verify initial favorites state
           this.productos.forEach(p => {
-            p.isFavorite = this.favoritesService.isFavorite(p.idProducto);
+            p.isFavorite = this.favoritesService.isFavorite(p.sIdP);
           });
         }
         this.loadingProductos = false;
@@ -93,7 +93,7 @@ export default class DashboardComponent {
     this.favoritesService.favorites$.subscribe(() => {
       if (this.productos.length > 0) {
         this.productos.forEach(p => {
-          p.isFavorite = this.favoritesService.isFavorite(p.idProducto);
+          p.isFavorite = this.favoritesService.isFavorite(p.sIdP);
         });
         this.cdr.detectChanges();
       }
@@ -133,7 +133,7 @@ export default class DashboardComponent {
   agregarAlCarrito(producto: any): void {
     // this.loadingProductos = false;
 
-    this.cartService.addToCart(producto.idProducto, 1).subscribe({
+    this.cartService.addToCart(producto.sIdP, 1).subscribe({
       next: (response: any) => {
         if (response.status == 0) {
           // Changed from intrusive alert to subtle snackbar

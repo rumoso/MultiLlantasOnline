@@ -1,17 +1,29 @@
 const { response } = require('express');
 const { dbConnection } = require('../database/config');
+const { encrypt, decrypt } = require('../utils/crypto');
 
 const getCart = async (req, res = response) => {
     const { idUser } = req.body;
     let guest_id = req.guestId;
 
-    if (idUser) {
+    let finalIdUser = (idUser && idUser > 0) ? idUser : null;
+
+    if (idUser && isNaN(idUser)) {
+        try {
+            finalIdUser = decrypt(idUser);
+        } catch (e) {
+            console.error('Error decrypting getCart idUser', e);
+            finalIdUser = 0;
+        }
+    }
+
+    if (finalIdUser) {
         guest_id = '';
     }
 
     try {
         const results = await dbConnection.query('CALL getCart(?, ?)', {
-            replacements: [idUser || 0, guest_id || '']
+            replacements: [finalIdUser || 0, guest_id || '']
         });
 
 
@@ -40,7 +52,19 @@ const getCart = async (req, res = response) => {
 };
 
 const addToCart = async (req, res = response) => {
-    const { idProducto, cantidad, idUser } = req.body;
+    const { sIdP, cantidad, idUser } = req.body;
+
+    // Support either sIdP or idProducto for backward compatibility (during transition)
+    let idProducto = req.body.idProducto;
+    if (sIdP) {
+        try {
+            idProducto = decrypt(sIdP);
+        } catch (e) { console.error('Error decrypting addToCart sIdP', e); }
+    } else if (idProducto && isNaN(idProducto)) { // Assuming sIdP passed as idProducto
+        try {
+            idProducto = decrypt(idProducto);
+        } catch (e) { console.error('Error decrypting addToCart idProducto', e); }
+    }
     const guest_id = req.guestId;
     const dateNow = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
@@ -51,7 +75,13 @@ const addToCart = async (req, res = response) => {
         });
     }
 
-    const finalIdUser = (idUser && idUser !== 0) ? idUser : null;
+    let finalIdUser = (idUser && idUser !== 0) ? idUser : null;
+    if (idUser && isNaN(idUser)) {
+        try {
+            finalIdUser = decrypt(idUser);
+        } catch (e) { console.error('Error decrypting addToCart idUser', e); }
+    }
+
     let finalGuestId = guest_id;
 
     if (finalIdUser) {
@@ -160,9 +190,16 @@ const processPurchase = async (req, res = response) => {
         });
     }
 
+    let finalIdUser = idUser;
+    if (idUser && isNaN(idUser)) {
+        try {
+            finalIdUser = decrypt(idUser);
+        } catch (e) { console.error('Error decrypting processPurchase idUser', e); }
+    }
+
     try {
         const results = await dbConnection.query('CALL processPurchase(?)', {
-            replacements: [idUser]
+            replacements: [finalIdUser]
         });
 
         let resultData = {};

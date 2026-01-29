@@ -37,7 +37,7 @@ export class FavoritesOverlayComponent implements OnInit {
     }
 
     addToCart(product: any) {
-        this.cartService.addToCart(product.idProducto, 1).subscribe({
+        this.cartService.addToCart(product.sIdP, 1).subscribe({
             next: (resp) => {
                 if (resp.status === 0) {
                     this.servicesGServ.showSnakbar('Agregado al carrito', undefined, 2000);

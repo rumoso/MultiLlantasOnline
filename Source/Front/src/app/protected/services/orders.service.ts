@@ -27,7 +27,7 @@ export class OrdersService {
     }
 
     getMyPurchases(): Observable<ResponseGet> {
-        const idUser = this.authService.getIdUserSession();
+        const idUser = this.authService.getSIdU();
         return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/my-purchases`, { idUser }, {
             withCredentials: true,
             headers: this.getHeaders()

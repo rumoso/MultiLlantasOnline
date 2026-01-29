@@ -1,7 +1,9 @@
 const response_express = require('express');
 const Op_sequelize = require('sequelize');
-const bcryptjs = require('bcryptjs');
+
 const { dbConnection, dbSPConnection } = require('../database/config');
+const { encrypt, decrypt } = require('../utils/crypto');
+const moment = require('moment');
 
 const getProductsPag = async (req, res) => {
     var {
@@ -23,11 +25,10 @@ const getProductsPag = async (req, res) => {
 
         //encript pwd
         if (iRows > 0) {
-            const salt = bcryptjs.genSaltSync();
             for (let i = 0; i < result.length; i++) {
-                var sIdEcript = bcryptjs.hashSync(result[i].idProducto.toString(), salt);
+                var sIdEcript = encrypt(result[i].idProducto);
                 result[i].sIdP = sIdEcript;
-                // result[i].idProducto = result[i].idProducto; // Mantenemos el ID original para operaciones internas como el carrito
+                delete result[i].idProducto;
             }
         }
 
@@ -55,7 +56,14 @@ const getProductsPag = async (req, res) => {
  */
 const getProductById = async (req, res = response_express.response) => {
     try {
-        const { idProducto } = req.body;
+        let { idProducto } = req.body;
+
+        let finalIdProducto = idProducto;
+        if (isNaN(idProducto) && typeof idProducto === 'string') {
+            try {
+                finalIdProducto = decrypt(idProducto);
+            } catch (e) { console.error('Error decrypting getProductById', e); }
+        }
 
         const query = `
             SELECT
@@ -76,7 +84,13 @@ const getProductById = async (req, res = response_express.response) => {
             WHERE idProducto = ? AND activo = 1
         `;
 
-        const [rows] = await dbSPConnection.query(query, [idProducto]);
+        const [rows] = await dbSPConnection.query(query, [finalIdProducto]);
+
+        // Encrypt ID in single product response too
+        if (rows.length > 0) {
+            rows[0].sIdP = encrypt(rows[0].idProducto);
+            delete rows[0].idProducto;
+        }
 
         if (rows.length === 0) {
             return res.status(404).json({
@@ -155,6 +169,12 @@ const getProductsByMarca = async (req, res = response_express.response) => {
 
         const total = countResult[0].total;
 
+        // Encrypt IDs
+        rows.forEach(row => {
+            row.sIdP = encrypt(row.idProducto);
+            delete row.idProducto;
+        });
+
         return res.status(200).json({
             ok: true,
             msg: 'Productos obtenidos correctamente',
@@ -213,13 +233,33 @@ const agregarAlCarrito = async (req, res) => {
 
     } = req.body;
 
+    let idCart = 0;
+    let idItem = 0;
+
     //console.log(req.body)
+    console.log('DEBUG agregarAlCarrito BODY:', req.body);
 
     const oGetDateNow = moment().format('YYYY-MM-DD HH:mm:ss');
 
     try {
 
-        var idProducto = bcryptjs.hashSync(sIdP, salt);
+        var idProducto = decrypt(sIdP);
+
+        if (!idProducto) {
+            return res.json({
+                status: 2,
+                message: "El ID del producto es obligatorio y no fue recibido (decryption failed)",
+                data: null
+            });
+        }
+
+        // Decrypt sIdU if present
+        let finalIdUser = idUsuario;
+        if (isNaN(idUsuario)) {
+            try {
+                finalIdUser = decrypt(idUsuario);
+            } catch (e) { console.error('Error decrypting cart idUser', e); }
+        }
 
         var OSQL = await dbConnection.query(`call agregarAlCarrito(
             '${oGetDateNow}'
@@ -227,7 +267,7 @@ const agregarAlCarrito = async (req, res) => {
             ,${idItem}
             ,${idProducto}
             , ${cantidad}
-            , ${idUsuario}
+            , ${finalIdUser}
             ,'${guest_id}'
             
         )`)

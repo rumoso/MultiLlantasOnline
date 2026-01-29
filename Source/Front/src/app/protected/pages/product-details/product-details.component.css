@@ -234,11 +234,7 @@
     gap: 16px;
 }
 
-.stock-status {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
-}
+
 
 .qty-control {
     display: flex;

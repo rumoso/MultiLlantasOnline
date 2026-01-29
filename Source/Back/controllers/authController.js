@@ -1,4 +1,5 @@
 const bcryptjs = require('bcryptjs');
+const { encrypt, decrypt } = require('../utils/crypto');
 const { response } = require('express');
 const { json } = require('express/lib/response');
 
@@ -32,7 +33,7 @@ const login = async (req, res = response) => {
         var user = OSQL[0];
         console.log("Usuario encontrado:", user); // DEBUG: Ver estructura exacta
         const salt = bcryptjs.genSaltSync();
-        user.sIdU = bcryptjs.hashSync((user.idUser || user.iduser).toString(), salt);
+        user.sIdU = encrypt((user.idUser || user.iduser));
 
         //Si el usuario está activo
         if (!user.active) {
@@ -112,7 +113,15 @@ const getMenuByPermissions = async (req, res = response) => {
 
         var OMenuList = [];
 
-        OGetMenuFatherList = await dbConnection.query(`call getMenuFathersByPermission(${idUser})`);
+        // Decrypt if sIdU is passed instead of idUser, or handle frontend sending sIdU in idUser field
+        let finalIdUser = idUser;
+        if (isNaN(idUser)) {
+            try {
+                finalIdUser = decrypt(idUser);
+            } catch (e) { console.error('Error decrypting menu idUser', e); }
+        }
+
+        OGetMenuFatherList = await dbConnection.query(`call getMenuFathersByPermission(${finalIdUser})`);
 
         console.log(OGetMenuFatherList);
 
@@ -136,7 +145,7 @@ const getMenuByPermissions = async (req, res = response) => {
                     'subMenus': []
                 }
 
-                OGetMenuDetailFatherList = await dbConnection.query(`call getMenuDetailsByPermission( ${idUser}, ${oMenuFather.idMenu} )`);
+                OGetMenuDetailFatherList = await dbConnection.query(`call getMenuDetailsByPermission( ${finalIdUser}, ${oMenuFather.idMenu} )`);
 
                 var OSubMenus = [];
                 for (var n = 0; n < OGetMenuDetailFatherList.length; n++) {
@@ -201,7 +210,14 @@ const getActionsPermissionByUser = async (req, res = response) => {
 
     try {
 
-        var OSQL = await dbConnection.query(`call getActionsPermissionByUser(${idUser})`)
+        let finalIdUser = idUser;
+        if (isNaN(idUser)) {
+            try {
+                finalIdUser = decrypt(idUser);
+            } catch (e) { console.error('Error decrypting action idUser', e); }
+        }
+
+        var OSQL = await dbConnection.query(`call getActionsPermissionByUser(${finalIdUser})`)
 
         if (OSQL.length == 0) {
 

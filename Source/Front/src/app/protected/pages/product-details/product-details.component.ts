@@ -29,20 +29,20 @@ export default class ProductDetailsComponent implements OnInit {
 
     producto: any = null;
     loading: boolean = true;
-    idProducto: number = 0;
+    idProducto: any = 0;
     cantidad: number = 1;
 
     ngOnInit(): void {
         if (this.data && this.data.producto) {
             this.producto = this.formatProductData(this.data.producto);
-            this.producto.isFavorite = this.favoritesService.isFavorite(this.producto.idProducto);
+            this.producto.isFavorite = this.favoritesService.isFavorite(this.producto.sIdP);
             this.loading = false;
         } else if (this.data && this.data.idProducto) {
             this.idProducto = this.data.idProducto;
             this.loadProductDetails(this.idProducto);
         } else {
             this.route.params.subscribe(params => {
-                this.idProducto = +params['id'];
+                this.idProducto = params['id'];
                 if (this.idProducto) {
                     this.loadProductDetails(this.idProducto);
                 }
@@ -50,13 +50,13 @@ export default class ProductDetailsComponent implements OnInit {
         }
     }
 
-    loadProductDetails(id: number): void {
+    loadProductDetails(id: any): void {
         this.loading = true;
         this.productosService.getProductById(id).subscribe({
             next: (resp: any) => {
                 if (resp.status === 0 && resp.data) {
                     this.producto = this.formatProductData(resp.data);
-                    this.producto.isFavorite = this.favoritesService.isFavorite(this.producto.idProducto);
+                    this.producto.isFavorite = this.favoritesService.isFavorite(this.producto.sIdP);
                 } else {
                     this.servicesGServ.showAlert('E', 'Error', 'No se encontró el producto');
                     this.goBack();
@@ -73,7 +73,7 @@ export default class ProductDetailsComponent implements OnInit {
 
     updateQuantity(change: number): void {
         const newVal = this.cantidad + change;
-        if (newVal >= 1 && newVal <= (this.producto?.stock || 99)) {
+        if (newVal >= 1) {
             this.cantidad = newVal;
         }
     }
@@ -81,7 +81,7 @@ export default class ProductDetailsComponent implements OnInit {
     addToCart(): void {
         if (!this.producto) return;
 
-        this.cartService.addToCart(this.producto.idProducto, this.cantidad).subscribe({
+        this.cartService.addToCart(this.producto.sIdP, this.cantidad).subscribe({
             next: (resp: any) => {
                 if (resp.status === 0) {
                     this.servicesGServ.showSnakbar('Producto agregado al carrito', 'Cerrar', 3000);

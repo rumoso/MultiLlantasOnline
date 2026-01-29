@@ -19,7 +19,7 @@ export class ProductosService {
    * @param pagination Objeto con pageIndex, pageSize y search
    * @returns Observable con la respuesta del servidor
    */
-  getProductById(id: number): Observable<ResponseGet> {
+  getProductById(id: any): Observable<ResponseGet> {
     return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/getProductById`, { idProducto: id });
   }
 

@@ -22,8 +22,8 @@ BEGIN
     IF v_guestCartId IS NOT NULL THEN
         -- 3. Mover items del carrito invitado al usuario
         -- Usamos INSERT ... SELECT ... ON DUPLICATE KEY UPDATE para manejar duplicados
-        INSERT INTO cart_items (idCart, idProducto, cantidad, createDate, updateDate)
-        SELECT v_userCartId, src.idProducto, src.cantidad, NOW(), NOW()
+        INSERT INTO cart_items (idCart, idProducto, cantidad, precio, createDate, updateDate)
+        SELECT v_userCartId, src.idProducto, src.cantidad, src.precio, NOW(), NOW()
         FROM cart_items src WHERE src.idCart = v_guestCartId
         ON DUPLICATE KEY UPDATE cantidad = cart_items.cantidad + VALUES(cantidad);
 

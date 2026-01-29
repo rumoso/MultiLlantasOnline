@@ -1,5 +1,6 @@
 const { response } = require('express');
 const { dbConnection } = require('../database/config');
+const { encrypt, decrypt } = require('../utils/crypto');
 
 const getMyPurchases = async (req, res = response) => {
     const { idUser } = req.body;
@@ -11,9 +12,20 @@ const getMyPurchases = async (req, res = response) => {
         });
     }
 
+    let finalIdUser = (idUser && idUser > 0) ? idUser : null;
+
+    if (idUser && isNaN(idUser)) {
+        try {
+            finalIdUser = decrypt(idUser);
+        } catch (e) {
+            console.error('Error decrypting orders idUser', e);
+            finalIdUser = null;
+        }
+    }
+
     try {
         const results = await dbConnection.query('CALL getMyPurchases(?)', {
-            replacements: [idUser]
+            replacements: [finalIdUser]
         });
 
         // Handle SP return

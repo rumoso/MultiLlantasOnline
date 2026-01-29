@@ -116,6 +116,13 @@ export class AuthService {
     return 0;
   }
 
+  getSIdU(): string {
+    if (localStorage.getItem('sIdU')) {
+      return JSON.parse(localStorage.getItem('sIdU')!.toString());
+    }
+    return '';
+  }
+
   getIdSucursalPrincipal(): number {
     if (localStorage.getItem('idSucursalPrincipal')) {
       let idSucursalPrincipal: number = + localStorage.getItem('idSucursalPrincipal')!.toString();

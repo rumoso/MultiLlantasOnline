@@ -1,5 +1,6 @@
 const { response } = require('express');
 const { dbConnection } = require('../database/config');
+const { encrypt, decrypt } = require('../utils/crypto');
 
 const getMyFavorites = async (req, res = response) => {
     let { idUser } = req.body;
@@ -7,7 +8,18 @@ const getMyFavorites = async (req, res = response) => {
     const guestIdMiddleware = req.guestId;
 
     const finalGuestId = guestIdMiddleware || guestIdHeader || req.body.guest_id;
-    const finalIdUser = (idUser && idUser > 0) ? idUser : null;
+    let finalIdUser = (idUser && idUser > 0) ? idUser : null;
+
+    console.log('DEBUG: getMyFavorites Body:', req.body, 'Headers:', req.headers['x-guest-id']);
+
+    if (idUser && isNaN(idUser)) {
+        try {
+            finalIdUser = decrypt(idUser);
+        } catch (e) {
+            console.error('Error decrypting favorite idUser', e);
+            finalIdUser = null;
+        }
+    }
 
     if (!finalIdUser && !finalGuestId) {
         return res.status(400).json({
@@ -33,14 +45,21 @@ const getMyFavorites = async (req, res = response) => {
             }
         }
 
-        // Filter out metadata if it leaked in
-        resultData = resultData.filter(item => item.idFavorite);
+        // Filter out metadata and encrypt IDs
+        resultData = resultData.filter(item => item.idFavorite).map(item => {
+            if (item.idProducto) {
+                item.sIdP = encrypt(item.idProducto);
+                delete item.idProducto;
+            }
+            return item;
+        });
 
         res.json({
             status: 0,
             message: 'Favoritos obtenidos exitosamente',
             data: resultData
         });
+        console.log('DEBUG: getMyFavorites returning:', resultData.length, 'items');
     } catch (error) {
         console.error('Error getMyFavorites:', error);
         res.status(500).json({
@@ -59,9 +78,22 @@ const toggleFavorite = async (req, res = response) => {
     // Logic similar to cartController: User ID takes precedence but we need guestID if no User
     // Use the middleware guestId which respects header priority
     const finalGuestId = guestIdMiddleware || guestIdHeader || req.body.guest_id;
-    const finalIdUser = (idUser && idUser > 0) ? idUser : null;
 
-    console.log('DEBUG: toggleFavorite | User:', finalIdUser, 'Guest:', finalGuestId, 'Prod:', idProducto);
+    let finalIdUser = (idUser && idUser > 0) ? idUser : null;
+    if (idUser && isNaN(idUser)) {
+        try {
+            finalIdUser = decrypt(idUser);
+        } catch (e) { console.error('Error decrypting toggle idUser', e); }
+    }
+
+    let finalIdProducto = idProducto;
+    if (isNaN(idProducto)) { // Assuming sIdP is string
+        try {
+            finalIdProducto = decrypt(idProducto);
+        } catch (e) { console.error('Error decrypting idProducto', e); }
+    }
+
+    console.log('DEBUG: toggleFavorite | User:', finalIdUser, 'Guest:', finalGuestId, 'Prod (Raw):', idProducto, 'Prod (Decrypted):', finalIdProducto);
 
     if ((!finalIdUser && !finalGuestId) || !idProducto) {
         return res.status(400).json({
@@ -72,7 +104,7 @@ const toggleFavorite = async (req, res = response) => {
 
     try {
         const results = await dbConnection.query('CALL toggleFavorite(?, ?, ?)', {
-            replacements: [finalIdUser, finalGuestId || null, idProducto]
+            replacements: [finalIdUser, finalGuestId || null, finalIdProducto]
         });
 
         console.log('DEBUG: toggleFavorite SQL Result:', JSON.stringify(results));

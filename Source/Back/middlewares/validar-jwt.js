@@ -46,11 +46,9 @@ const validarJWTOptional = (req = request, res = response, next) => {
         next();
 
     } catch (error) {
-        console.log(error);
-        res.status(401).json({
-            status: 2,
-            message: 'Token no válido'
-        });
+        console.log('ValidarJWTOptional - Token inválido/expirado, continuando como invitado:', error.message);
+        // No bloqueamos, dejamos pasar. El controlador decidirá si necesita usuario o le basta guestId.
+        next();
     }
 
 }
