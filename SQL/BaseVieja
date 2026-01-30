@@ -1,0 +1,1311 @@
+-- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: db_multillantas
+-- ------------------------------------------------------
+-- Server version	8.0.44
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Dumping routines for database 'db_multillantas'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `agregarAlCarrito` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `agregarAlCarrito`(
+    IN p_oGetDateNow DATETIME,
+    IN p_idProducto INT,
+    IN p_cantidad INT,
+    IN p_idUsuario INT,
+    IN p_guest_id VARCHAR(255)
+)
+BEGIN
+    SET @idCart = 0;
+
+    -- Localizar el carrito existente
+    SELECT idCart INTO @idCart
+    FROM carts
+    WHERE (idUser = p_idUsuario AND p_idUsuario <> 0)
+       OR (guest_id = p_guest_id AND p_guest_id <> '')
+    LIMIT 1;
+
+    -- Si no existe, crearlo (idCart en 'carts' también debería ser AI)
+    IF @idCart = 0 OR @idCart IS NULL THEN
+        INSERT INTO carts(createDate, updateDate, idUser, guest_id)
+        VALUES (p_oGetDateNow, p_oGetDateNow, p_idUsuario, p_guest_id);
+        
+        SET @idCart = LAST_INSERT_ID();
+    END IF;
+
+    -- Insertar en cart_items (MySQL generará el 'keyx' automáticamente)
+    INSERT INTO cart_items(createDate, updateDate, idCart, idProducto, cantidad, precio)
+    SELECT 
+        p_oGetDateNow, 
+        p_oGetDateNow, 
+        @idCart, 
+        p_idProducto, 
+        p_cantidad, 
+        precio
+    FROM productos
+    WHERE idProducto = p_idProducto;
+
+    -- Retornar respuesta al Front-end
+    SELECT @idCart AS idCart, LAST_INSERT_ID() AS idItem, 'Éxito' AS message;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `deleteRol` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteRol`(
+IN p_idRol INT
+
+, IN p_idUserC BIGINT
+)
+BEGIN
+
+	DELETE FROM roles WHERE idRol = p_idRol;
+
+	SELECT 1 AS out_id, 'Rol eliminado' AS message;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `deleteRolByIdUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `deleteRolByIdUser`(
+	IN p_idUser BIGINT
+	, IN p_idRol BIGINT
+)
+BEGIN
+
+	DELETE FROM
+		user_roles
+	WHERE
+		idUser = p_idUser
+		AND idRol = p_idRol;
+
+	SET @iRows = ( SELECT ROW_COUNT() );
+
+	SELECT @iRows AS iRows;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `disabledUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `disabledUser`(
+IN p_idUser INT
+)
+BEGIN
+
+	UPDATE users SET active = 0 WHERE idUser = p_idUser;
+
+	SELECT 1 AS out_id, 'Usuario deshabilitado' AS message;    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getActionsPermissionByUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getActionsPermissionByUser`(
+	IN p_idUser BIGINT
+)
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+
+	SET @iRows = 0;
+	
+	CREATE TEMPORARY TABLE actionsList (
+		id BIGINT AUTO_INCREMENT,
+		idAction BIGINT,
+		PRIMARY KEY(id)
+	) ENGINE=InnoDB;
+	
+	INSERT INTO actionsList( idAction )
+	SELECT DISTINCT
+	A.idAction
+	FROM actions AS A
+	INNER JOIN actionsconf AS AC ON AC.active = 1 AND relationType = 'R' AND A.idAction = AC.idAction
+	INNER JOIN user_roles AS RC ON AC.idRelation = RC.idRol
+	INNER JOIN users AS U ON RC.idUser = U.idUser
+	WHERE A.active = 1
+	AND U.idUser = p_idUser
+	;
+	
+	INSERT INTO actionsList( idAction )
+	SELECT DISTINCT
+	A.idAction
+	FROM actions AS A
+	INNER JOIN actionsconf AS AC ON AC.active = 1 AND AC.relationType = 'U' AND A.idAction = AC.idAction
+	INNER JOIN users AS U ON AC.idRelation = U.idUser
+	WHERE A.active = 1
+	AND U.idUser = p_idUser
+	;
+	
+	SELECT DISTINCT
+	A.idAction
+	,A.name
+	FROM actions AS A
+	INNER JOIN actionsList AS AL ON A.idAction = AL.idAction;
+    
+    DROP TABLE actionsList;
+
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+ 
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getCart` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getCart`(
+    IN p_idUsuario INT,
+    IN p_guest_id VARCHAR(255)
+)
+BEGIN
+    SELECT 
+        ci.keyx AS idItem,
+        ci.idCart,
+        ci.idProducto,
+        p.nombre AS descripcion,
+        p.imagen_url,
+        ci.cantidad,
+        ci.precio,
+        (ci.cantidad * ci.precio) AS subtotal
+    FROM cart_items ci
+    INNER JOIN carts c ON ci.idCart = c.idCart
+    INNER JOIN productos p ON ci.idProducto = p.idProducto
+    WHERE 
+        (p_idUsuario IS NOT NULL AND p_idUsuario <> 0 AND c.idUser = p_idUsuario)
+        OR 
+        ((p_idUsuario IS NULL OR p_idUsuario = 0) AND c.guest_id = p_guest_id AND p_guest_id <> '');
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getMenuDetailsByPermission` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getMenuDetailsByPermission`(
+IN p_idUser BIGINT
+, IN p_idMenuPadre BIGINT
+)
+BEGIN
+	
+	SELECT *
+	FROM
+	(
+		SELECT
+		M.idMenu
+		,M.idMenuPadre
+		,M.lugar
+		,M.name
+		,M.description
+		,M.icon
+		,M.linkCat
+		,M.linkList
+		,M.imgDash
+		,M.imgDashSize
+		FROM menus AS M
+		INNER JOIN menupermisos AS MP
+			ON
+				M.idMenu = MP.idMenu
+				AND MP.typeRelation = 'R'
+                
+        INNER JOIN user_roles AS UR
+			ON
+				UR.idRol = MP.idRelation
+				
+		INNER JOIN users AS U
+			ON
+				U.idUser = UR.idUser
+                
+		WHERE
+			M.active = 1
+			AND M.idAplication = 1
+			AND M.idMenuPadre > 0
+			AND MP.active = 1
+			AND U.idUser = p_idUser
+			AND M.idMenuPadre = p_idMenuPadre
+		
+		UNION
+		
+		SELECT
+		M.idMenu
+		,M.idMenuPadre
+		,M.lugar
+		,M.name
+		,M.description
+		,M.icon
+		,M.linkCat
+		,M.linkList
+		,M.imgDash
+		,M.imgDashSize
+		FROM menus AS M
+		INNER JOIN menupermisos AS MP
+			ON
+				M.idMenu = MP.idMenu
+                AND MP.typeRelation = 'U'
+                
+		WHERE
+			M.active = 1
+			AND M.idAplication = 1
+			AND M.idMenuPadre > 0
+			AND MP.active = 1
+			AND MP.idRelation = p_idUser
+			AND M.idMenuPadre = p_idMenuPadre
+		
+	) AS subquery
+	ORDER BY idMenuPadre, lugar ASC;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getMenuDetailsForPermission` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getMenuDetailsForPermission`(
+IN p_idMenuPadre BIGINT
+, IN p_relationType VARCHAR(5)
+, IN p_idRelation BIGINT
+)
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+	
+	SELECT
+	M.idMenu
+	,M.idMenuPadre
+	,M.lugar
+	,M.name
+	,M.description
+	,M.icon
+	,M.linkCat
+	,M.linkList
+	,M.imgDash
+	,M.imgDashSize
+	,IFNULL(
+	(
+		SELECT
+		1
+		FROM menupermisos AS MP
+		WHERE
+			MP.active = 1
+			AND MP.typeRelation = p_relationType
+			AND MP.idRelation = p_idRelation
+			AND MP.idMenu = M.idMenu
+	), 0) AS bPermissionMenu
+	FROM menus AS M
+	WHERE
+		M.active = 1
+		AND M.idAplication = 1
+		AND M.idMenuPadre > 0
+		AND M.idMenuPadre = p_idMenuPadre
+	ORDER BY idMenuPadre, lugar ASC;
+
+ SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getMenuFathersByPermission` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getMenuFathersByPermission`(
+IN p_idUser BIGINT
+)
+BEGIN
+	
+	SELECT DISTINCT *
+	FROM
+	(
+		SELECT
+		MPadre.idMenu
+		,MPadre.lugar
+		,MPadre.name
+		,MPadre.icon
+		FROM menus AS MPadre
+		INNER JOIN menus AS M
+			ON
+				MPadre.idMenu = M.idMenuPadre
+				
+		INNER JOIN menupermisos AS MP
+			ON
+				M.idMenu = MP.idMenu
+				AND MP.typeRelation = 'R'
+				
+		INNER JOIN user_roles AS UR
+			ON
+				UR.idRol = MP.idRelation
+				
+		INNER JOIN users AS U
+			ON
+				U.idUser = UR.idUser
+				
+		WHERE
+			M.active = 1
+			AND M.idAplication = 1
+			AND MPadre.idMenuPadre = 0
+			AND MP.active = 1
+			AND U.idUser = p_idUser
+		
+		UNION
+		
+		SELECT
+		MPadre.idMenu
+		,MPadre.lugar
+		,MPadre.name
+		,MPadre.icon
+		FROM menus AS MPadre
+		INNER JOIN menus AS M
+			ON
+				MPadre.idMenu = M.idMenuPadre
+				
+		INNER JOIN menupermisos AS MP
+			ON
+				M.idMenu = MP.idMenu
+				AND MP.typeRelation = 'U'
+				
+		WHERE
+			M.active = 1
+			AND M.idAplication = 1
+			AND MPadre.idMenuPadre = 0
+			AND MP.active = 1
+			AND MP.idRelation = p_idUser
+	) AS subquery
+	ORDER BY lugar;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getMenuFathersForPermission` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getMenuFathersForPermission`()
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+	
+	SELECT DISTINCT
+	MPadre.idMenu
+	,MPadre.lugar
+	,MPadre.name
+	,MPadre.icon
+	FROM menus AS MPadre
+	WHERE
+		MPadre.active = 1
+		AND MPadre.idAplication = 1
+		AND MPadre.idMenuPadre = 0
+    ORDER BY MPadre.lugar ASC
+	;
+
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getProductsPag` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getProductsPag`(
+    IN p_search VARCHAR(500),
+    IN p_start INT,
+    IN p_limiter INT
+)
+BEGIN
+
+	SET @iRows = 0;
+
+    SET @iRows = (
+					WITH RECURSIVE words AS (
+					SELECT
+						SUBSTRING_INDEX(p_search, ' ', 1) AS palabra,
+						SUBSTRING(p_search, LOCATE(' ', p_search) + 1) AS rest
+					UNION ALL
+					SELECT
+						SUBSTRING_INDEX(rest, ' ', 1) AS palabra,
+						SUBSTRING(rest, LOCATE(' ', rest) + 1) AS rest
+					FROM words
+					WHERE rest <> '' AND LOCATE(' ', rest) > 0
+					UNION ALL
+					SELECT
+						rest AS palabra,
+						'' AS rest
+					FROM words
+					WHERE rest <> '' AND LOCATE(' ', rest) = 0
+				)
+				SELECT
+					COUNT( * )
+				FROM productos AS P
+				WHERE
+					P.activo = 1
+					AND (
+						p_search = ''
+						OR (
+							SELECT COUNT(*) 
+							FROM words w
+							WHERE CONCAT(
+								IFNULL(P.nombre, ''),
+								' ', IFNULL(P.marca, ''),
+								' ', IFNULL(P.modelo, ''),
+								' ', IFNULL(P.descripcion, ''),
+								' ', IFNULL(P.ancho, ''),
+								'/', IFNULL(P.perfil, ''),
+								' R', IFNULL(P.rin, '')
+							) LIKE CONCAT('%', w.palabra, '%')
+						) > 0
+					)
+				  );
+    
+    -- Tabla temporal para dividir el search en palabras individuales
+    WITH RECURSIVE words AS (
+        SELECT
+            SUBSTRING_INDEX(p_search, ' ', 1) AS palabra,
+            SUBSTRING(p_search, LOCATE(' ', p_search) + 1) AS rest
+        UNION ALL
+        SELECT
+            SUBSTRING_INDEX(rest, ' ', 1) AS palabra,
+            SUBSTRING(rest, LOCATE(' ', rest) + 1) AS rest
+        FROM words
+        WHERE rest <> '' AND LOCATE(' ', rest) > 0
+        UNION ALL
+        SELECT
+            rest AS palabra,
+            '' AS rest
+        FROM words
+        WHERE rest <> '' AND LOCATE(' ', rest) = 0
+    )
+    SELECT
+		@iRows AS iRows,
+        P.idProducto,
+        P.nombre,
+        P.descripcion,
+        P.marca,
+        P.modelo,
+        P.ancho,
+        P.perfil,
+        P.rin,
+        P.precio,
+        P.stock,
+        P.imagen_url,
+        P.activo,
+        P.createDate AS fecha_creacion,
+        
+        -- Contar cuántas palabras del search coinciden
+        (
+            SELECT COUNT(*) 
+            FROM words w
+            WHERE CONCAT(
+                IFNULL(P.nombre, ''),
+                ' ', IFNULL(P.marca, ''),
+                ' ', IFNULL(P.modelo, ''),
+                ' ', IFNULL(P.descripcion, ''),
+                ' ', IFNULL(P.ancho, ''),
+                '/', IFNULL(P.perfil, ''),
+                ' R', IFNULL(P.rin, '')
+            ) LIKE CONCAT('%', w.palabra, '%')
+        ) AS iCountWords
+        
+    FROM productos AS P
+    WHERE
+        P.activo = 1
+        AND (
+            p_search = ''
+            OR (
+                SELECT COUNT(*) 
+                FROM words w
+                WHERE CONCAT(
+                    IFNULL(P.nombre, ''),
+                    ' ', IFNULL(P.marca, ''),
+                    ' ', IFNULL(P.modelo, ''),
+                    ' ', IFNULL(P.descripcion, ''),
+                    ' ', IFNULL(P.ancho, ''),
+                    '/', IFNULL(P.perfil, ''),
+                    ' R', IFNULL(P.rin, '')
+                ) LIKE CONCAT('%', w.palabra, '%')
+            ) > 0
+        )
+    ORDER BY iCountWords DESC, P.marca ASC, P.nombre ASC
+    LIMIT p_start, p_limiter;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getRolByID` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRolByID`(
+IN p_idRol INT
+)
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+	
+	SELECT
+	R.idRol
+	, R.createDate
+	, R.name
+	, R.description
+	, R.active
+	FROM roles as R
+	WHERE R.idRol = p_idRol;
+
+ SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getRolesByIdUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRolesByIdUser`(
+IN p_idUser BIGINT
+)
+BEGIN
+	
+	SELECT
+	UR.createDate
+	, R.idRol
+	, R.name
+	FROM roles as R
+	LEFT JOIN user_roles AS UR ON R.idRol = UR.idRol
+	WHERE
+		R.active = 1
+		AND UR.idUser = p_idUser
+		
+    ORDER BY UR.keyx DESC;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getRolesForAddUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRolesForAddUser`(
+IN p_search VARCHAR(500)
+, IN p_idUser BIGINT
+
+, IN p_idUserLogON BIGINT
+)
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+	
+	SELECT
+	R.idRol AS id
+	, R.name AS text
+	FROM roles as R
+	LEFT JOIN user_roles AS UR ON UR.idUser = p_idUser AND R.idRol = UR.idRol
+	WHERE
+		R.active = 1
+		AND UR.keyx IS NULL
+		AND
+		(
+			p_search = ''
+			OR R.name LIKE CONCAT('%', p_search ,'%')
+		)
+    ORDER BY R.idRol DESC
+	LIMIT 0, 5;
+
+ SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getRolesListWithPage` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getRolesListWithPage`(
+IN p_search VARCHAR(500)
+, IN p_start INT
+, IN p_limiter INT
+)
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+
+	SET @iRows = 0;
+	
+	
+	SET @iRows = ( SELECT
+					COUNT(*)
+					FROM roles as R
+					WHERE
+					(
+						p_search = ''
+						OR R.name LIKE CONCAT('%', p_search ,'%')
+						OR R.description LIKE CONCAT('%', p_search ,'%')
+					)
+	);
+	
+	SELECT
+	@iRows AS iRows
+	, R.idRol
+	, R.createDate
+	, R.name
+	, R.description
+	, R.active
+	FROM roles as R
+	WHERE
+	(
+		p_search = ''
+		OR R.name LIKE CONCAT('%', p_search ,'%')
+		OR R.description LIKE CONCAT('%', p_search ,'%')
+	)
+    ORDER BY R.idRol DESC
+	LIMIT p_start, p_limiter;
+
+ SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getUserByID` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUserByID`(IN p_idUser BIGINT)
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+    
+    SELECT
+      U.idUser
+    , U.createDate
+    , U.name
+    , U.userName
+    , U.pwd
+    , U.active
+    FROM users as U
+    WHERE U.idUser = p_idUser;
+
+ SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getUserByUserName` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUserByUserName`(
+IN `p_userName` VARCHAR(45)
+)
+BEGIN
+	
+	SELECT
+	U.idUser
+	, U.createDate
+	, U.name
+	, U.username
+	, U.pwd
+	, U.active
+	FROM users AS U
+	WHERE
+		active = 1
+		AND username = p_userName;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getUsersListWithPage` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getUsersListWithPage`(IN p_search VARCHAR(500),IN p_start INT, IN p_limiter INT)
+BEGIN
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+
+	SET @iRows = 0;
+	
+	
+	SET @iRows = ( SELECT
+					COUNT(*)
+					FROM users as U
+					WHERE
+					(
+						p_search = ''
+						OR U.name LIKE CONCAT('%', p_search ,'%')
+						OR U.userName LIKE CONCAT('%', p_search ,'%')
+					)
+	);
+	
+	SELECT
+	@iRows AS iRows
+	, U.idUser
+	, U.createDate
+	, U.name
+	, U.userName
+	,IFNULL(
+	(
+		SELECT GROUP_CONCAT( R.name )
+		FROM user_roles AS RC
+		INNER JOIN roles AS R ON RC.idRol = R.idRol
+		WHERE RC.idUser = U.idUser
+	), '') AS roles
+    
+	, U.active
+	FROM users as U
+	WHERE
+	(
+		p_search = ''
+		OR U.name LIKE CONCAT('%', p_search ,'%')
+		OR U.userName LIKE CONCAT('%', p_search ,'%')
+	)
+    ORDER BY U.idUser DESC
+	LIMIT p_start, p_limiter;
+
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `insertRol` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertRol`(
+IN p_oGetDateNow DATETIME
+, IN p_name VARCHAR(500)
+, IN p_description VARCHAR(500)
+
+, IN p_idUserC BIGINT
+)
+BEGIN
+
+	SET @idRol = 0;
+	SET @out_id = 0;
+	SET @message = '';
+	
+	SET @idRol = IFNULL(
+	(
+		SELECT
+		idRol
+		FROM roles
+		WHERE name = p_name
+		LIMIT 1
+	)
+	,0);
+	
+	IF @idRol = 0 THEN
+
+		INSERT INTO roles(
+		createDate
+		, name
+		, description
+		, active
+		)
+		SELECT
+		p_oGetDateNow
+		, p_name
+		, p_description
+		, 1;
+		
+		SET @out_id = LAST_INSERT_ID();
+		SET @message = 'Rol guardado con éxito.';
+	
+	ELSE
+		SET @out_id = 0;
+		SET @message = 'El nombre del rol ya se está utilizando.';
+	END IF;
+
+	SELECT @out_id AS out_id, @message AS message;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `insertRolByIdUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertRolByIdUser`(
+IN p_idUser BIGINT
+, IN p_idRol BIGINT
+, IN p_oGetDateNow DATETIME
+)
+BEGIN
+
+	SET @out_id = 0;
+	SET @message = '';
+
+	IF
+	(
+		SELECT
+		COUNT(*)
+		FROM user_roles AS UR
+		WHERE idUser = p_idUser
+		AND idRol = p_idRol
+	) = 0
+	THEN
+		
+		INSERT INTO user_roles(
+		createDate
+		, idUser
+		, idRol
+		)
+		SELECT
+		p_oGetDateNow
+		, p_idUser
+		, p_idRol;
+		
+		SET @out_id = ( SELECT LAST_INSERT_ID() );
+		
+		SET @message = 'Guardado con éxito';
+		
+	ELSE
+		SET @message = 'No se puede agregar dos veces el mismo Rol';
+	END IF;
+
+	SELECT @out_id AS out_id
+	, @message AS message;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `insertUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertUser`(
+  IN p_oGetDateNow DATETIME
+, IN p_name VARCHAR(500)
+, IN p_userName VARCHAR(500)
+, IN p_pwd TEXT
+, IN p_active SMALLINT -- Quitamos p_idStatus de aquí
+, IN p_idUserC BIGINT
+)
+BEGIN
+
+	SET @idUser = 0;
+	SET @out_id = 0;
+	SET @message = '';
+	
+	SET @idUser = IFNULL(
+	(
+		SELECT
+		idUser
+		FROM users
+		WHERE
+			UPPER( userName ) = UPPER( p_userName )
+		LIMIT 1
+	)
+	,0);
+	
+	IF @idUser = 0 THEN
+
+		INSERT INTO users(
+		createDate
+		, updateDate
+		, name
+		, userName
+		, pwd
+		-- Eliminamos idStatus de la lista de columnas
+		, active
+		)
+		SELECT
+		p_oGetDateNow
+		, p_oGetDateNow
+		, p_name
+		, p_userName
+		, p_pwd
+		-- Eliminamos p_idStatus de la selección
+		, p_active;
+		
+		SET @out_id = LAST_INSERT_ID();
+		SET @message = 'Usuario guardado con éxito.';
+		
+	ELSE
+		SET @out_id = 0;
+		SET @message = 'Ese usuario ya existe intente con otro.';
+	END IF;
+	
+	SELECT @out_id AS out_id, @message AS message;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `updatePWD` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updatePWD`(
+IN p_idUser BIGINT
+, IN p_pwd TEXT
+)
+BEGIN
+
+	UPDATE
+		users
+	SET
+		pwd = p_pwd
+	WHERE
+		idUser = p_idUser;
+
+	SET @iRows = ( SELECT ROW_COUNT() );
+
+	SELECT @iRows AS iRows;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `updateRol` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateRol`(
+IN p_idRol INT
+, IN p_name VARCHAR(500)
+, IN p_description VARCHAR(500)
+, IN p_active SMALLINT
+)
+BEGIN
+
+	SET @idRol = 0;
+	SET @out_id = 0;
+	SET @message = '';
+	
+	SET @idRol = IFNULL(
+	(
+		SELECT
+		idRol
+		FROM roles
+		WHERE name = p_name
+		AND idRol <> p_idRol
+		LIMIT 1
+	)
+	,0);
+	
+	IF @idRol = 0 THEN
+	
+		UPDATE
+			roles
+		SET
+			name = p_name
+			, description = p_description
+			, active = p_active
+		WHERE
+			idRol = p_idRol;
+
+		SET @out_id = p_idRol;
+		
+		SET @message = 'Rol actualizado con éxito.';
+	
+	ELSEIF @idRol > 0 THEN
+		SET @out_id = 0;
+		SET @message = 'El nombre del rol ya se está utilizando.';
+	END IF;
+
+	SELECT @out_id AS out_id, @message AS message;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `updateUser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateUser`(
+  IN p_idUser BIGINT
+, IN p_name VARCHAR(500)
+, IN p_userName VARCHAR(500)
+, IN p_active SMALLINT
+-- Ya no pedimos p_idStatus aquí porque la columna no existe
+)
+BEGIN
+
+    SET @idUserUserName = 0;
+    SET @out_id = 0;
+    SET @message = '';
+    
+    -- Verificamos si el nombre de usuario ya existe en otro ID
+    SET @idUserUserName = IFNULL(
+    (
+        SELECT
+        idUser
+        FROM users
+        WHERE userName = p_userName
+        AND idUser <> p_idUser
+        LIMIT 1
+    )
+    ,0);
+    
+    IF @idUserUserName = 0 THEN
+    
+        UPDATE
+            users
+        SET
+            name = p_name
+            , userName = p_userName
+            -- SE ELIMINÓ: idStatus = p_idStatus (esta línea daba el error)
+            , active = p_active
+        WHERE
+            idUser = p_idUser;
+
+        SET @out_id = p_idUser;
+        SET @message = 'Usuario actualizado con éxito.';
+        
+    ELSEIF @idUserUserName > 0 THEN
+        SET @out_id = 0;
+        SET @message = 'Ese usuario ya se está utilizando, intenta con otro.';
+    END IF;
+
+    SELECT @out_id AS out_id, @message AS message;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-01-29 17:13:30
