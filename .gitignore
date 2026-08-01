@@ -1,10 +1,18 @@
-api/node_modules/*
-api/.env
-/frontend/diprolim/.vscode
-back/node_modules/*
-frontend/diprolimweb/node_modules/*
-/nosubir
-back/.env
-back/assets/productos
-back/- Hugo.env
-frontend/.vscode/tasks.json
+# Node
+Source/Back/node_modules/
+Source/Front/node_modules/
+
+# Environment files (contienen secretos - nunca deben subirse)
+Source/Back/.env
+Source/Back/*.env
+!Source/Back/example.env
+
+# Build output / artefactos
+Source/Back/dist/
+Source/Front/dist/
+
+# Logs
+Source/Back/*.log
+
+# Editor
+.vscode/
