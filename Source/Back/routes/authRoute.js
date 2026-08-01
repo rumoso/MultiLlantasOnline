@@ -4,15 +4,16 @@ const { check } = require('express-validator')
 const { validarCampos } = require('../middlewares/validar-campos')
 const { esRolValido, existeEmail } = require('../helpers/db-validators/user-validator');
 
-const { 
+const {
 
     login
+    , register
     , getMenuByPermissions
     , getActionsPermissionByUser
 
     , getMenuForPermissions
     , insertMenusPermisionsByIdRelation
-    
+
 } = require('../controllers/authController');
 
 
@@ -24,6 +25,15 @@ router.post('/login',[
     validarCampos
 
 ], login );
+
+router.post('/register',[
+    check('name','El nombre es obligatorio').not().isEmpty(),
+    check('userName','El nombre de usuario es obligatorio').not().isEmpty(),
+    check('email','El correo no es válido').isEmail(),
+    check('pwd','La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
+    validarCampos
+
+], register );
 
 router.post('/getMenuByPermissions',[
     check('idUser','Usuario obligatorio').not().isEmpty(),

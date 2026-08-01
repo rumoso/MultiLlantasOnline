@@ -5,7 +5,7 @@ const { json } = require('express/lib/response');
 
 const { generarJWT } = require('../helpers/generar-jwt');
 
-const { dbConnection } = require('../database/config');
+const { dbConnection, dbSPConnection } = require('../database/config');
 
 const login = async (req, res = response) => {
 
@@ -97,6 +97,98 @@ const login = async (req, res = response) => {
             status: 2,
             message: "Sucedió un error inesperado",
             data: OSQL
+        });
+    }
+}
+
+const register = async (req, res = response) => {
+
+    const {
+        name
+        , userName
+        , email
+        , telefono
+        , pwd
+    } = req.body;
+
+    try {
+
+        const [existing] = await dbSPConnection.query(
+            'SELECT idUser FROM users WHERE userName = ? OR email = ? LIMIT 1',
+            [userName, email]
+        );
+
+        if (existing.length > 0) {
+            return res.json({
+                status: 1,
+                message: "El usuario o el correo ya están registrados",
+                data: null
+            });
+        }
+
+        const salt = bcryptjs.genSaltSync();
+        const hashedPwd = bcryptjs.hashSync(pwd, salt);
+
+        const [insertResult] = await dbSPConnection.query(
+            `INSERT INTO users (createDate, updateDate, name, userName, pwd, email, telefono, active)
+             VALUES (NOW(), NOW(), ?, ?, ?, ?, ?, 1)`,
+            [name, userName, hashedPwd, email, telefono]
+        );
+
+        const idUser = insertResult.insertId;
+
+        const user = {
+            idUser
+            , name
+            , userName
+            , email
+            , telefono
+            , active: 1
+            , sIdU: encrypt(idUser)
+        };
+
+        const token = await generarJWT(idUser);
+
+        // ASOCIACIÓN DE DATOS (CARRITO Y FAVORITOS): Vincular datos del guest al usuario nuevo
+        try {
+            const currentGuestId = req.guestId || req.headers['x-guest-id'] || req.body.guest_id;
+
+            if (currentGuestId) {
+                console.log(`Fusionando datos de guest ${currentGuestId} al usuario nuevo ${idUser}`);
+                try {
+                    await dbConnection.query('CALL fromGuestToUser(?, ?)', {
+                        replacements: [idUser, currentGuestId]
+                    });
+                    console.log('Fusionado correcto.');
+                } catch (e) {
+                    console.error('Error ejecutando SP fromGuestToUser:', e);
+                    throw e;
+                }
+            } else {
+                console.warn('Registro exitoso pero SIN guest-id para fusionar.');
+            }
+        } catch (mergeError) {
+            console.error('Error al fusionar datos de invitado:', mergeError);
+            // No bloqueamos el registro si falla esto
+        }
+
+        res.json({
+            status: 0,
+            message: "Cuenta creada correctamente.",
+            data: {
+                user,
+                token
+            }
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            status: 2,
+            message: "Sucedió un error inesperado",
+            data: error.message
         });
     }
 }
@@ -428,6 +520,7 @@ const insertMenusPermisionsByIdRelation = async (req, res) => {
 
 module.exports = {
     login
+    , register
     , getMenuByPermissions
     , getActionsPermissionByUser
     , getMenuForPermissions
