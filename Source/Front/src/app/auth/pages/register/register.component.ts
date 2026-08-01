@@ -1,28 +1,22 @@
 import { Component } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ServicesGService } from '../../../servicesG/servicesG.service';
-import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { SpinnerComponent } from '../../../components/spinner/spinner.component';
 import { SharedModule } from '../../../shared/Shared.module';
 import { MaterialModule } from '../../../shared/material.module';
 import { CartService } from '../../../protected/services/cart.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css'],
   imports: [
     SharedModule,
     MaterialModule,
   ]
 })
-export default class LoginComponent {
+export default class RegisterComponent {
 
   private _appMain: string = environment.appMain;
 
@@ -30,28 +24,28 @@ export default class LoginComponent {
 
   bShowSpinner: boolean = false;
 
-  myLogin: any = {
-    username: '',
+  myRegister: any = {
+    name: '',
+    userName: '',
+    email: '',
+    telefono: '',
     pwd: ''
   };
 
   constructor(private fb: FormBuilder
     , private authServ: AuthService
     , private servicesGServ: ServicesGService
-    , private cartService: CartService // Inyección correcta
+    , private cartService: CartService
   ) {
     var idUserLogOn = this.authServ.getIdUserSession();
 
     if (idUserLogOn > 0) {
       this.servicesGServ.changeRoute(`/${this._appMain}/dashboard`);
-    } else {
-      this.authServ.logout(false);
     }
-
   }
 
   ngAfterViewInit() {
-    this.focusNext('tbxUsuario')
+    this.focusNext('tbxNombre')
   }
 
   focusNext(field: string) {
@@ -63,23 +57,23 @@ export default class LoginComponent {
     }, 300);
   }
 
-  irARegistro() {
-    this.servicesGServ.changeRoute('/auth/register');
+  get formValido(): boolean {
+    return this.myRegister.name.length > 0
+      && this.myRegister.userName.length > 0
+      && this.myRegister.email.length > 0
+      && this.myRegister.pwd.length >= 6;
   }
 
-  fn_login() {
+  fn_register() {
 
-    if (this.myLogin.username.length > 0 && this.myLogin.pwd.length > 0) {
+    if (this.formValido) {
       this.bShowSpinner = true;
 
-      //console.log(this.myLogin.value)
-      //this.servicesGService.showSnakbar( this.myLogin.value.username + ", " + this.myLogin.value.pwd);
-
-      this.authServ.CLogin(this.myLogin)
+      this.authServ.CRegister(this.myRegister)
         .subscribe({
           next: (resp) => {
             if (resp.status === 0) {
-              // Actualizar carrito
+              // Actualizar carrito (ya fusionado con lo del invitado)
               this.cartService.getCart().subscribe();
               this.servicesGServ.changeRoute(`/${this._appMain}/dashboard`);
             } else {
@@ -94,6 +88,10 @@ export default class LoginComponent {
           }
         })
     }
+  }
+
+  irALogin() {
+    this.servicesGServ.changeRoute('/auth/login');
   }
 
 }

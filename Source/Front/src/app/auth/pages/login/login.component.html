@@ -29,6 +29,10 @@
                 <span *ngIf="!bShowSpinner">INGRESAR</span>
                 <mat-spinner diameter="20" *ngIf="bShowSpinner" color="accent"></mat-spinner>
             </button>
+
+            <button mat-button type="button" class="full-width" (click)="irARegistro()">
+                ¿No tienes cuenta? Crea una
+            </button>
         </form>
     </div>
 </div>

@@ -5,6 +5,7 @@ import { SharedModule } from '../../../shared/Shared.module';
 import { CartService } from '../../services/cart.service';
 import { ServicesGService } from '../../../servicesG/servicesG.service';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
     selector: 'app-cart',
@@ -18,6 +19,7 @@ export default class CartComponent implements OnInit {
     private _appMain: string = environment.appMain;
     cartService = inject(CartService);
     servicesGServ = inject(ServicesGService);
+    authService = inject(AuthService);
 
     cartItems: any[] = [];
     loading: boolean = false;
@@ -70,6 +72,12 @@ export default class CartComponent implements OnInit {
 
     processCheckout(): void {
         if (!this.cartItems.length) return;
+
+        if (this.authService.getIdUserSession() === 0) {
+            this.servicesGServ.showAlert('W', 'Crea tu cuenta', 'Para procesar tu compra y darte seguimiento a tus pedidos, primero crea una cuenta.');
+            this.servicesGServ.changeRoute('/auth/register');
+            return;
+        }
 
         if (!confirm('¿Estás seguro de procesar la compra?')) return;
 

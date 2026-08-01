@@ -34,27 +34,47 @@ export class AuthService {
       .pipe(
         tap(async userLogin => {
           if (userLogin.status == 0) {
-            this._userLogin = userLogin.data!.user;
-            localStorage.setItem('idUser', JSON.stringify(userLogin.data.user.idUser));
-            localStorage.setItem('sIdU', JSON.stringify(userLogin.data.user.sIdU));
-            localStorage.setItem('user', JSON.stringify(userLogin.data.user));
-            localStorage.setItem('token', JSON.stringify(userLogin.data.token));
-            localStorage.setItem('idSucursalPrincipal', JSON.stringify(userLogin.data.user.idSucursalPrincipal));
-            localStorage.setItem('countSucursales', JSON.stringify(userLogin.data.user.countSucursales));
-
-            var oActions = await this.CGetActionsPermissionPromise(userLogin.data.user.idUser)
-            if (oActions)
-              localStorage.setItem('oActions', JSON.stringify(oActions));
-
-            var oRoles = await this.getRolesByIDUserPromise(userLogin.data.user.idUser)
-            if (oRoles)
-              localStorage.setItem('oRoles', JSON.stringify(oRoles));
-
-            // Limpiar guest_id después de login exitoso
-            this.guestService.clearGuestId();
+            await this._persistSession(userLogin);
           }
         })
       );
+  }
+
+  CRegister(data: any): Observable<ResponseGet> {
+
+    const headers = {
+      'x-guest-id': this.guestService.getGuestId()
+    };
+
+    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/register`, data, { headers })
+      .pipe(
+        tap(async userRegister => {
+          if (userRegister.status == 0) {
+            await this._persistSession(userRegister);
+          }
+        })
+      );
+  }
+
+  private async _persistSession(resp: ResponseGet) {
+    this._userLogin = resp.data!.user;
+    localStorage.setItem('idUser', JSON.stringify(resp.data.user.idUser));
+    localStorage.setItem('sIdU', JSON.stringify(resp.data.user.sIdU));
+    localStorage.setItem('user', JSON.stringify(resp.data.user));
+    localStorage.setItem('token', JSON.stringify(resp.data.token));
+    localStorage.setItem('idSucursalPrincipal', JSON.stringify(resp.data.user.idSucursalPrincipal));
+    localStorage.setItem('countSucursales', JSON.stringify(resp.data.user.countSucursales));
+
+    var oActions = await this.CGetActionsPermissionPromise(resp.data.user.idUser)
+    if (oActions)
+      localStorage.setItem('oActions', JSON.stringify(oActions));
+
+    var oRoles = await this.getRolesByIDUserPromise(resp.data.user.idUser)
+    if (oRoles)
+      localStorage.setItem('oRoles', JSON.stringify(oRoles));
+
+    // Limpiar guest_id después de autenticarse (login o registro)
+    this.guestService.clearGuestId();
   }
 
   get userLogin(): any | undefined {

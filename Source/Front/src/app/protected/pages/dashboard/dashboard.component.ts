@@ -10,6 +10,8 @@ import { ProductosService } from '../../services/productos.service';
 import { Pagination } from '../../interfaces/global.interfaces';
 import { CartService } from '../../services/cart.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { SearchService } from '../../services/search.service';
+import { skip } from 'rxjs';
 import ProductDetailsComponent from '../product-details/product-details.component';
 
 @Component({
@@ -51,6 +53,7 @@ export default class DashboardComponent {
     , private productosService: ProductosService
     , private cartService: CartService
     , private favoritesService: FavoritesService
+    , private searchService: SearchService
   ) { }
 
   async ngOnInit() {
@@ -63,6 +66,12 @@ export default class DashboardComponent {
 
     // Cargar productos
     this.loadProductos();
+
+    // Reaccionar a búsquedas emitidas desde el buscador del header (skip(1)
+    // para no repetir la carga inicial con el valor por defecto del BehaviorSubject)
+    this.searchService.search$.pipe(skip(1)).subscribe(term => {
+      this.onSearchProducts(term);
+    });
   }
 
   loadProductos(): void {

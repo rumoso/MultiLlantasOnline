@@ -14,6 +14,8 @@ import { FavoritesOverlayComponent } from '../../components/favorites-overlay/fa
 import { CartService } from '../../services/cart.service';
 import { CartOverlayComponent } from '../../components/cart-overlay/cart-overlay.component';
 import { MatSidenav } from '@angular/material/sidenav';
+import { SearchService } from '../../services/search.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -42,6 +44,8 @@ export default class MainComponent implements OnInit, OnDestroy {
   private cajaInfoService = inject(CajaInfoService);
   private cartService = inject(CartService);
   private favoritesService = inject(FavoritesService);
+  private searchService = inject(SearchService);
+  private router = inject(Router);
   private cajaInfoSubscription!: Subscription;
   private cartSubscription!: Subscription;
   private cartToggleSubscription!: Subscription;
@@ -187,12 +191,12 @@ export default class MainComponent implements OnInit, OnDestroy {
 
   // Método para buscar productos
   onSearch() {
-    if (this.searchQuery.trim()) {
-      console.log('Buscando:', this.searchQuery);
-      // TODO: Implementar lógica de búsqueda
-      // this.router.navigate(['/Multillantas/productos'], {
-      //   queryParams: { q: this.searchQuery }
-      // });
+    const term = this.searchQuery.trim();
+
+    this.searchService.emitSearch(term);
+
+    if (!this.router.url.includes('/dashboard')) {
+      this.changeRoute('dashboard');
     }
   }
 
