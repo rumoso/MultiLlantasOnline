@@ -7,6 +7,21 @@ const { generarJWT } = require('../helpers/generar-jwt');
 
 const { dbConnection, dbSPConnection } = require('../database/config');
 
+const repairCartPrices = async (idUser) => {
+    // fromGuestToUser (SP) no copia el precio al fusionar el carrito de invitado
+    // al de usuario, dejando cart_items.precio en NULL (bug de datos, no se
+    // puede corregir el SP porque pertenece a otro definer). Esto lo repara
+    // justo despues de cada fusion para que nunca se vea $0.00 en el carrito.
+    await dbConnection.query(
+        `UPDATE cart_items ci
+         JOIN carts c ON ci.idCart = c.idCart
+         JOIN productos p ON ci.idProducto = p.idProducto
+         SET ci.precio = p.precio
+         WHERE c.idUser = ? AND ci.precio IS NULL`,
+        { replacements: [idUser] }
+    );
+};
+
 const setTokenCookie = (res, token) => {
     res.cookie('token', token, {
         maxAge: 12 * 60 * 60 * 1000, // 12h, igual que expiresIn del JWT
@@ -89,6 +104,7 @@ const login = async (req, res = response) => {
                     await dbConnection.query('CALL fromGuestToUser(?, ?)', {
                         replacements: [user.idUser || user.iduser, currentGuestId]
                     });
+                    await repairCartPrices(user.idUser || user.iduser);
                     console.log('Fusionado correcto.');
                 } catch (e) {
                     console.error('Error ejecutando SP fromGuestToUser:', e);
@@ -128,22 +144,27 @@ const register = async (req, res = response) => {
     const {
         name
         , userName
-        , email
-        , telefono
         , pwd
     } = req.body;
+
+    // El "usuario" es el correo o el numero de celular que la persona
+    // escribio - se guarda tal cual en userName (para poder loguearse
+    // despues) y ademas se clasifica en email/telefono segun su formato.
+    const esCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userName || '');
+    const email = esCorreo ? userName : null;
+    const telefono = esCorreo ? null : userName;
 
     try {
 
         const [existing] = await dbSPConnection.query(
-            'SELECT idUser FROM users WHERE userName = ? OR email = ? LIMIT 1',
-            [userName, email]
+            'SELECT idUser FROM users WHERE userName = ? LIMIT 1',
+            [userName]
         );
 
         if (existing.length > 0) {
             return res.json({
                 status: 1,
-                message: "El usuario o el correo ya están registrados",
+                message: "Ese correo o número de celular ya está registrado",
                 data: null
             });
         }
@@ -181,6 +202,7 @@ const register = async (req, res = response) => {
                     await dbConnection.query('CALL fromGuestToUser(?, ?)', {
                         replacements: [idUser, currentGuestId]
                     });
+                    await repairCartPrices(idUser);
                     console.log('Fusionado correcto.');
                 } catch (e) {
                     console.error('Error ejecutando SP fromGuestToUser:', e);

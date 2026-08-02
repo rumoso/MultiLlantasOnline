@@ -82,6 +82,12 @@
 .btn-back-mobile {
     display: none;
     /* Solo móbiles */
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .main-image-wrapper img {
@@ -311,5 +317,13 @@
 @media (max-width: 900px) {
     .product-grid {
         grid-template-columns: 1fr;
+    }
+
+    .image-column {
+        position: relative;
+    }
+
+    .btn-back-mobile {
+        display: flex;
     }
 }

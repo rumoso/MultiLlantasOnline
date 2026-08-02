@@ -8,42 +8,44 @@
 
         <form class="login-form">
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Nombre</mat-label>
+                <mat-label>Nombre completo</mat-label>
                 <input matInput id="tbxNombre" name="tbxNombre" placeholder="Tu nombre completo"
                     [(ngModel)]="myRegister.name" (keydown.enter)="focusNext('tbxUsuarioReg')">
                 <mat-icon matSuffix>badge</mat-icon>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Usuario</mat-label>
-                <input matInput id="tbxUsuarioReg" name="tbxUsuarioReg" placeholder="Elige un usuario"
-                    [(ngModel)]="myRegister.userName" (keydown.enter)="focusNext('tbxEmailReg')">
+                <mat-label>Usuario o número celular</mat-label>
+                <input matInput id="tbxUsuarioReg" name="tbxUsuarioReg" placeholder="tu@correo.com o 10 dígitos"
+                    [(ngModel)]="myRegister.userName" (keydown.enter)="focusNext('tbxPwdReg')">
                 <mat-icon matSuffix>person</mat-icon>
             </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Correo</mat-label>
-                <input matInput id="tbxEmailReg" name="tbxEmailReg" type="email" placeholder="tu@correo.com"
-                    [(ngModel)]="myRegister.email" (keydown.enter)="focusNext('tbxTelefonoReg')">
-                <mat-icon matSuffix>mail</mat-icon>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Teléfono (opcional)</mat-label>
-                <input matInput id="tbxTelefonoReg" name="tbxTelefonoReg" placeholder="10 dígitos"
-                    [(ngModel)]="myRegister.telefono" (keydown.enter)="focusNext('tbxPwdReg')">
-                <mat-icon matSuffix>phone</mat-icon>
-            </mat-form-field>
+            <p class="campo-error" *ngIf="myRegister.userName && !usuarioEsValido">
+                Ingresa un correo válido o un número de celular a 10 dígitos
+            </p>
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Contraseña</mat-label>
                 <input matInput id="tbxPwdReg" name="tbxPwdReg" [type]="hidePwd ? 'password' : 'text'"
-                    placeholder="Mínimo 6 caracteres" [(ngModel)]="myRegister.pwd" (keydown.enter)="fn_register()">
+                    placeholder="Mínimo 6 caracteres" [(ngModel)]="myRegister.pwd" (keydown.enter)="focusNext('tbxPwdReg2')">
                 <button mat-icon-button matSuffix (click)="hidePwd = !hidePwd" [attr.aria-label]="'Ocultar contraseña'"
                     type="button">
                     <mat-icon>{{hidePwd ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Confirmar contraseña</mat-label>
+                <input matInput id="tbxPwdReg2" name="tbxPwdReg2" [type]="hidePwd2 ? 'password' : 'text'"
+                    placeholder="Repite la contraseña" [(ngModel)]="myRegister.pwd2" (keydown.enter)="fn_register()">
+                <button mat-icon-button matSuffix (click)="hidePwd2 = !hidePwd2" [attr.aria-label]="'Ocultar contraseña'"
+                    type="button">
+                    <mat-icon>{{hidePwd2 ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+            <p class="campo-error" *ngIf="myRegister.pwd2 && !passwordsCoinciden">
+                Las contraseñas no coinciden
+            </p>
 
             <button mat-raised-button color="primary" class="btn-login" (click)="fn_register()"
                 [disabled]="bShowSpinner || !formValido">
@@ -53,6 +55,10 @@
 
             <button mat-button type="button" class="full-width" (click)="irALogin()">
                 ¿Ya tienes cuenta? Inicia sesión
+            </button>
+
+            <button mat-stroked-button type="button" class="full-width btn-cancelar" (click)="cancelar()">
+                No crear cuenta, regresar al catálogo
             </button>
         </form>
     </div>

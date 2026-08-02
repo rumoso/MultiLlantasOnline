@@ -14,8 +14,10 @@ import { FavoritesOverlayComponent } from '../../components/favorites-overlay/fa
 import { CartService } from '../../services/cart.service';
 import { CartOverlayComponent } from '../../components/cart-overlay/cart-overlay.component';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MatDialog } from '@angular/material/dialog';
 import { SearchService } from '../../services/search.service';
 import { Router } from '@angular/router';
+import LoginComponent from '../../../auth/pages/login/login.component';
 
 @Component({
   selector: 'app-main',
@@ -33,6 +35,7 @@ export default class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild('cartSidenav') cartSidenav!: MatSidenav;
   @ViewChild('favoritesSidenav') favoritesSidenav!: MatSidenav;
+  @ViewChild('navSidenav') navSidenav!: MatSidenav;
 
   public isCartOpen: boolean = false;
 
@@ -45,6 +48,7 @@ export default class MainComponent implements OnInit, OnDestroy {
   private cartService = inject(CartService);
   private favoritesService = inject(FavoritesService);
   private searchService = inject(SearchService);
+  private dialog = inject(MatDialog);
   private router = inject(Router);
   private cajaInfoSubscription!: Subscription;
   private cartSubscription!: Subscription;
@@ -166,6 +170,13 @@ export default class MainComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleNavMenu(): void {
+    if (this.navSidenav) {
+      this.showBackdrop = true;
+      setTimeout(() => this.navSidenav.toggle(), 0);
+    }
+  }
+
   animateCart(): void {
     this.cartAnimated = true;
     setTimeout(() => {
@@ -180,8 +191,13 @@ export default class MainComponent implements OnInit, OnDestroy {
       // Si está logueado, ir al perfil (o menú de usuario)
       this.servicesGServ.changeRoute(`/${this.configLocal.sRutaInicial}/usuario`);
     } else {
-      // Si no, ir al login
-      this.servicesGServ.changeRoute('/auth/login');
+      // Iniciar sesión como diálogo: no navega, se queda en la pantalla actual
+      this.dialog.open(LoginComponent, {
+        width: '100%',
+        maxWidth: '420px',
+        panelClass: 'login-dialog-panel',
+        autoFocus: false
+      });
     }
   }
 

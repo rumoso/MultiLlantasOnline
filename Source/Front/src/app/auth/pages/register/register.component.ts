@@ -24,12 +24,13 @@ export default class RegisterComponent {
 
   bShowSpinner: boolean = false;
 
+  hidePwd2: boolean = true;
+
   myRegister: any = {
     name: '',
     userName: '',
-    email: '',
-    telefono: '',
-    pwd: ''
+    pwd: '',
+    pwd2: ''
   };
 
   constructor(private fb: FormBuilder
@@ -57,11 +58,23 @@ export default class RegisterComponent {
     }, 300);
   }
 
+  get usuarioEsValido(): boolean {
+    const valor = (this.myRegister.userName || '').trim();
+    const esCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+    const esCelular = /^\d{7,15}$/.test(valor);
+    return esCorreo || esCelular;
+  }
+
+  get passwordsCoinciden(): boolean {
+    return this.myRegister.pwd.length > 0
+      && this.myRegister.pwd === this.myRegister.pwd2;
+  }
+
   get formValido(): boolean {
     return this.myRegister.name.length > 0
-      && this.myRegister.userName.length > 0
-      && this.myRegister.email.length > 0
-      && this.myRegister.pwd.length >= 6;
+      && this.usuarioEsValido
+      && this.myRegister.pwd.length >= 6
+      && this.passwordsCoinciden;
   }
 
   fn_register() {
@@ -69,7 +82,13 @@ export default class RegisterComponent {
     if (this.formValido) {
       this.bShowSpinner = true;
 
-      this.authServ.CRegister(this.myRegister)
+      const payload = {
+        name: this.myRegister.name,
+        userName: this.myRegister.userName.trim(),
+        pwd: this.myRegister.pwd
+      };
+
+      this.authServ.CRegister(payload)
         .subscribe({
           next: (resp) => {
             if (resp.status === 0) {
@@ -92,6 +111,10 @@ export default class RegisterComponent {
 
   irALogin() {
     this.servicesGServ.changeRoute('/auth/login');
+  }
+
+  cancelar() {
+    this.servicesGServ.changeRoute(`/${this._appMain}/dashboard`);
   }
 
 }

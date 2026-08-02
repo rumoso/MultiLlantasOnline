@@ -16,6 +16,48 @@
     width: 100%;
     max-width: 400px;
     text-align: center;
+    position: relative;
+}
+
+.btn-close-dialog {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+}
+
+.btn-close-dialog:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-close-dialog mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Como dialogo (abierto sobre la pantalla actual, no navega): el dialogo
+   ya centra y limita el tamaño, no hace falta el fondo de pantalla completa */
+:host-context(.login-dialog-panel) .login-container {
+    min-height: auto;
+    padding: 0;
+    background: none;
+}
+
+:host-context(.login-dialog-panel) .login-card {
+    box-shadow: none;
+    max-width: none;
 }
 
 .login-header {

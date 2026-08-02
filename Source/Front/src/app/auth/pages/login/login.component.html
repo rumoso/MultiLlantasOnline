@@ -1,5 +1,9 @@
 <div class="login-container">
     <div class="login-card">
+        <button *ngIf="dialogRef" class="btn-close-dialog" (click)="closeDialog()" type="button" aria-label="Cerrar">
+            <mat-icon>close</mat-icon>
+        </button>
+
         <div class="login-header">
             <mat-icon class="login-icon">tire_repair</mat-icon>
             <h2>Bienvenido</h2>

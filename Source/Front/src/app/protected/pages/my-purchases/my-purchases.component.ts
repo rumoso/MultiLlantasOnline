@@ -24,6 +24,8 @@ import { ServicesGService } from '../../../servicesG/servicesG.service';
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .status-badge {
             padding: 4px 8px;
@@ -31,6 +33,12 @@ import { ServicesGService } from '../../../servicesG/servicesG.service';
             font-size: 0.8rem;
             font-weight: 500;
             color: white;
+            white-space: nowrap;
+        }
+        @media (max-width: 480px) {
+            .order-header {
+                padding: 12px;
+            }
         }
     `]
 })

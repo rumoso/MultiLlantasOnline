@@ -65,3 +65,19 @@
 .btn-login:disabled {
     background-color: #e0e0e0;
 }
+
+.campo-error {
+    margin: -10px 0 0 4px;
+    color: #d32f2f;
+    font-size: 12px;
+    text-align: left;
+}
+
+.btn-cancelar {
+    color: #666;
+    border-color: #ddd;
+}
+
+.btn-cancelar:hover {
+    background-color: #f5f5f5;
+}

@@ -6,6 +6,11 @@
             <img [src]="_IconApp" alt="Logo" class="logo-icon" width="200" height="100" />
         </div>
 
+        <!-- Menú hamburguesa: solo visible en mobile, a la izquierda del buscador -->
+        <button mat-icon-button class="nav-menu-button" (click)="toggleNavMenu()">
+            <mat-icon>menu</mat-icon>
+        </button>
+
         <!-- Buscador -->
         <div class="header-search">
             <mat-form-field appearance="outline" class="search-field">
@@ -86,6 +91,41 @@
 
     <mat-sidenav #cartSidenav mode="over" position="end" class="cart-sidenav">
         <app-cart-overlay (close)="toggleCart()"></app-cart-overlay>
+    </mat-sidenav>
+
+    <mat-sidenav #navSidenav mode="over" position="start" class="nav-menu-sidenav">
+        <div class="nav-menu-header">
+            <h3>Menú</h3>
+            <button mat-icon-button (click)="toggleNavMenu()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <mat-nav-list>
+            <a mat-list-item routerLink="./my-purchases" (click)="toggleNavMenu()">
+                <mat-icon matListItemIcon>shopping_bag</mat-icon>
+                <span matListItemTitle>Mis compras</span>
+            </a>
+            <a mat-list-item (click)="toggleFavorites(); toggleNavMenu()">
+                <mat-icon matListItemIcon>favorite_border</mat-icon>
+                <span matListItemTitle>Favoritos</span>
+            </a>
+            <ng-container *ngIf="userLogin; else navLoginLink">
+                <a mat-list-item routerLink="./perfil" (click)="toggleNavMenu()">
+                    <mat-icon matListItemIcon>settings</mat-icon>
+                    <span matListItemTitle>Mi perfil</span>
+                </a>
+                <a mat-list-item (click)="logout(); toggleNavMenu()">
+                    <mat-icon matListItemIcon color="warn">logout</mat-icon>
+                    <span matListItemTitle>Cerrar sesión</span>
+                </a>
+            </ng-container>
+            <ng-template #navLoginLink>
+                <a mat-list-item (click)="handleUserAction(); toggleNavMenu()">
+                    <mat-icon matListItemIcon>login</mat-icon>
+                    <span matListItemTitle>Iniciar Sesión</span>
+                </a>
+            </ng-template>
+        </mat-nav-list>
     </mat-sidenav>
 
     <mat-sidenav-content>

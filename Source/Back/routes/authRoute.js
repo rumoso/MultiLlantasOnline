@@ -37,8 +37,12 @@ router.post('/login',[
 
 router.post('/register',[
     check('name','El nombre es obligatorio').not().isEmpty(),
-    check('userName','El nombre de usuario es obligatorio').not().isEmpty(),
-    check('email','El correo no es válido').isEmail(),
+    check('userName','Ingresa un correo o número de celular válido').custom((value) => {
+        if (!value) return false;
+        const esCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        const esCelular = /^\d{7,15}$/.test(value);
+        return esCorreo || esCelular;
+    }),
     check('pwd','La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
     validarCampos
 

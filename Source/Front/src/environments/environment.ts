@@ -4,7 +4,7 @@ export const environment = {
   appName: 'Multillantas',
   iconApp: 'img/icons/diprolimIco.webp',
 
-  baseUrl: 'http://127.0.0.1:8080',
+  baseUrl: 'http://127.0.0.1:8090',
 
   nodeBridgeUrl: 'http://127.0.0.1:3000',
 

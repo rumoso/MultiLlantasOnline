@@ -1,6 +1,9 @@
 mat-dialog-content {
-    min-width: 350px;
+    min-width: 0;
+    width: 100%;
+    max-width: 350px;
     max-height: 70vh;
+    box-sizing: border-box;
 }
 
 .list-group-item {
