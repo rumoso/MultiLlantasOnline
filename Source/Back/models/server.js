@@ -72,8 +72,11 @@ class Server {
     routes() {
         // Rutas del E-Commerce
         this.app.use(this.authPath, require('../routes/authRoute'));
-        this.app.use(this.usersPath, require('../routes/usersRoute'));
-        this.app.use(this.rolesPath, require('../routes/rolesRoute'));
+        // usersRoute/rolesRoute deshabilitadas: CRUD de usuarios/roles del
+        // starter compartido con Admin, sin ningun middleware de auth, y no
+        // consumidas por el Front de Online (ver analisis/003-seguridad-online-produccion.md).
+        // this.app.use(this.usersPath, require('../routes/usersRoute'));
+        // this.app.use(this.rolesPath, require('../routes/rolesRoute'));
         this.app.use(this.productosPath, require('../routes/productosRoute'));
         this.app.use(this.cartPath, require('../routes/cartRoute'));
         this.app.use(this.ordersPath, require('../routes/ordersRoute'));
