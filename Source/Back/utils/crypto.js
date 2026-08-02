@@ -1,8 +1,11 @@
 const crypto = require('crypto');
 
-// Clave de 32 caracteres (debería ir en .env)
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || '12345678901234567890123456789012';
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const IV_LENGTH = 16;
+
+if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 32) {
+    throw new Error('ENCRYPTION_KEY no definida en .env o no tiene 32 caracteres (aes-256-cbc requiere una clave de 32 bytes)');
+}
 
 function encrypt(text) {
     if (!text) return null;

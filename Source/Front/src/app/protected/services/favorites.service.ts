@@ -30,10 +30,7 @@ export class FavoritesService {
     }
 
     private getHeaders() {
-        const tokenString = localStorage.getItem('token');
-        const token = tokenString ? JSON.parse(tokenString) : '';
         return {
-            'x-token': token,
             'x-guest-id': this.guestService.getGuestId()
         };
     }

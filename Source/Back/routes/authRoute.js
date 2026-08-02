@@ -1,18 +1,26 @@
 const { Router } = require('express');
 const { check } = require('express-validator')
+const rateLimit = require('express-rate-limit');
 
 const { validarCampos } = require('../middlewares/validar-campos')
+const { validarJWT } = require('../middlewares/validar-jwt');
 const { esRolValido, existeEmail } = require('../helpers/db-validators/user-validator');
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { status: 2, message: 'Demasiados intentos de inicio de sesión. Intenta de nuevo más tarde.' },
+    standardHeaders: true,
+    legacyHeaders: false
+});
 
 const {
 
     login
     , register
+    , logout
     , getMenuByPermissions
     , getActionsPermissionByUser
-
-    , getMenuForPermissions
-    , insertMenusPermisionsByIdRelation
 
 } = require('../controllers/authController');
 
@@ -20,6 +28,7 @@ const {
 const router = Router();
 
 router.post('/login',[
+    loginLimiter,
     check('username','El nombre de usuario es obligatorio').not().isEmpty(),
     check('pwd','La contraseña es obligatoria').not().isEmpty(),
     validarCampos
@@ -35,34 +44,18 @@ router.post('/register',[
 
 ], register );
 
+router.post('/logout', logout);
+
 router.post('/getMenuByPermissions',[
-    check('idUser','Usuario obligatorio').not().isEmpty(),
+    validarJWT,
     validarCampos
 
 ], getMenuByPermissions );
 
 router.post('/getActionsPermissionByUser',[
-    check('idUser','Usuario obligatorio').not().isEmpty(),
+    validarJWT,
     validarCampos
 
 ], getActionsPermissionByUser );
-
-router.post('/getMenuForPermissions', [
-  
-    check('relationType','Id tipo de relación obligatorio').not().isEmpty(),
-    check('idRelation','Id usuario obligatorio').not().isEmpty(),
-    check('idRelation','Id usuario debe ser numérico').isNumeric(),
-  
-    validarCampos
-  ], getMenuForPermissions);
-
-router.post('/insertMenusPermisionsByIdRelation', [
-
-    check('relationType','Id tipo de relación obligatorio').not().isEmpty(),
-    check('idRelation','Id usuario obligatorio').not().isEmpty(),
-    check('idRelation','Id usuario debe ser numérico').isNumeric(),
-
-validarCampos
-], insertMenusPermisionsByIdRelation);
 
 module.exports = router;

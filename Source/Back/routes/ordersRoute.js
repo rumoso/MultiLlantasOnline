@@ -1,15 +1,15 @@
 const { Router } = require('express');
 const { getMyPurchases, getOrderDetails } = require('../controllers/ordersController');
-const { validarJWT, validarJWTOptional } = require('../middlewares/validar-jwt');
+const { validarJWT } = require('../middlewares/validar-jwt');
 
 const router = Router();
 
 router.post('/my-purchases', [
-    validarJWTOptional
+    validarJWT
 ], getMyPurchases);
 
 router.post('/get-details', [
-    validarJWTOptional
+    validarJWT
 ], getOrderDetails);
 
 module.exports = router;

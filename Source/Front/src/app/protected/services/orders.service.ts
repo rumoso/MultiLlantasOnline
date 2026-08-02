@@ -18,26 +18,12 @@ export class OrdersService {
 
     constructor() { }
 
-    private getHeaders() {
-        const tokenString = localStorage.getItem('token');
-        const token = tokenString ? JSON.parse(tokenString) : '';
-        return {
-            'x-token': token
-        };
-    }
-
     getMyPurchases(): Observable<ResponseGet> {
         const idUser = this.authService.getSIdU();
-        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/my-purchases`, { idUser }, {
-            withCredentials: true,
-            headers: this.getHeaders()
-        });
+        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/my-purchases`, { idUser });
     }
 
     getOrderDetails(idOrder: number): Observable<ResponseGet> {
-        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/get-details`, { idOrder }, {
-            withCredentials: true,
-            headers: this.getHeaders()
-        });
+        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/get-details`, { idOrder });
     }
 }

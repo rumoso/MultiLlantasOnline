@@ -2,6 +2,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 
 const { dbConnection } = require('../database/config');
 
@@ -13,8 +14,6 @@ class Server {
 
         // Rutas del E-Commerce de Llantas
         this.authPath = '/api/auth';
-        this.usersPath = '/api/users';
-        this.rolesPath = '/api/roles';
         this.productosPath = '/api/productos';
         this.productosPath = '/api/productos';
         this.cartPath = '/api/cart';
@@ -41,9 +40,19 @@ class Server {
     }
 
     middlewares() {
+        // Cabeceras de seguridad (API pura, sin CSP porque no sirve HTML renderizado)
+        this.app.use(helmet({
+            contentSecurityPolicy: false,
+            crossOriginResourcePolicy: { policy: 'cross-origin' }
+        }));
+
         //CORS
+        const allowedOrigins = process.env.ALLOWED_ORIGINS
+            ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+            : ['http://localhost:4200', 'http://127.0.0.1:4200', 'http://localhost:4201', 'http://127.0.0.1:4201'];
+
         this.app.use(cors({
-            origin: ['http://localhost:4200', 'http://127.0.0.1:4200'], // Permitir origen específico para credenciales
+            origin: allowedOrigins, // Lista explícita (nunca '*'): credentials:true lo exige
             credentials: true, // Permitir envío de cookies
             allowedHeaders: ['Content-Type', 'Authorization', 'x-token', 'x-guest-id'] // Permitir headers personalizados
         }));
@@ -72,11 +81,6 @@ class Server {
     routes() {
         // Rutas del E-Commerce
         this.app.use(this.authPath, require('../routes/authRoute'));
-        // usersRoute/rolesRoute deshabilitadas: CRUD de usuarios/roles del
-        // starter compartido con Admin, sin ningun middleware de auth, y no
-        // consumidas por el Front de Online (ver analisis/003-seguridad-online-produccion.md).
-        // this.app.use(this.usersPath, require('../routes/usersRoute'));
-        // this.app.use(this.rolesPath, require('../routes/rolesRoute'));
         this.app.use(this.productosPath, require('../routes/productosRoute'));
         this.app.use(this.cartPath, require('../routes/cartRoute'));
         this.app.use(this.ordersPath, require('../routes/ordersRoute'));

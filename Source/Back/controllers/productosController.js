@@ -15,11 +15,9 @@ const getProductsPag = async (req, res) => {
     console.log(req.body);
     try {
 
-        var result = await dbConnection.query(`CALL getProductsPag(
-            '${search}'
-            , ${start}
-            , ${limiter}
-            )`);
+        var result = await dbConnection.query('CALL getProductsPag(?, ?, ?)', {
+            replacements: [search, start, limiter]
+        });
         console.log(result);
         const iRows = result.length > 0 ? result[0].iRows : 0;
 

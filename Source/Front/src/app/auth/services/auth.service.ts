@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { ServicesGService } from '../../servicesG/servicesG.service';
 import { Login, ResponseGet } from '../../interfaces/general.interfaces';
 import { firstValueFrom, Observable, of, tap } from 'rxjs';
-import { ResponseDB_CRUD } from '../../protected/interfaces/global.interfaces';
 import { GuestService } from '../../shared/services/guest.service';
 
 @Injectable({
@@ -61,7 +60,9 @@ export class AuthService {
     localStorage.setItem('idUser', JSON.stringify(resp.data.user.idUser));
     localStorage.setItem('sIdU', JSON.stringify(resp.data.user.sIdU));
     localStorage.setItem('user', JSON.stringify(resp.data.user));
-    localStorage.setItem('token', JSON.stringify(resp.data.token));
+    // El JWT ya no se guarda en localStorage: el backend lo entrega en una
+    // cookie httpOnly (ver login/register en authController.js) que viaja
+    // sola gracias a withCredentials (credentials.interceptor.ts).
     localStorage.setItem('idSucursalPrincipal', JSON.stringify(resp.data.user.idSucursalPrincipal));
     localStorage.setItem('countSucursales', JSON.stringify(resp.data.user.countSucursales));
 
@@ -90,9 +91,11 @@ export class AuthService {
 
 
   logout(bRedirect: boolean) {
+    // Best-effort: le pide al backend que borre la cookie httpOnly del JWT.
+    this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/logout`, {}).subscribe();
+
     localStorage.removeItem('user');
     localStorage.removeItem('idUser');
-    localStorage.removeItem('token');
     localStorage.removeItem('idSucursalPrincipal');
     localStorage.removeItem('countSucursales');
     localStorage.removeItem('oActions');
@@ -251,21 +254,6 @@ export class AuthService {
     }
 
     return false;
-  }
-
-  CGetMenuForPermissions(data: any): Observable<ResponseGet> {
-
-    data.idUserLogON = this.getIdUserSession();
-
-    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/getMenuForPermissions`, data);
-
-  }
-
-  CInsertMenusPermisionsByIdRelation(data: any): Observable<ResponseDB_CRUD> {
-
-    data.idUserLogON = this.getIdUserSession();
-
-    return this.http.post<ResponseDB_CRUD>(`${this.baseURL}/${this._api}/insertMenusPermisionsByIdRelation`, data);
   }
 
 }

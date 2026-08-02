@@ -30,14 +30,11 @@ export class CartService {
 
     /**
      * Helper to get headers with guest-id
+     * (el JWT ya no se manda a mano: viaja en la cookie httpOnly via withCredentials)
      */
     private getHeaders() {
-        const tokenString = localStorage.getItem('token');
-        const token = tokenString ? JSON.parse(tokenString) : '';
-
         return {
-            'x-guest-id': this.guestService.getGuestId(),
-            'x-token': token
+            'x-guest-id': this.guestService.getGuestId()
         };
     }
 

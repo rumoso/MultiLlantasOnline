@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const validarJWT = (req = request, res = response, next) => {
 
-    const token = req.header('x-token');
+    const token = req.header('x-token') || req.cookies?.token;
 
     if (!token) {
         return res.status(401).json({
@@ -31,7 +31,7 @@ const validarJWT = (req = request, res = response, next) => {
 
 const validarJWTOptional = (req = request, res = response, next) => {
 
-    const token = req.header('x-token');
+    const token = req.header('x-token') || req.cookies?.token;
 
     if (!token) {
         // No hay token, permitimos el paso (modos invitado)

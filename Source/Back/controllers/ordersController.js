@@ -1,31 +1,12 @@
 const { response } = require('express');
 const { dbConnection } = require('../database/config');
-const { encrypt, decrypt } = require('../utils/crypto');
 
 const getMyPurchases = async (req, res = response) => {
-    const { idUser } = req.body;
-
-    if (!idUser) {
-        return res.status(400).json({
-            status: 2,
-            message: 'El ID de usuario es obligatorio'
-        });
-    }
-
-    let finalIdUser = (idUser && idUser > 0) ? idUser : null;
-
-    if (idUser && isNaN(idUser)) {
-        try {
-            finalIdUser = decrypt(idUser);
-        } catch (e) {
-            console.error('Error decrypting orders idUser', e);
-            finalIdUser = null;
-        }
-    }
+    const idUser = req.uid;
 
     try {
         const results = await dbConnection.query('CALL getMyPurchases(?)', {
-            replacements: [finalIdUser]
+            replacements: [idUser]
         });
 
         // Handle SP return
@@ -53,6 +34,7 @@ const getMyPurchases = async (req, res = response) => {
 
 const getOrderDetails = async (req, res = response) => {
     const { idOrder } = req.body;
+    const idUser = req.uid;
 
     if (!idOrder) {
         return res.status(400).json({
@@ -62,6 +44,19 @@ const getOrderDetails = async (req, res = response) => {
     }
 
     try {
+        const [ownerRows] = await dbConnection.query(
+            'SELECT idUser FROM orders WHERE idOrder = ? LIMIT 1',
+            { replacements: [idOrder] }
+        );
+
+        if (ownerRows.length === 0 || ownerRows[0].idUser != idUser) {
+            return res.status(404).json({
+                status: 2,
+                message: 'Orden no encontrada',
+                data: null
+            });
+        }
+
         const results = await dbConnection.query('CALL getOrderDetails(?)', {
             replacements: [idOrder]
         });
