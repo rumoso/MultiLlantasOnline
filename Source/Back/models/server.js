@@ -47,12 +47,24 @@ class Server {
         }));
 
         //CORS
+        const isProd = process.env.NODE_ENV === 'production';
         const allowedOrigins = process.env.ALLOWED_ORIGINS
             ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
-            : ['http://localhost:4200', 'http://127.0.0.1:4200', 'http://localhost:4201', 'http://127.0.0.1:4201'];
+            : null;
+
+        const corsOrigin = isProd
+            ? (allowedOrigins || []) // producción: exige ALLOWED_ORIGINS explícito, nunca '*'
+            : (origin, callback) => {
+                // desarrollo: cualquier puerto de localhost/127.0.0.1 (ng serve cambia de puerto seguido),
+                // o lo que diga ALLOWED_ORIGINS si está definido
+                if (!origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin) || (allowedOrigins && allowedOrigins.includes(origin))) {
+                    return callback(null, true);
+                }
+                callback(new Error('Origen no permitido por CORS'));
+            };
 
         this.app.use(cors({
-            origin: allowedOrigins, // Lista explícita (nunca '*'): credentials:true lo exige
+            origin: corsOrigin, // Lista explícita (nunca '*'): credentials:true lo exige
             credentials: true, // Permitir envío de cookies
             allowedHeaders: ['Content-Type', 'Authorization', 'x-token', 'x-guest-id'] // Permitir headers personalizados
         }));
