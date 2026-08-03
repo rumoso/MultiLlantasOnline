@@ -188,8 +188,8 @@ export default class MainComponent implements OnInit, OnDestroy {
 
   handleUserAction() {
     if (this.userLogin) {
-      // Si está logueado, ir al perfil (o menú de usuario)
-      this.servicesGServ.changeRoute(`/${this.configLocal.sRutaInicial}/usuario`);
+      // Si está logueado, ir al perfil
+      this.servicesGServ.changeRoute(`/${this._appMain}/perfil`);
     } else {
       // Iniciar sesión como diálogo: no navega, se queda en la pantalla actual
       this.dialog.open(LoginComponent, {

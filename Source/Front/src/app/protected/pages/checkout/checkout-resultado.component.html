@@ -1,0 +1,59 @@
+<div class="resultado-container">
+    <div *ngIf="loading" class="loading-wrapper">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <mat-card class="resultado-card" *ngIf="!loading">
+
+        <!-- Sin referencia de orden -->
+        <div *ngIf="!orden" class="estado-bloque">
+            <mat-icon class="icono neutro">help_outline</mat-icon>
+            <h2>No encontramos tu pedido</h2>
+            <p>No pudimos identificar la orden. Revisa tus compras para ver su estado.</p>
+        </div>
+
+        <!-- Aprobado -->
+        <div *ngIf="orden && esAprobado" class="estado-bloque">
+            <mat-icon class="icono exito">check_circle</mat-icon>
+            <h2>¡Pago confirmado!</h2>
+            <p>Tu orden <strong>#{{ orden.idOrder }}</strong> quedó pagada por
+                <strong>{{ orden.total | currency:'MXN' }}</strong>.</p>
+            <p class="detalle" *ngIf="orden.metodoEntrega === 'RETIRO'">
+                Te avisaremos cuando esté lista para recoger en tienda.
+            </p>
+            <p class="detalle" *ngIf="orden.metodoEntrega === 'ENVIO'">
+                Prepararemos tu envío en breve.
+            </p>
+        </div>
+
+        <!-- Pendiente (tipico de OXXO) -->
+        <div *ngIf="orden && esPendiente" class="estado-bloque">
+            <mat-icon class="icono pendiente">schedule</mat-icon>
+            <h2>Tu pago está pendiente</h2>
+            <p>Tu orden <strong>#{{ orden.idOrder }}</strong> por
+                <strong>{{ orden.total | currency:'MXN' }}</strong> quedó registrada,
+                pero aún no recibimos el pago.</p>
+            <p class="detalle">
+                Si elegiste pagar en efectivo, tu pedido se confirmará automáticamente
+                cuando realices el pago. <strong>No necesitas comprar de nuevo.</strong>
+            </p>
+        </div>
+
+        <!-- Fallido -->
+        <div *ngIf="orden && esFallido" class="estado-bloque">
+            <mat-icon class="icono error">cancel</mat-icon>
+            <h2>No se pudo completar el pago</h2>
+            <p>Tu orden <strong>#{{ orden.idOrder }}</strong> quedó como
+                <strong>{{ orden.statusPago }}</strong>.</p>
+            <p class="detalle">
+                Tus productos siguen en el carrito. Puedes intentar de nuevo con otro
+                método de pago.
+            </p>
+        </div>
+
+        <div class="acciones">
+            <button mat-stroked-button (click)="irAlCatalogo()">Seguir comprando</button>
+            <button mat-raised-button color="primary" (click)="irAMisCompras()">Ver mis compras</button>
+        </div>
+    </mat-card>
+</div>

@@ -19,6 +19,8 @@ class Server {
         this.cartPath = '/api/cart';
         this.ordersPath = '/api/orders';
         this.favoritesPath = '/api/favorites';
+        this.accountPath = '/api/account';
+        this.checkoutPath = '/api/checkout';
 
         //CONEXION A LA BASE DE DATOS
         this.dbConnection();
@@ -97,6 +99,8 @@ class Server {
         this.app.use(this.cartPath, require('../routes/cartRoute'));
         this.app.use(this.ordersPath, require('../routes/ordersRoute'));
         this.app.use(this.favoritesPath, require('../routes/favoritesRoute'));
+        this.app.use(this.accountPath, require('../routes/accountRoute'));
+        this.app.use(this.checkoutPath, require('../routes/checkoutRoute'));
     }
 
     listen() {

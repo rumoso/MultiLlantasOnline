@@ -1,0 +1,68 @@
+.resultado-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 16px;
+}
+
+.loading-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 60px 0;
+}
+
+.resultado-card {
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.estado-bloque .icono {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 12px;
+}
+
+.icono.exito {
+    color: #00a650;
+}
+
+.icono.pendiente {
+    color: #f59e0b;
+}
+
+.icono.error {
+    color: #c62828;
+}
+
+.icono.neutro {
+    color: #bbb;
+}
+
+.estado-bloque h2 {
+    margin: 0 0 12px 0;
+    color: #333;
+}
+
+.estado-bloque p {
+    color: #555;
+    margin: 0 0 8px 0;
+}
+
+.estado-bloque .detalle {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.acciones {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .acciones {
+        flex-direction: column;
+    }
+}

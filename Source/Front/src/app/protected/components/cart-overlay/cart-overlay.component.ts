@@ -86,27 +86,9 @@ export class CartOverlayComponent implements OnInit {
             return;
         }
 
-        if (!confirm('¿Estás seguro de procesar la compra?')) return;
-
-        this.loading = true;
-        this.cartService.processPurchase().subscribe({
-            next: (resp) => {
-                this.loading = false;
-                if (resp.status === 0) {
-                    this.servicesGServ.showAlert('S', 'Éxito', 'Compra procesada correctamente');
-                    this.cartService.openCart();
-                    this.closeCart();
-                    this.servicesGServ.changeRoute(`/${this._appMain}/my-purchases`);
-                } else {
-                    this.servicesGServ.showAlert('E', 'Error', resp.message || 'Error al procesar la compra');
-                }
-            },
-            error: (err) => {
-                this.loading = false;
-                console.error(err);
-                this.servicesGServ.showAlert('E', 'Error', 'Ocurrió un error al procesar la compra');
-            }
-        });
+        // La compra ya no se procesa aqui: se va a la pantalla de checkout.
+        this.closeCart();
+        this.servicesGServ.changeRoute(`/${this._appMain}/checkout`);
     }
 
     goToFullCart(): void {

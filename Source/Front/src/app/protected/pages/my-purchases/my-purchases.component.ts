@@ -35,6 +35,24 @@ import { ServicesGService } from '../../../servicesG/servicesG.service';
             color: white;
             white-space: nowrap;
         }
+        .aviso-pendiente {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            background: #fff8e1;
+            color: #8d6e00;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            line-height: 1.35;
+        }
+        .aviso-pendiente mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
         @media (max-width: 480px) {
             .order-header {
                 padding: 12px;

@@ -35,6 +35,15 @@
                 </div>
             </div>
             <mat-card-content class="p-3">
+                <!-- Aviso de pago pendiente: tipico de OXXO, donde el cliente paga
+                     dias despues. Sin esto la gente cree que no compro y paga dos veces. -->
+                <div class="aviso-pendiente" *ngIf="order.statusPago === 'Pendiente'">
+                    <mat-icon>schedule</mat-icon>
+                    <span>
+                        Estamos esperando tu pago. Si elegiste pagar en efectivo, tu pedido
+                        se confirmará solo al pagarlo. <strong>No compres de nuevo.</strong>
+                    </span>
+                </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="mb-1"><strong>Total:</strong> {{ order.total | currency:'MXN' }}</p>

@@ -1,0 +1,165 @@
+.perfil-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+.titulo-pagina {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #003366;
+    margin-bottom: 20px;
+}
+
+.loading-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 60px 0;
+}
+
+.seccion-card {
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.seccion-card h3 {
+    margin: 0 0 16px 0;
+    color: #003366;
+}
+
+.seccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.seccion-header h3 {
+    margin: 0;
+}
+
+.seccion-subtitulo {
+    color: #666;
+    margin: -8px 0 16px 0;
+    font-size: 14px;
+}
+
+.campos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px 16px;
+}
+
+.campo-error {
+    margin: -8px 0 12px 4px;
+    color: #d32f2f;
+    font-size: 12px;
+}
+
+.estado-vacio {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.estado-vacio mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+}
+
+.address-form {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.address-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid #e6e6e6;
+    box-shadow: none;
+}
+
+.address-item.principal {
+    border-color: #00b4d8;
+    background: #f0fbfd;
+}
+
+.address-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.badge-principal {
+    display: inline-block;
+    background: #00b4d8;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.address-calle {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.address-detalle {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.address-entrecalles {
+    margin: 4px 0 0 0;
+    color: #999;
+    font-size: 13px;
+}
+
+.address-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+@media (max-width: 576px) {
+    .campos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .address-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .address-actions {
+        justify-content: flex-end;
+    }
+}

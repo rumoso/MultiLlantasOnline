@@ -84,15 +84,10 @@
     </mat-menu>
 </header>
 
-<mat-sidenav-container class="main-sidenav-container" [hasBackdrop]="showBackdrop">
-    <mat-sidenav #favoritesSidenav mode="over" position="start" class="favorites-sidenav">
-        <app-favorites-overlay (close)="toggleFavorites()"></app-favorites-overlay>
-    </mat-sidenav>
-
-    <mat-sidenav #cartSidenav mode="over" position="end" class="cart-sidenav">
-        <app-cart-overlay (close)="toggleCart()"></app-cart-overlay>
-    </mat-sidenav>
-
+<!-- Contenedor exterior solo para el menu lateral (hamburguesa) - va aparte
+     porque Angular Material no permite dos drawers con position="start"
+     en el mismo mat-sidenav-container (el de favoritos ya usa "start"). -->
+<mat-sidenav-container class="nav-menu-outer-container" [hasBackdrop]="true">
     <mat-sidenav #navSidenav mode="over" position="start" class="nav-menu-sidenav">
         <div class="nav-menu-header">
             <h3>Menú</h3>
@@ -129,8 +124,20 @@
     </mat-sidenav>
 
     <mat-sidenav-content>
-        <div class="container" style="margin-bottom: 50px;">
-            <router-outlet />
-        </div>
+        <mat-sidenav-container class="main-sidenav-container" [hasBackdrop]="showBackdrop">
+            <mat-sidenav #favoritesSidenav mode="over" position="start" class="favorites-sidenav">
+                <app-favorites-overlay (close)="toggleFavorites()"></app-favorites-overlay>
+            </mat-sidenav>
+
+            <mat-sidenav #cartSidenav mode="over" position="end" class="cart-sidenav">
+                <app-cart-overlay (close)="toggleCart()"></app-cart-overlay>
+            </mat-sidenav>
+
+            <mat-sidenav-content>
+                <div class="container" style="margin-bottom: 50px;">
+                    <router-outlet />
+                </div>
+            </mat-sidenav-content>
+        </mat-sidenav-container>
     </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,0 +1,186 @@
+<div class="perfil-container">
+    <h2 class="titulo-pagina">
+        <mat-icon>account_circle</mat-icon>
+        Mi cuenta
+    </h2>
+
+    <div *ngIf="loading" class="loading-wrapper">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading">
+
+        <!-- Datos personales -->
+        <mat-card class="seccion-card">
+            <h3>Datos personales</h3>
+
+            <div class="campos-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Nombre completo</mat-label>
+                    <input matInput [(ngModel)]="myAccount.name">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Usuario</mat-label>
+                    <input matInput [ngModel]="myAccount.userName" disabled readonly>
+                    <mat-icon matSuffix matTooltip="El usuario con el que inicias sesión no se puede cambiar aquí">lock</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Correo</mat-label>
+                    <input matInput type="email" [(ngModel)]="myAccount.email" placeholder="tu@correo.com">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Teléfono</mat-label>
+                    <input matInput [(ngModel)]="myAccount.telefono" placeholder="10 dígitos">
+                </mat-form-field>
+            </div>
+
+            <button mat-raised-button color="primary" (click)="guardarDatosPersonales()"
+                [disabled]="bGuardandoDatos || !myAccount.name">
+                <span *ngIf="!bGuardandoDatos">Guardar cambios</span>
+                <mat-spinner diameter="18" *ngIf="bGuardandoDatos"></mat-spinner>
+            </button>
+        </mat-card>
+
+        <!-- Direcciones -->
+        <mat-card class="seccion-card">
+            <div class="seccion-header">
+                <h3>Direcciones</h3>
+                <button mat-stroked-button color="primary" (click)="abrirNuevaDireccion()" *ngIf="!showAddressForm">
+                    <mat-icon>add</mat-icon> Agregar dirección
+                </button>
+            </div>
+
+            <!-- Formulario agregar/editar -->
+            <div class="address-form" *ngIf="showAddressForm">
+                <div class="campos-grid">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Código postal</mat-label>
+                        <input matInput [(ngModel)]="addressForm.codigoPostal">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Calle</mat-label>
+                        <input matInput [(ngModel)]="addressForm.calle">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Número exterior</mat-label>
+                        <input matInput [(ngModel)]="addressForm.numExt">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Número interior (opcional)</mat-label>
+                        <input matInput [(ngModel)]="addressForm.numInt">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Entre calles (opcional)</mat-label>
+                        <input matInput [(ngModel)]="addressForm.entreCalles">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Colonia o localidad</mat-label>
+                        <input matInput [(ngModel)]="addressForm.colonia">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ciudad</mat-label>
+                        <input matInput [(ngModel)]="addressForm.ciudad">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Municipio</mat-label>
+                        <input matInput [(ngModel)]="addressForm.municipio">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Estado</mat-label>
+                        <input matInput [(ngModel)]="addressForm.estado">
+                    </mat-form-field>
+                </div>
+
+                <mat-checkbox [(ngModel)]="addressForm.bPrincipal">Usar como dirección principal</mat-checkbox>
+
+                <div class="form-actions">
+                    <button mat-button type="button" (click)="cancelarFormularioDireccion()">Cancelar</button>
+                    <button mat-raised-button color="primary" (click)="guardarDireccion()"
+                        [disabled]="!direccionFormValida">
+                        {{ editingAddressId ? 'Guardar cambios' : 'Agregar dirección' }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estado vacío -->
+            <div class="estado-vacio" *ngIf="!loadingAddresses && addresses.length === 0 && !showAddressForm">
+                <mat-icon>location_off</mat-icon>
+                <p>Aún no tienes direcciones guardadas.</p>
+            </div>
+
+            <!-- Lista de direcciones -->
+            <div class="address-list" *ngIf="!showAddressForm">
+                <mat-card class="address-item" *ngFor="let dir of addresses" [class.principal]="dir.bPrincipal">
+                    <div class="address-info">
+                        <span class="badge-principal" *ngIf="dir.bPrincipal">Principal</span>
+                        <p class="address-calle">{{ dir.calle }} {{ dir.numExt }}<span *ngIf="dir.numInt">, Int. {{ dir.numInt }}</span></p>
+                        <p class="address-detalle">{{ dir.colonia }}, {{ dir.ciudad }}, {{ dir.municipio }}, {{ dir.estado }} — CP {{ dir.codigoPostal }}</p>
+                        <p class="address-entrecalles" *ngIf="dir.entreCalles">Entre calles: {{ dir.entreCalles }}</p>
+                    </div>
+                    <div class="address-actions">
+                        <button mat-button *ngIf="!dir.bPrincipal" (click)="marcarPrincipal(dir)">Marcar principal</button>
+                        <button mat-icon-button (click)="editarDireccion(dir)" aria-label="Editar">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="eliminarDireccion(dir)" aria-label="Eliminar">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-card>
+            </div>
+        </mat-card>
+
+        <!-- Seguridad -->
+        <mat-card class="seccion-card">
+            <h3>Seguridad</h3>
+            <p class="seccion-subtitulo">Cambiar contraseña</p>
+
+            <div class="campos-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Contraseña actual</mat-label>
+                    <input matInput [type]="hidePwdActual ? 'password' : 'text'" [(ngModel)]="myPasswords.pwdActual">
+                    <button mat-icon-button matSuffix type="button" (click)="hidePwdActual = !hidePwdActual">
+                        <mat-icon>{{ hidePwdActual ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Contraseña nueva</mat-label>
+                    <input matInput [type]="hidePwdNueva ? 'password' : 'text'" [(ngModel)]="myPasswords.pwdNueva">
+                    <button mat-icon-button matSuffix type="button" (click)="hidePwdNueva = !hidePwdNueva">
+                        <mat-icon>{{ hidePwdNueva ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Confirmar contraseña nueva</mat-label>
+                    <input matInput [type]="hidePwdNueva2 ? 'password' : 'text'" [(ngModel)]="myPasswords.pwdNueva2">
+                    <button mat-icon-button matSuffix type="button" (click)="hidePwdNueva2 = !hidePwdNueva2">
+                        <mat-icon>{{ hidePwdNueva2 ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <p class="campo-error" *ngIf="myPasswords.pwdNueva2 && !passwordsNuevasCoinciden">
+                Las contraseñas nuevas no coinciden
+            </p>
+
+            <button mat-raised-button color="primary" (click)="cambiarPassword()"
+                [disabled]="bGuardandoPassword || !passwordFormValido">
+                <span *ngIf="!bGuardandoPassword">Cambiar contraseña</span>
+                <mat-spinner diameter="18" *ngIf="bGuardandoPassword"></mat-spinner>
+            </button>
+        </mat-card>
+
+    </div>
+</div>

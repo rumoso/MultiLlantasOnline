@@ -1,0 +1,127 @@
+<div class="checkout-container">
+    <h2 class="titulo-pagina">Finaliza tu compra</h2>
+
+    <div *ngIf="loading && !resumen" class="loading-wrapper">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div class="checkout-grid" *ngIf="resumen && !resumen.vacio">
+
+        <!-- ============ Columna izquierda ============ -->
+        <div class="col-izquierda">
+
+            <!-- Productos -->
+            <mat-card class="bloque">
+                <h3>Productos</h3>
+                <div class="producto-linea" *ngFor="let it of resumen.items">
+                    <div class="producto-info">
+                        <span class="producto-nombre">{{ it.nombre }}</span>
+                        <span class="producto-cant">{{ it.cantidad }} x {{ it.precio | currency:'MXN' }}</span>
+                    </div>
+                    <span class="producto-sub">{{ it.subtotal | currency:'MXN' }}</span>
+                </div>
+
+                <p class="aviso-stock" *ngIf="!resumen.hayStockSuficiente">
+                    <mat-icon>error_outline</mat-icon>
+                    Algunos productos ya no tienen existencia suficiente. Ajusta tu carrito para continuar.
+                </p>
+            </mat-card>
+
+            <!-- Forma de entrega -->
+            <mat-card class="bloque">
+                <h3>Forma de entrega</h3>
+
+                <div class="entrega-opciones">
+                    <button type="button" class="entrega-btn" [class.activa]="metodoEntrega === ENVIO"
+                        (click)="cambiarMetodo(ENVIO)">
+                        <mat-icon>local_shipping</mat-icon>
+                        <span>Envío</span>
+                    </button>
+                    <button type="button" class="entrega-btn" [class.activa]="metodoEntrega === RETIRO"
+                        (click)="cambiarMetodo(RETIRO)">
+                        <mat-icon>store</mat-icon>
+                        <span>Retiro en tienda</span>
+                    </button>
+                </div>
+
+                <!-- ENVIO: direcciones -->
+                <div *ngIf="metodoEntrega === ENVIO">
+                    <div class="sin-direcciones" *ngIf="direcciones.length === 0">
+                        <p>Aún no tienes direcciones guardadas.</p>
+                        <button mat-stroked-button color="primary" (click)="irAMisDirecciones()">
+                            Agregar una dirección
+                        </button>
+                    </div>
+
+                    <div class="direccion-opcion" *ngFor="let d of direcciones"
+                        [class.seleccionada]="d.idAddress === idAddressSel" (click)="cambiarDireccion(d.idAddress)">
+                        <mat-icon>{{ d.idAddress === idAddressSel ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+                        <div class="direccion-texto">
+                            <span class="dir-calle">{{ d.calle }} {{ d.numExt }}<span *ngIf="d.numInt">, Int. {{ d.numInt }}</span></span>
+                            <span class="dir-detalle">{{ d.colonia }}, {{ d.ciudad }}, {{ d.estado }} — CP {{ d.codigoPostal }}</span>
+                        </div>
+                        <span class="badge-principal" *ngIf="d.bPrincipal">Principal</span>
+                    </div>
+
+                    <p class="aviso-envio" *ngIf="idAddressSel && !resumen.envioDisponible">
+                        <mat-icon>info_outline</mat-icon>
+                        {{ resumen.motivoEnvio }}
+                    </p>
+                </div>
+
+                <!-- RETIRO: sucursales -->
+                <div *ngIf="metodoEntrega === RETIRO">
+                    <div class="direccion-opcion" *ngFor="let s of sucursales"
+                        [class.seleccionada]="s.idSucursal === idSucursalSel" (click)="idSucursalSel = s.idSucursal">
+                        <mat-icon>{{ s.idSucursal === idSucursalSel ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+                        <div class="direccion-texto">
+                            <span class="dir-calle">{{ s.nombre }}</span>
+                            <span class="dir-detalle">{{ s.direccion }}</span>
+                            <span class="dir-horario" *ngIf="s.horario">{{ s.horario }}</span>
+                        </div>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+
+        <!-- ============ Columna derecha: resumen ============ -->
+        <div class="col-derecha">
+            <mat-card class="resumen-card">
+                <h3>Resumen de compra</h3>
+
+                <div class="resumen-linea">
+                    <span>Productos</span>
+                    <span>{{ resumen.subtotal | currency:'MXN' }}</span>
+                </div>
+                <div class="resumen-linea">
+                    <span>Envío</span>
+                    <span *ngIf="metodoEntrega === RETIRO" class="gratis">Gratis</span>
+                    <span *ngIf="metodoEntrega === ENVIO && resumen.envioDisponible">
+                        {{ resumen.costoEnvio | currency:'MXN' }}
+                    </span>
+                    <span *ngIf="metodoEntrega === ENVIO && !resumen.envioDisponible" class="no-disp">
+                        No disponible
+                    </span>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="resumen-total">
+                    <span>Total</span>
+                    <span>{{ resumen.total | currency:'MXN' }}</span>
+                </div>
+
+                <button mat-raised-button color="primary" class="btn-pagar" (click)="pagar()"
+                    [disabled]="!puedePagar">
+                    <span *ngIf="!procesando">Pagar y finalizar</span>
+                    <mat-spinner diameter="20" *ngIf="procesando"></mat-spinner>
+                </button>
+
+                <p class="nota-pago">
+                    <mat-icon>lock</mat-icon>
+                    El pago se realiza en Mercado Pago. Tus datos de tarjeta no pasan por este sitio.
+                </p>
+            </mat-card>
+        </div>
+    </div>
+</div>

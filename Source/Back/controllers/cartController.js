@@ -180,55 +180,13 @@ const removeFromCart = async (req, res = response) => {
     }
 };
 
-const processPurchase = async (req, res = response) => {
-    const { idUser } = req.body;
-
-    if (!idUser) {
-        return res.status(400).json({
-            status: 2,
-            message: 'El usuario es requerido para procesar la compra'
-        });
-    }
-
-    let finalIdUser = idUser;
-    if (idUser && isNaN(idUser)) {
-        try {
-            finalIdUser = decrypt(idUser);
-        } catch (e) { console.error('Error decrypting processPurchase idUser', e); }
-    }
-
-    try {
-        const results = await dbConnection.query('CALL processPurchase(?)', {
-            replacements: [finalIdUser]
-        });
-
-        let resultData = {};
-
-        if (Array.isArray(results) && results.length > 0) {
-            resultData = results[0];
-        } else if (results && results[0] && Array.isArray(results[0])) {
-            resultData = results[0][0]; // For stored procedure returning select
-        }
-
-        res.json({
-            status: 0,
-            message: 'Compra procesada exitosamente',
-            data: resultData
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            status: 2,
-            message: 'Error al procesar la compra',
-            data: error.message
-        });
-    }
-};
+// processPurchase se retiro: marcaba la orden como PAGADA sin cobrar nada y
+// confiaba en el idUser del body. El cobro real vive ahora en
+// checkoutController.js (crearOrden + webhook de Mercado Pago).
 
 module.exports = {
     getCart,
     addToCart,
     updateQuantity,
-    removeFromCart,
-    processPurchase
+    removeFromCart
 };

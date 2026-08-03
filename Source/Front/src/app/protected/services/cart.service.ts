@@ -106,22 +106,6 @@ export class CartService {
         );
     }
 
-    processPurchase(): Observable<ResponseGet> {
-        const idUser = this.authService.getSIdU();
-        return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/process`, { idUser }, {
-            withCredentials: true,
-            headers: this.getHeaders()
-        }).pipe(
-            tap(resp => {
-                if (resp.status === 0) {
-                    this.clearLocalCart();
-                    // Opcional: Recargar el carrito (debería estar vacío)
-                    this.getCart().subscribe();
-                }
-            })
-        );
-    }
-
     /**
      * Limpia el estado local del carrito
      */
