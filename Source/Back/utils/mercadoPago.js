@@ -184,6 +184,23 @@ const crearPreferencia = async ({ idOrder, items, total, costoEnvio = 0, emailCo
 
     const creada = await preference.create({ body });
 
+    // Mercado Pago DESCARTA EN SILENCIO las back_urls que apuntan a
+    // localhost: las guarda como cadena vacia sin avisar. El efecto es que
+    // el comprador se queda atrapado en el sitio de MP porque no hay a donde
+    // volver (y el pago puede fallar al final). Como no da error, hay que
+    // detectarlo aqui o se descubre mucho despues y de la peor manera.
+    const urlsGuardadas = creada.back_urls || {};
+    if (successUrl && !urlsGuardadas.success) {
+        console.warn(
+            '[mercadoPago] AVISO: Mercado Pago descarto las URLs de retorno.\n' +
+            `  Se enviaron: ${successUrl}\n` +
+            '  MP no acepta localhost/127.0.0.1 como back_url. El comprador no\n' +
+            '  podra regresar al sitio y el pago puede fallar al finalizar.\n' +
+            '  Para probar en local: exponer el Front con un tunel publico y\n' +
+            '  apuntar MP_SUCCESS_URL/FAILURE/PENDING a esa URL.'
+        );
+    }
+
     // Red de seguridad: lo que Mercado Pago va a cobrar debe coincidir con el
     // total calculado por el servidor. Si no cuadra, es preferible fallar aqui
     // que cobrarle al cliente un importe distinto al que acepto.
