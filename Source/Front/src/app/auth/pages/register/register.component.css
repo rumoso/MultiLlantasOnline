@@ -1,53 +1,55 @@
+/* ===================================================================
+   REGISTRO — sistema de diseño (--ml-*)
+   =================================================================== */
+
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    /* Fondo sutíl y profesional */
-    padding: 20px;
+    background: linear-gradient(135deg, var(--ml-gray-50) 0%, var(--ml-primary-100) 100%);
+    padding: var(--ml-space-5);
 }
 
 .login-card {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    background: var(--ml-bg-surface);
+    padding: var(--ml-space-10);
+    border-radius: var(--ml-radius-lg);
+    box-shadow: var(--ml-shadow-md);
     width: 100%;
     max-width: 400px;
     text-align: center;
 }
 
 .login-header {
-    margin-bottom: 30px;
+    margin-bottom: var(--ml-space-8);
 }
 
 .login-icon {
     font-size: 48px;
     width: 48px;
     height: 48px;
-    color: #d32f2f;
-    /* Rojo llantas */
-    margin-bottom: 10px;
+    color: var(--ml-primary-500);
+    margin-bottom: var(--ml-space-2);
 }
 
 .login-header h2 {
     margin: 0;
-    color: #333;
-    font-size: 24px;
-    font-weight: 600;
+    color: var(--ml-text-primary);
+    font-size: var(--ml-fs-xl);
+    font-weight: var(--ml-fw-bold);
 }
 
 .login-header p {
-    color: #666;
-    margin-top: 5px;
-    font-size: 14px;
+    color: var(--ml-text-secondary);
+    margin-top: var(--ml-space-1);
+    font-size: var(--ml-fs-sm);
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: var(--ml-space-3);
 }
 
 .full-width {
@@ -55,29 +57,34 @@
 }
 
 .btn-login {
-    margin-top: 10px;
+    margin-top: var(--ml-space-2);
     height: 48px;
-    font-size: 16px;
-    background-color: #d32f2f;
-    color: white;
+    font-size: var(--ml-fs-md);
+    font-weight: var(--ml-fw-bold);
+    background-color: var(--ml-primary-500);
+    color: var(--ml-text-on-primary);
+}
+
+.btn-login:hover:not(:disabled) {
+    background-color: var(--ml-primary-600);
 }
 
 .btn-login:disabled {
-    background-color: #e0e0e0;
+    background-color: var(--ml-gray-300);
 }
 
 .campo-error {
-    margin: -10px 0 0 4px;
-    color: #d32f2f;
-    font-size: 12px;
+    margin: calc(-1 * var(--ml-space-2)) 0 0 var(--ml-space-1);
+    color: var(--ml-danger);
+    font-size: var(--ml-fs-xs);
     text-align: left;
 }
 
 .btn-cancelar {
-    color: #666;
-    border-color: #ddd;
+    color: var(--ml-text-secondary);
+    border-color: var(--ml-border-strong);
 }
 
 .btn-cancelar:hover {
-    background-color: #f5f5f5;
+    background-color: var(--ml-bg-subtle);
 }
