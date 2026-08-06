@@ -1,55 +1,54 @@
-<div class="row p-4">
-    <div class="col-12 mb-4">
-        <h2><mat-icon>favorite</mat-icon> Mis Favoritos</h2>
-        <p class="text-muted">Gestiona tu lista de productos deseados</p>
+<div class="favorites-page">
+
+    <div class="fav-header">
+        <h1 class="fav-title"><mat-icon>favorite</mat-icon> Mis favoritos</h1>
+        <span class="fav-count" *ngIf="!loading && favorites.length > 0">
+            {{ favorites.length }} {{ favorites.length === 1 ? 'producto' : 'productos' }}
+        </span>
     </div>
 
-    <div class="col-12" *ngIf="loading">
+    <div class="loading-bar" *ngIf="loading">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
 
-    <div class="col-12" *ngIf="!loading && favorites.length === 0">
-        <div class="text-center p-5 bg-light rounded">
-            <mat-icon style="font-size: 64px; height: 64px; width: 64px;"
-                class="text-muted mb-3">favorite_border</mat-icon>
-            <h3>No tienes favoritos aún</h3>
-            <p>Guarda los productos que más te gusten para verlos aquí.</p>
-            <button mat-raised-button color="primary" class="mt-3" (click)="goToCatalog()">
-                Explorar Catálogo
-            </button>
+    <!-- Vacío -->
+    <div class="empty-state" *ngIf="!loading && favorites.length === 0">
+        <div class="empty-icon-circle">
+            <mat-icon>favorite_border</mat-icon>
         </div>
+        <h2>No tienes favoritos aún</h2>
+        <p>Guarda las llantas que más te gusten para verlas aquí.</p>
+        <button class="btn-catalogo" (click)="goToCatalog()">Explorar catálogo</button>
     </div>
 
-    <div class="col-12" *ngIf="!loading && favorites.length > 0">
-        <div class="row">
-            <div class="col-12 col-md-6 col-lg-4 mb-4" *ngFor="let item of favorites">
-                <mat-card class="h-100 product-card">
-                    <div class="product-image-container">
-                        <img [src]="item.imagen_url || 'assets/img/default-tire.png'" [alt]="item.nombre"
-                            (error)="$any($event.target).src='assets/img/default-tire.png'">
-                        <button mat-icon-button class="remover-btn" (click)="removeFavorite(item)"
-                            matTooltip="Eliminar de favoritos">
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    </div>
+    <!-- Lista -->
+    <div class="fav-grid" *ngIf="!loading && favorites.length > 0">
+        <div class="fav-item" *ngFor="let item of favorites">
+            <div class="item-image">
+                <img [src]="item.imagen_url || 'assets/img/default-tire.png'" [alt]="item.nombre"
+                    (error)="$any($event.target).src='assets/img/default-tire.png'">
+            </div>
 
-                    <mat-card-content class="p-3">
-                        <span class="badge-marca mb-2">{{ item.marca }}</span>
-                        <h3 class="product-title">{{ item.nombre }}</h3>
-                        <p class="product-model text-muted">{{ item.modelo }}</p>
+            <div class="item-info">
+                <div class="item-top">
+                    <h3 class="item-name">{{ item.nombre }}</h3>
+                    <button class="item-remove" (click)="removeFavorite(item)" aria-label="Quitar de favoritos">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
 
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span class="product-price">{{ item.precio | currency:'MXN' }}</span>
-                        </div>
-                    </mat-card-content>
+                <span class="item-medida" *ngIf="medida(item)">{{ medida(item) }}</span>
+                <p class="item-model" *ngIf="item.modelo">{{ item.modelo }}</p>
 
-                    <mat-card-actions class="p-3 pt-0">
-                        <button mat-raised-button color="primary" class="w-100" (click)="addToCart(item)">
-                            <mat-icon>shopping_cart</mat-icon> Agregar al Carrito
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
+                <div class="item-controls">
+                    <span class="item-price">{{ item.precio | currency:'MXN' }}</span>
+                    <button class="btn-add" (click)="addToCart(item)">
+                        <mat-icon>add_shopping_cart</mat-icon>
+                        <span>Agregar</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+
 </div>

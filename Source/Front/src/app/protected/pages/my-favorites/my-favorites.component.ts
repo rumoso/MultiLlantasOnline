@@ -30,6 +30,15 @@ export default class MyFavoritesComponent implements OnInit {
         });
     }
 
+    /** Medida (ej. "205/55 R16"): de los campos del producto o del nombre. */
+    medida(item: any): string | null {
+        if (item?.ancho && item?.perfil && item?.rin) {
+            return `${item.ancho}/${item.perfil} R${item.rin}`;
+        }
+        const m = (item?.nombre || '').match(/(\d{3})\s*\/\s*(\d{2})\s*R\s*(\d{2})/i);
+        return m ? `${m[1]}/${m[2]} R${m[3]}` : null;
+    }
+
     removeFavorite(product: any) {
         this.favoritesService.toggleFavorite(product);
         this.servicesGServ.showSnakbar('Eliminado de favoritos', undefined, 2000);
