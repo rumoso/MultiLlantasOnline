@@ -47,6 +47,19 @@ export default class DashboardComponent {
     pageSizeOptions: [12, 24, 36, 48]
   };
 
+  // Filtros del catalogo
+  // El SP getProductsPag ya busca dentro de un texto que concatena
+  // nombre/marca/modelo/descripcion/ancho/perfil/rin, asi que tanto el
+  // buscador por medida como el filtro por marca se resuelven armando un
+  // termino de busqueda y reutilizando el mismo endpoint (sin backend extra).
+  medidas: { anchos: any[]; perfiles: any[]; rines: any[] } = { anchos: [], perfiles: [], rines: [] };
+  marcas: string[] = [];
+  filtroAncho: string | null = null;
+  filtroPerfil: string | null = null;
+  filtroRin: string | null = null;
+  filtroMarca: string | null = null;
+  textoBusqueda: string = '';   // termino que llega del buscador del header
+
   constructor(
     private servicesGServ: ServicesGService
     , private authServ: AuthService
@@ -64,14 +77,96 @@ export default class DashboardComponent {
     this.validacionesCompletas = true;
     this.cdr.detectChanges();
 
-    // Cargar productos
+    // Cargar catalogo + opciones de filtros
     this.loadProductos();
+    this.loadMedidas();
+    this.loadMarcas();
 
     // Reaccionar a búsquedas emitidas desde el buscador del header (skip(1)
     // para no repetir la carga inicial con el valor por defecto del BehaviorSubject)
     this.searchService.search$.pipe(skip(1)).subscribe(term => {
-      this.onSearchProducts(term);
+      this.textoBusqueda = term || '';
+      this.aplicarFiltros();
     });
+  }
+
+  loadMedidas(): void {
+    this.productosService.getMedidas().subscribe({
+      next: (resp: any) => {
+        if (resp?.ok && resp.data) {
+          this.medidas = {
+            anchos: resp.data.anchos || [],
+            perfiles: resp.data.perfiles || [],
+            rines: resp.data.rines || []
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => console.error('Error al cargar medidas:', err)
+    });
+  }
+
+  loadMarcas(): void {
+    this.productosService.getMarcas().subscribe({
+      next: (resp: any) => {
+        if (resp?.ok && resp.data) {
+          this.marcas = resp.data.map((m: any) => m.marca).filter((m: any) => !!m);
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => console.error('Error al cargar marcas:', err)
+    });
+  }
+
+  /**
+   * Arma el termino de busqueda combinando texto libre + medida + marca.
+   * Cada token calza contra el texto concatenado que arma el SP.
+   */
+  private construirBusqueda(): string {
+    const tokens: string[] = [];
+    if (this.textoBusqueda && this.textoBusqueda.trim()) {
+      tokens.push(this.textoBusqueda.trim());
+    }
+    if (this.filtroAncho && this.filtroPerfil) {
+      tokens.push(`${this.filtroAncho}/${this.filtroPerfil}`);
+    } else {
+      if (this.filtroAncho) tokens.push(this.filtroAncho);
+      if (this.filtroPerfil) tokens.push(this.filtroPerfil);
+    }
+    if (this.filtroRin) tokens.push(`R${this.filtroRin}`);
+    if (this.filtroMarca) tokens.push(this.filtroMarca);
+    return tokens.join(' ');
+  }
+
+  aplicarFiltros(): void {
+    this.pagination.search = this.construirBusqueda();
+    this.pagination.pageIndex = 0;
+    this.loadProductos();
+  }
+
+  seleccionarMarca(marca: string): void {
+    this.filtroMarca = this.filtroMarca === marca ? null : marca;
+    this.aplicarFiltros();
+  }
+
+  get hayFiltrosActivos(): boolean {
+    return !!(this.filtroAncho || this.filtroPerfil || this.filtroRin || this.filtroMarca);
+  }
+
+  limpiarFiltros(): void {
+    this.filtroAncho = null;
+    this.filtroPerfil = null;
+    this.filtroRin = null;
+    this.filtroMarca = null;
+    this.aplicarFiltros();
+  }
+
+  onPageChange(event: any): void {
+    this.pagination.pageIndex = event.pageIndex;
+    this.pagination.pageSize = event.pageSize;
+    this.loadProductos();
+    // Al cambiar de pagina, subir al inicio del catalogo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   loadProductos(): void {

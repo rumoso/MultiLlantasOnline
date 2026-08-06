@@ -66,6 +66,13 @@ export class ProductosService {
     return this.http.get<ResponseGet>(`${this.baseURL}/${this._api}/getMarcas`);
   }
 
+  /**
+   * Obtiene las medidas distintas (ancho/perfil/rin) para el buscador por medida
+   */
+  getMedidas(): Observable<any> {
+    return this.http.get<any>(`${this.baseURL}/${this._api}/getMedidas`);
+  }
+
   agregarAlCarrito(data: any): Observable<ResponseGet> {
     return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/agregarAlCarrito`, data);
   }

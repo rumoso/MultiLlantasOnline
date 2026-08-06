@@ -18,10 +18,18 @@ body {
 }
 
 /* La clase .mat-typography de Material fija Roboto con mas especificidad
-   que el selector `body`; se iguala aqui para que gane la fuente del sistema. */
+   que el selector `body`; se iguala aqui para que gane la fuente del sistema.
+   Material tambien fija Roboto en los encabezados (.mat-typography h1..h6) con
+   un selector compuesto que le gana a la herencia, por eso se replican aqui. */
 body,
 body.mat-typography,
-.mat-typography {
+.mat-typography,
+.mat-typography h1,
+.mat-typography h2,
+.mat-typography h3,
+.mat-typography h4,
+.mat-typography h5,
+.mat-typography h6 {
   font-family: var(--ml-font-sans);
 }
 

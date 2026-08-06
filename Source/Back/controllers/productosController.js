@@ -220,6 +220,47 @@ const getMarcas = async (req, res = response_express.response) => {
     }
 };
 
+/**
+ * Obtiene las medidas distintas disponibles (ancho / perfil / rin) para
+ * poblar el buscador por medida del catalogo. Solo lectura, sin parametros.
+ */
+const getMedidas = async (req, res = response_express.response) => {
+    try {
+        const [anchos] = await dbSPConnection.query(
+            `SELECT DISTINCT ancho FROM productos
+             WHERE activo = 1 AND ancho IS NOT NULL AND ancho <> ''
+             ORDER BY CAST(ancho AS UNSIGNED) ASC`
+        );
+        const [perfiles] = await dbSPConnection.query(
+            `SELECT DISTINCT perfil FROM productos
+             WHERE activo = 1 AND perfil IS NOT NULL AND perfil <> ''
+             ORDER BY CAST(perfil AS UNSIGNED) ASC`
+        );
+        const [rines] = await dbSPConnection.query(
+            `SELECT DISTINCT rin FROM productos
+             WHERE activo = 1 AND rin IS NOT NULL AND rin <> ''
+             ORDER BY CAST(rin AS UNSIGNED) ASC`
+        );
+
+        return res.status(200).json({
+            ok: true,
+            msg: 'Medidas obtenidas correctamente',
+            data: {
+                anchos: anchos.map(r => r.ancho),
+                perfiles: perfiles.map(r => r.perfil),
+                rines: rines.map(r => r.rin)
+            }
+        });
+    } catch (error) {
+        console.error('Error en getMedidas:', error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error al obtener medidas',
+            error: error.message
+        });
+    }
+};
+
 const agregarAlCarrito = async (req, res) => {
 
     // si no funciona cambialo a Var
@@ -295,5 +336,6 @@ module.exports = {
     getProductById,
     getProductsByMarca,
     getMarcas,
+    getMedidas,
     agregarAlCarrito
 };

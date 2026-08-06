@@ -8,6 +8,7 @@ const {
     getProductById,
     getProductsByMarca,
     getMarcas,
+    getMedidas,
     agregarAlCarrito,
 } = require('../controllers/productosController');
 
@@ -58,5 +59,11 @@ router.post('/agregarAlCarrito', [
 
 
 router.get('/getMarcas', getMarcas);
+
+/**
+ * Obtener medidas distintas (ancho/perfil/rin) para el buscador por medida
+ * GET /api/productos/getMedidas
+ */
+router.get('/getMedidas', getMedidas);
 
 module.exports = router;
