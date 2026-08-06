@@ -1,0 +1,109 @@
+/* ============================================================================
+   MULTILLANTAS — SISTEMA DE DISEÑO (design tokens)
+   Fuente unica de verdad para colores, espaciado, tipografia, radios y sombras.
+   Los componentes deben referenciar estas variables (var(--ml-...)), NUNCA
+   colores sueltos hardcodeados. Cambiar el look del sitio se hace aqui.
+   ============================================================================ */
+
+:root {
+    /* ---- Marca / primario (azul automotriz, confiable) ---- */
+    --ml-primary-50:  #eaf1f9;
+    --ml-primary-100: #c7dbf0;
+    --ml-primary-200: #9dbfe4;
+    --ml-primary-300: #6b9ed5;
+    --ml-primary-400: #3d7cc2;
+    --ml-primary-500: #1f5fa5;   /* principal — botones, header */
+    --ml-primary-600: #184e8a;   /* hover */
+    --ml-primary-700: #133d6d;
+    --ml-primary-800: #0d2c4f;
+    --ml-primary-900: #081d35;   /* header oscuro / textos sobre claro */
+
+    /* ---- Acento (cyan, para detalles y realces, no dominante) ---- */
+    --ml-accent-50:  #e0f7fb;
+    --ml-accent-100: #b3ecf5;
+    --ml-accent-400: #29c3dd;
+    --ml-accent-500: #00b4d8;
+    --ml-accent-600: #0093b3;
+
+    /* ---- Neutros (texto, bordes, superficies) ---- */
+    --ml-white:      #ffffff;
+    --ml-gray-50:    #f8fafc;
+    --ml-gray-100:   #f1f5f9;
+    --ml-gray-200:   #e6ecf3;
+    --ml-gray-300:   #cbd5e1;
+    --ml-gray-400:   #94a3b8;
+    --ml-gray-500:   #64748b;
+    --ml-gray-600:   #475569;
+    --ml-gray-700:   #334155;
+    --ml-gray-800:   #1e293b;
+    --ml-gray-900:   #0f1b2d;
+
+    /* ---- Semanticos (SOLO para estados, no decorativos) ---- */
+    --ml-success:     #16a34a;
+    --ml-success-bg:  #dcfce7;
+    --ml-success-fg:  #15803d;
+    --ml-warning:     #f59e0b;
+    --ml-warning-bg:  #fef3c7;
+    --ml-warning-fg:  #b45309;
+    --ml-danger:      #ef4444;
+    --ml-danger-bg:   #fee2e2;
+    --ml-danger-fg:   #b91c1c;
+    --ml-info:        #6366f1;
+    --ml-info-bg:     #e0e7ff;
+    --ml-info-fg:     #4338ca;
+
+    /* ---- Roles semanticos de superficie/texto (usar estos en componentes) ---- */
+    --ml-bg-page:        var(--ml-gray-50);   /* fondo general de la app */
+    --ml-bg-surface:     var(--ml-white);     /* tarjetas, paneles */
+    --ml-bg-subtle:      var(--ml-gray-100);  /* zonas resaltadas suaves */
+    --ml-text-primary:   var(--ml-gray-900);
+    --ml-text-secondary: var(--ml-gray-500);
+    --ml-text-muted:     var(--ml-gray-400);
+    --ml-text-on-primary: var(--ml-white);    /* texto sobre el color primario */
+    --ml-border:         var(--ml-gray-200);
+    --ml-border-strong:  var(--ml-gray-300);
+
+    /* ---- Precio (verde de conversion, consistente en todo el sitio) ---- */
+    --ml-price: #00a54f;
+
+    /* ---- Tipografia ---- */
+    --ml-font-sans: 'Inter', 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --ml-fs-xs:   0.75rem;   /* 12 */
+    --ml-fs-sm:   0.85rem;   /* 13.6 */
+    --ml-fs-base: 0.95rem;   /* 15.2 */
+    --ml-fs-md:   1.05rem;
+    --ml-fs-lg:   1.25rem;
+    --ml-fs-xl:   1.6rem;
+    --ml-fs-2xl:  2rem;
+    --ml-fw-regular: 400;
+    --ml-fw-medium:  500;
+    --ml-fw-bold:    600;
+
+    /* ---- Espaciado (escala consistente) ---- */
+    --ml-space-1: 4px;
+    --ml-space-2: 8px;
+    --ml-space-3: 12px;
+    --ml-space-4: 16px;
+    --ml-space-5: 20px;
+    --ml-space-6: 24px;
+    --ml-space-8: 32px;
+    --ml-space-10: 40px;
+
+    /* ---- Radios ---- */
+    --ml-radius-sm: 6px;
+    --ml-radius:    10px;   /* controles, botones */
+    --ml-radius-lg: 14px;   /* tarjetas */
+    --ml-radius-pill: 999px;
+
+    /* ---- Sombras (suaves, planas, nada de neon) ---- */
+    --ml-shadow-sm: 0 1px 2px rgba(15, 27, 45, 0.05);
+    --ml-shadow:    0 2px 8px rgba(15, 27, 45, 0.06);
+    --ml-shadow-md: 0 8px 24px rgba(15, 27, 45, 0.09);
+
+    /* ---- Transiciones ---- */
+    --ml-transition: 0.2s ease;
+
+    /* ---- Layout ---- */
+    --ml-container: 1200px;
+    --ml-header-h: 64px;
+}
