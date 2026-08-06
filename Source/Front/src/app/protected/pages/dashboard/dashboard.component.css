@@ -172,8 +172,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    max-height: 132px;
-    overflow-y: auto;
 }
 
 .tag {
@@ -205,6 +203,22 @@
     font-size: var(--ml-fs-xs);
     color: var(--ml-text-muted);
     font-style: italic;
+}
+
+.ver-mas {
+    margin-top: var(--ml-space-2);
+    padding: 2px 0;
+    border: none;
+    background: transparent;
+    color: var(--ml-primary-600);
+    font-family: var(--ml-font-sans);
+    font-size: var(--ml-fs-xs);
+    font-weight: var(--ml-fw-bold);
+    cursor: pointer;
+}
+
+.ver-mas:hover {
+    text-decoration: underline;
 }
 
 /* ---------- Contenido ---------- */

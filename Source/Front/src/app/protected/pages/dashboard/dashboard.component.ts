@@ -64,8 +64,13 @@ export default class DashboardComponent {
   textoFiltroAncho: string = '';
   textoFiltroPerfil: string = '';
   textoFiltroRin: string = '';
-  textoFiltroMarca: string = '';
   mostrarFiltrosMobile: boolean = false;   // panel de filtros en mobile
+
+  // Cada grupo muestra pocas opciones y un "ver mas" para desplegar el resto
+  limiteTags: number = 4;
+  expandidoAncho: boolean = false;
+  expandidoPerfil: boolean = false;
+  expandidoRin: boolean = false;
 
   constructor(
     private servicesGServ: ServicesGService
@@ -181,7 +186,6 @@ export default class DashboardComponent {
   get anchosFiltrados(): any[] { return this.filtrarOpciones(this.medidas.anchos, this.textoFiltroAncho); }
   get perfilesFiltrados(): any[] { return this.filtrarOpciones(this.medidas.perfiles, this.textoFiltroPerfil); }
   get rinesFiltrados(): any[] { return this.filtrarOpciones(this.medidas.rines, this.textoFiltroRin); }
-  get marcasFiltradas(): string[] { return this.filtrarOpciones(this.marcas, this.textoFiltroMarca); }
 
   get hayFiltrosActivos(): boolean {
     return !!(this.filtroAncho || this.filtroPerfil || this.filtroRin || this.filtroMarca);
@@ -195,7 +199,6 @@ export default class DashboardComponent {
     this.textoFiltroAncho = '';
     this.textoFiltroPerfil = '';
     this.textoFiltroRin = '';
-    this.textoFiltroMarca = '';
     this.aplicarFiltros();
   }
 

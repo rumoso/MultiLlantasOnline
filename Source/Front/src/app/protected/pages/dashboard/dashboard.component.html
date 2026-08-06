@@ -38,10 +38,15 @@
                     <input type="text" [(ngModel)]="textoFiltroAncho" placeholder="Filtrar ancho…" />
                 </div>
                 <div class="tags">
-                    <button class="tag" *ngFor="let a of anchosFiltrados" [class.active]="filtroAncho === a"
-                        (click)="toggleAncho(a)">{{ a }}</button>
+                    <button class="tag"
+                        *ngFor="let a of (anchosFiltrados | slice:0:(expandidoAncho ? anchosFiltrados.length : limiteTags))"
+                        [class.active]="filtroAncho === a" (click)="toggleAncho(a)">{{ a }}</button>
                     <span class="tags-vacio" *ngIf="anchosFiltrados.length === 0">Sin coincidencias</span>
                 </div>
+                <button class="ver-mas" *ngIf="anchosFiltrados.length > limiteTags"
+                    (click)="expandidoAncho = !expandidoAncho">
+                    {{ expandidoAncho ? 'Ver menos' : 'Ver más (' + (anchosFiltrados.length - limiteTags) + ')' }}
+                </button>
             </div>
 
             <!-- Grupo: Perfil -->
@@ -55,10 +60,15 @@
                     <input type="text" [(ngModel)]="textoFiltroPerfil" placeholder="Filtrar perfil…" />
                 </div>
                 <div class="tags">
-                    <button class="tag" *ngFor="let p of perfilesFiltrados" [class.active]="filtroPerfil === p"
-                        (click)="togglePerfil(p)">{{ p }}</button>
+                    <button class="tag"
+                        *ngFor="let p of (perfilesFiltrados | slice:0:(expandidoPerfil ? perfilesFiltrados.length : limiteTags))"
+                        [class.active]="filtroPerfil === p" (click)="togglePerfil(p)">{{ p }}</button>
                     <span class="tags-vacio" *ngIf="perfilesFiltrados.length === 0">Sin coincidencias</span>
                 </div>
+                <button class="ver-mas" *ngIf="perfilesFiltrados.length > limiteTags"
+                    (click)="expandidoPerfil = !expandidoPerfil">
+                    {{ expandidoPerfil ? 'Ver menos' : 'Ver más (' + (perfilesFiltrados.length - limiteTags) + ')' }}
+                </button>
             </div>
 
             <!-- Grupo: Rin -->
@@ -72,27 +82,15 @@
                     <input type="text" [(ngModel)]="textoFiltroRin" placeholder="Filtrar rin…" />
                 </div>
                 <div class="tags">
-                    <button class="tag" *ngFor="let r of rinesFiltrados" [class.active]="filtroRin === r"
-                        (click)="toggleRin(r)">R{{ r }}</button>
+                    <button class="tag"
+                        *ngFor="let r of (rinesFiltrados | slice:0:(expandidoRin ? rinesFiltrados.length : limiteTags))"
+                        [class.active]="filtroRin === r" (click)="toggleRin(r)">R{{ r }}</button>
                     <span class="tags-vacio" *ngIf="rinesFiltrados.length === 0">Sin coincidencias</span>
                 </div>
-            </div>
-
-            <!-- Grupo: Marca -->
-            <div class="filtro-grupo" *ngIf="marcas.length > 0">
-                <div class="grupo-head">
-                    <span class="grupo-title">Marca</span>
-                    <span class="grupo-sel" *ngIf="filtroMarca">{{ filtroMarca }}</span>
-                </div>
-                <div class="mini-filtro">
-                    <mat-icon>search</mat-icon>
-                    <input type="text" [(ngModel)]="textoFiltroMarca" placeholder="Filtrar marca…" />
-                </div>
-                <div class="tags">
-                    <button class="tag" *ngFor="let m of marcasFiltradas" [class.active]="filtroMarca === m"
-                        (click)="seleccionarMarca(m)">{{ m }}</button>
-                    <span class="tags-vacio" *ngIf="marcasFiltradas.length === 0">Sin coincidencias</span>
-                </div>
+                <button class="ver-mas" *ngIf="rinesFiltrados.length > limiteTags"
+                    (click)="expandidoRin = !expandidoRin">
+                    {{ expandidoRin ? 'Ver menos' : 'Ver más (' + (rinesFiltrados.length - limiteTags) + ')' }}
+                </button>
             </div>
         </aside>
 
