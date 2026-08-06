@@ -8,12 +8,12 @@
 }
 
 .catalogo-layout {
-    max-width: var(--ml-container);
-    margin: 0 auto;
+    max-width: none;         /* ocupa todo el ancho de la pantalla */
+    margin: 0;
     display: flex;
     align-items: flex-start;
     gap: var(--ml-space-5);
-    padding: var(--ml-space-5) var(--ml-space-4) var(--ml-space-10);
+    padding: var(--ml-space-5) var(--ml-space-6) var(--ml-space-10);
 }
 
 /* ---------- Barra mobile (abre filtros) ---------- */
