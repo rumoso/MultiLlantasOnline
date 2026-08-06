@@ -130,7 +130,6 @@ export default class CheckoutComponent implements OnInit {
     get puedePagar(): boolean {
         if (!this.resumen || this.resumen.vacio) return false;
         if (this.procesando) return false;
-        if (!this.resumen.hayStockSuficiente) return false;
         if (this.metodoEntrega === METODO_ENVIO) {
             return !!this.idAddressSel && this.resumen.envioDisponible;
         }

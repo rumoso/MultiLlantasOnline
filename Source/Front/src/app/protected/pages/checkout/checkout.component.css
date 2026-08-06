@@ -74,7 +74,6 @@
     white-space: nowrap;
 }
 
-.aviso-stock,
 .aviso-envio {
     display: flex;
     align-items: center;
@@ -83,14 +82,6 @@
     padding: 10px 12px;
     border-radius: 6px;
     font-size: 0.88rem;
-}
-
-.aviso-stock {
-    background: #fdecea;
-    color: #c62828;
-}
-
-.aviso-envio {
     background: #fff8e1;
     color: #8d6e00;
 }

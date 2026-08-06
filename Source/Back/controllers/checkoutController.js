@@ -56,11 +56,12 @@ const buscarTarifaEnvio = async (codigoPostal, transaction = null) => {
  * que sea imposible que muestren numeros distintos a los que se cobran.
  */
 const calcularResumen = async ({ idUser, metodoEntrega, idAddress, transaction = null }) => {
-    // 1. Items del carrito, con el precio y stock ACTUALES de productos
-    //    (cart_items.precio esta congelado desde que se agrego y puede estar viejo).
+    // 1. Items del carrito, con el precio ACTUAL de productos (cart_items.precio
+    //    esta congelado desde que se agrego y puede estar viejo). NO se maneja
+    //    stock: la disponibilidad la controla el proveedor, no esta tienda.
     const [items] = await dbConnection.query(
         `SELECT ci.idProducto, ci.cantidad,
-                p.nombre, p.precio AS precioActual, p.stock, p.activo
+                p.nombre, p.precio AS precioActual, p.activo
          FROM cart_items ci
          INNER JOIN carts c ON ci.idCart = c.idCart
          INNER JOIN productos p ON ci.idProducto = p.idProducto
@@ -79,9 +80,7 @@ const calcularResumen = async ({ idUser, metodoEntrega, idAddress, transaction =
         cantidad: Number(it.cantidad),
         precio: Number(it.precioActual),
         subtotal: Number((Number(it.precioActual) * Number(it.cantidad)).toFixed(2)),
-        stockDisponible: Number(it.stock),
-        activo: !!it.activo,
-        suficienteStock: Number(it.stock) >= Number(it.cantidad)
+        activo: !!it.activo
     }));
 
     const subtotal = Number(itemsCalculados.reduce((acc, it) => acc + it.subtotal, 0).toFixed(2));
@@ -132,7 +131,9 @@ const calcularResumen = async ({ idUser, metodoEntrega, idAddress, transaction =
         direccion,
         envioDisponible,
         motivoEnvio,
-        hayStockSuficiente: itemsCalculados.every(it => it.suficienteStock && it.activo)
+        // Se sigue validando que los productos esten ACTIVOS (a la venta),
+        // pero no que haya existencia: el stock lo maneja el proveedor.
+        productosValidos: itemsCalculados.every(it => it.activo)
     };
 };
 
@@ -213,12 +214,12 @@ const crearOrden = async (req, res = response) => {
             return res.json({ status: 1, message: 'Tu carrito esta vacio', data: null });
         }
 
-        if (!resumen.hayStockSuficiente) {
+        if (!resumen.productosValidos) {
             await tran.rollback();
-            const sinStock = resumen.items.filter(it => !it.suficienteStock || !it.activo).map(it => it.nombre);
+            const noDisponibles = resumen.items.filter(it => !it.activo).map(it => it.nombre);
             return res.json({
                 status: 1,
-                message: `Ya no hay existencia suficiente de: ${sinStock.join(', ')}`,
+                message: `Estos productos ya no estan disponibles: ${noDisponibles.join(', ')}`,
                 data: null
             });
         }
@@ -340,33 +341,10 @@ const crearOrden = async (req, res = response) => {
 // ---------------------------------------------------------------------------
 
 /**
- * Aplica los efectos de un pago aprobado: descuenta stock y vacia el carrito.
- * El descuento es ATOMICO: dos compras simultaneas del ultimo articulo no
- * pueden dejar el stock negativo (analisis 006, criterio 19).
- *
- * Si ya no hay existencia, NO se puede "rechazar" un pago ya cobrado: la orden
- * queda pagada pero marcada para revision manual (criterio 22 / T22).
+ * Aplica los efectos de un pago aprobado: vacia el carrito del usuario.
+ * NO se descuenta stock: la existencia la maneja el proveedor, no esta tienda.
  */
-const aplicarEfectosPagoAprobado = async ({ idOrder, idUser, transaction }) => {
-    const [detalles] = await dbConnection.query(
-        'SELECT idProducto, cantidad FROM order_details WHERE idOrder = ?',
-        { replacements: [idOrder], transaction }
-    );
-
-    const faltantes = [];
-
-    for (const d of detalles) {
-        const [, meta] = await dbConnection.query(
-            `UPDATE productos SET stock = stock - ?
-             WHERE idProducto = ? AND stock >= ?`,
-            { replacements: [d.cantidad, d.idProducto, d.cantidad], transaction }
-        );
-        const afectadas = meta && meta.affectedRows !== undefined ? meta.affectedRows : meta;
-        if (!afectadas) {
-            faltantes.push(d.idProducto);
-        }
-    }
-
+const aplicarEfectosPagoAprobado = async ({ idUser, transaction }) => {
     // El carrito se vacia solo cuando el pago quedo confirmado.
     await dbConnection.query(
         `DELETE ci FROM cart_items ci
@@ -374,8 +352,6 @@ const aplicarEfectosPagoAprobado = async ({ idOrder, idUser, transaction }) => {
          WHERE c.idUser = ?`,
         { replacements: [idUser], transaction }
     );
-
-    return { faltantes };
 };
 
 const webhookMercadoPago = async (req, res = response) => {
@@ -518,32 +494,14 @@ const webhookMercadoPago = async (req, res = response) => {
                 );
             }
 
-            // --- T20: efectos SOLO al pasar a aprobado, y solo una vez ---
+            // --- Efectos SOLO al pasar a aprobado, y solo una vez ---
+            // (vaciar el carrito). No se toca stock: lo maneja el proveedor.
             const yaEstabaAprobado = orden.codigoPagoActual === STATUS_PAGO.APROBADO;
             if (mapeo.pago === STATUS_PAGO.APROBADO && !yaEstabaAprobado) {
-                const { faltantes } = await aplicarEfectosPagoAprobado({
-                    idOrder,
+                await aplicarEfectosPagoAprobado({
                     idUser: orden.idUser,
                     transaction: tran
                 });
-
-                // --- T22: el dinero ya se cobro y no hay existencia ---
-                if (faltantes.length > 0) {
-                    await dbConnection.query(
-                        `UPDATE order_payments
-                         SET revisionManual = 1,
-                             notaRevision = ?
-                         WHERE paymentId = ?`,
-                        {
-                            replacements: [
-                                `Pago aprobado pero sin existencia suficiente de los productos: ${faltantes.join(', ')}. Requiere contactar al cliente.`,
-                                String(dataId)
-                            ],
-                            transaction: tran
-                        }
-                    );
-                    console.error(`ATENCION: orden ${idOrder} pagada sin stock suficiente. Productos: ${faltantes.join(', ')}`);
-                }
             }
 
             // charged_back siempre requiere que la tienda se entere (criterio 13).

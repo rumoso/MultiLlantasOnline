@@ -40,9 +40,6 @@
 
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <span class="product-price">{{ item.precio | currency:'MXN' }}</span>
-                            <span class="stock-badge" [class.low-stock]="item.stock < 5">
-                                {{ item.stock }} disp.
-                            </span>
                         </div>
                     </mat-card-content>
 

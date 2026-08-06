@@ -21,10 +21,6 @@
                     <span class="producto-sub">{{ it.subtotal | currency:'MXN' }}</span>
                 </div>
 
-                <p class="aviso-stock" *ngIf="!resumen.hayStockSuficiente">
-                    <mat-icon>error_outline</mat-icon>
-                    Algunos productos ya no tienen existencia suficiente. Ajusta tu carrito para continuar.
-                </p>
             </mat-card>
 
             <!-- Forma de entrega -->
