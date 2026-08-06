@@ -7,10 +7,10 @@
     min-height: 100%;
 }
 
-/* ---------- Hero + buscador por medida ---------- */
+/* ---------- Hero + buscador por medida (banda compacta) ---------- */
 .hero {
     background: linear-gradient(135deg, var(--ml-primary-800) 0%, var(--ml-primary-600) 100%);
-    padding: var(--ml-space-8) var(--ml-space-4) var(--ml-space-10);
+    padding: var(--ml-space-4);
     position: relative;
 }
 
@@ -18,68 +18,73 @@
     max-width: var(--ml-container);
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
-    gap: var(--ml-space-6);
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ml-space-5);
+    flex-wrap: wrap;
 }
 
 .hero-copy {
     color: var(--ml-text-on-primary);
+    flex: 1 1 200px;
+    min-width: 0;
 }
 
 .hero-title {
     margin: 0;
-    font-size: var(--ml-fs-2xl);
+    font-size: var(--ml-fs-lg);
     font-weight: var(--ml-fw-bold);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
 }
 
 .hero-sub {
-    margin: var(--ml-space-2) 0 0;
-    font-size: var(--ml-fs-md);
+    margin: 2px 0 0;
+    font-size: var(--ml-fs-sm);
     color: var(--ml-accent-100);
     font-weight: var(--ml-fw-regular);
 }
 
-/* Tarjeta del buscador por medida */
+/* Tarjeta del buscador por medida — compacta, en la misma fila */
 .finder {
     background: var(--ml-bg-surface);
-    border-radius: var(--ml-radius-lg);
-    padding: var(--ml-space-5);
+    border-radius: var(--ml-radius);
+    padding: var(--ml-space-3) var(--ml-space-4);
     box-shadow: var(--ml-shadow-md);
-    max-width: 720px;
+    flex: 0 1 auto;
 }
 
 .finder-title {
     display: flex;
     align-items: center;
-    gap: var(--ml-space-2);
-    font-weight: var(--ml-fw-bold);
-    font-size: var(--ml-fs-base);
-    color: var(--ml-text-primary);
-    margin-bottom: var(--ml-space-4);
+    gap: 6px;
+    font-weight: var(--ml-fw-medium);
+    font-size: var(--ml-fs-xs);
+    color: var(--ml-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
 }
 
 .finder-title mat-icon {
     color: var(--ml-primary-500);
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
 }
 
 .finder-fields {
     display: flex;
     align-items: flex-end;
-    gap: var(--ml-space-3);
+    gap: var(--ml-space-2);
     flex-wrap: wrap;
 }
 
 .finder-field {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    flex: 1;
-    min-width: 90px;
+    gap: 3px;
+    min-width: 84px;
 }
 
 .finder-field label {
@@ -94,7 +99,7 @@
     appearance: none;
     -webkit-appearance: none;
     width: 100%;
-    padding: 10px 12px;
+    padding: 8px 28px 8px 10px;
     border: 1.5px solid var(--ml-border-strong);
     border-radius: var(--ml-radius);
     background: var(--ml-bg-surface) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 8px center;
@@ -127,7 +132,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 11px 22px;
+    padding: 9px 18px;
     border: none;
     border-radius: var(--ml-radius);
     background: var(--ml-primary-500);
@@ -526,12 +531,8 @@
 
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
-    .hero {
-        padding: var(--ml-space-6) var(--ml-space-4) var(--ml-space-8);
-    }
-
-    .hero-title {
-        font-size: var(--ml-fs-xl);
+    .finder {
+        flex: 1 1 100%;
     }
 
     .productos-grid {
