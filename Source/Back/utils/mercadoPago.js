@@ -167,16 +167,33 @@ const crearPreferencia = async ({ idOrder, items, total, costoEnvio = 0, emailCo
             pending: process.env.MP_PENDING_URL
         },
         ...(esLocal ? {} : { auto_return: 'approved' }),
+        // A donde Mercado Pago notifica el resultado del pago (servidor a
+        // servidor). Sin esto la orden nunca pasa de PENDIENTE. En produccion
+        // es el dominio real del backend; en local, el tunel publico.
+        ...(process.env.MP_NOTIFICATION_URL
+            ? { notification_url: process.env.MP_NOTIFICATION_URL }
+            : {}),
         // El costo de envio se cobra aparte de los items. Sin esto Mercado Pago
         // solo cobraria la suma de los productos y el envio saldria gratis.
         ...(Number(costoEnvio) > 0
             ? { shipments: { cost: Number(costoEnvio), mode: 'not_specified' } }
             : {}),
         payment_methods: {
-            // Cuotas CON interes permitidas (las paga el comprador, no la tienda).
+            // `installments` SOLO limita el NUMERO maximo de mensualidades; no
+            // controla si son con interes o sin interes (MSI).
             installments: 12,
             // Por defecto se muestra el pago de contado seleccionado.
             default_installments: 1
+            // ----------------------------------------------------------------
+            // MESES SIN INTERESES (MSI): la decision del negocio es permitir
+            // cuotas CON interes (las paga el comprador) y NO ofrecer MSI (que
+            // las pagaria la tienda). Pero MSI NO se apaga desde aqui: el API
+            // de Checkout Pro no tiene una bandera "excluir MSI". Se controla
+            // en el PANEL de Mercado Pago (cuenta real, no la de prueba):
+            //   Tu negocio > Costos / Cuotas sin interes > desactivar.
+            // En sandbox seguira apareciendo MSI porque la cuenta de prueba lo
+            // trae activo por defecto; eso NO refleja produccion.
+            // ----------------------------------------------------------------
         },
         expires: true,
         expiration_date_to: expiraEn.toISOString()

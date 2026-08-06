@@ -3,7 +3,19 @@
         <mat-spinner diameter="40"></mat-spinner>
     </div>
 
-    <mat-card class="resultado-card" *ngIf="!loading">
+    <!-- Esperando que el webhook confirme el pago (carrera redirect vs webhook) -->
+    <mat-card class="resultado-card" *ngIf="confirmando">
+        <div class="estado-bloque">
+            <mat-spinner diameter="48"></mat-spinner>
+            <h2>Confirmando tu pago...</h2>
+            <p class="detalle">
+                Estamos verificando tu pago con el banco. Esto puede tardar unos
+                segundos. <strong>No cierres ni recargues esta página.</strong>
+            </p>
+        </div>
+    </mat-card>
+
+    <mat-card class="resultado-card" *ngIf="!loading && !confirmando">
 
         <!-- Sin referencia de orden -->
         <div *ngIf="!orden" class="estado-bloque">

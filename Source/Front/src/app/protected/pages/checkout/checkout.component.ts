@@ -148,8 +148,12 @@ export default class CheckoutComponent implements OnInit {
         ).subscribe({
             next: (resp) => {
                 if (resp.status === 0 && resp.data) {
-                    // Se usa el sandbox si viene (credenciales de prueba).
-                    const url = resp.data.sandboxInitPoint || resp.data.initPoint;
+                    // Se usa SIEMPRE initPoint. Con el esquema de usuarios de
+                    // prueba, la cuenta de prueba YA es el sandbox y el
+                    // sandbox_init_point falla ("No pudimos procesar tu pago").
+                    // El init_point (www.mercadopago.com.mx) funciona para
+                    // prueba y para produccion por igual.
+                    const url = resp.data.initPoint || resp.data.sandboxInitPoint;
                     if (url) {
                         window.location.href = url;
                         return;

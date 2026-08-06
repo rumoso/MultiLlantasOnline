@@ -1,57 +1,95 @@
-<div class="row p-4">
-    <div class="col-12 mb-4">
-        <h2>Mis Compras</h2>
-        <p class="text-muted">Historial de tus pedidos realizados</p>
-    </div>
+<div class="compras-container">
 
-    <div class="col-12" *ngIf="loading">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
-
-    <div class="col-12" *ngIf="!loading && orders.length === 0">
-        <div class="text-center p-5 bg-light rounded">
-            <mat-icon style="font-size: 48px; height: 48px; width: 48px;"
-                class="text-muted mb-3">shopping_bag</mat-icon>
-            <h3>No tienes compras registradas</h3>
-            <p>Aún no has realizado ninguna compra en nuestra tienda.</p>
+    <header class="compras-header">
+        <div>
+            <h1 class="titulo">Mis compras</h1>
+            <p class="subtitulo">Historial y seguimiento de tus pedidos</p>
         </div>
+        <div class="contador" *ngIf="!loading && orders.length > 0">
+            <mat-icon>receipt_long</mat-icon>
+            <span>{{ orders.length }} pedido{{ orders.length === 1 ? '' : 's' }}</span>
+        </div>
+    </header>
+
+    <!-- Cargando -->
+    <div *ngIf="loading" class="skeleton-list">
+        <div class="skeleton-card" *ngFor="let _ of [1,2,3]"></div>
     </div>
 
-    <div class="col-12" *ngIf="!loading && orders.length > 0">
-        <mat-card class="order-card" *ngFor="let order of orders">
-            <div class="order-header">
-                <div>
-                    <strong>Orden #{{ order.idOrder }}</strong>
-                    <br>
-                    <small class="text-muted">{{ order.createDate | date:'medium' }}</small>
-                </div>
-                <div>
-                    <span class="status-badge me-2" [style.background-color]="order.colorPago || 'gray'">
-                        {{ order.statusPago }}
-                    </span>
-                    <span class="status-badge" [style.background-color]="order.colorOrden || 'gray'">
-                        {{ order.statusOrden }}
-                    </span>
-                </div>
-            </div>
-            <mat-card-content class="p-3">
-                <!-- Aviso de pago pendiente: tipico de OXXO, donde el cliente paga
-                     dias despues. Sin esto la gente cree que no compro y paga dos veces. -->
-                <div class="aviso-pendiente" *ngIf="order.statusPago === 'Pendiente'">
-                    <mat-icon>schedule</mat-icon>
-                    <span>
-                        Estamos esperando tu pago. Si elegiste pagar en efectivo, tu pedido
-                        se confirmará solo al pagarlo. <strong>No compres de nuevo.</strong>
-                    </span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="mb-1"><strong>Total:</strong> {{ order.total | currency:'MXN' }}</p>
-                        <p class="mb-0 text-muted">{{ order.itemsCount }} producto(s)</p>
+    <!-- Estado vacio -->
+    <div *ngIf="!loading && orders.length === 0" class="estado-vacio">
+        <div class="vacio-icono">
+            <mat-icon>shopping_bag</mat-icon>
+        </div>
+        <h3>Aún no tienes compras</h3>
+        <p>Cuando realices tu primer pedido, aparecerá aquí con su seguimiento.</p>
+        <button mat-raised-button color="primary" routerLink="../dashboard">
+            <mat-icon>storefront</mat-icon> Explorar catálogo
+        </button>
+    </div>
+
+    <!-- Lista de ordenes -->
+    <div *ngIf="!loading && orders.length > 0" class="ordenes-lista">
+        <article class="orden-card" *ngFor="let order of orders" [ngClass]="estadoClase(order)">
+
+            <!-- Franja lateral de color segun estado -->
+            <div class="franja-estado"></div>
+
+            <div class="orden-cuerpo">
+
+                <!-- Encabezado -->
+                <div class="orden-top">
+                    <div class="orden-id">
+                        <span class="label-orden">Pedido</span>
+                        <span class="num-orden">#{{ order.idOrder }}</span>
                     </div>
-                    <button mat-stroked-button color="primary" (click)="openDetail(order)">Ver Detalle</button>
+                    <div class="chip-estado" [ngClass]="estadoClase(order)">
+                        <mat-icon>{{ iconoEstado(order) }}</mat-icon>
+                        <span>{{ order.statusPago }}</span>
+                    </div>
                 </div>
-            </mat-card-content>
-        </mat-card>
+
+                <p class="orden-fecha">
+                    <mat-icon>event</mat-icon>
+                    {{ order.createDate | date:'d MMM y, HH:mm' }}
+                </p>
+
+                <!-- Aviso de pago pendiente (tipico de OXXO) -->
+                <div class="aviso-pendiente" *ngIf="esPendiente(order)">
+                    <mat-icon>info</mat-icon>
+                    <span>
+                        Esperando tu pago. Si elegiste efectivo, tu pedido se confirmará
+                        automáticamente al pagarlo. <strong>No necesitas comprar de nuevo.</strong>
+                    </span>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <!-- Pie: total, items, envio y accion -->
+                <div class="orden-bottom">
+                    <div class="orden-datos">
+                        <div class="dato-total">
+                            <span class="dato-label">Total</span>
+                            <span class="dato-valor">{{ order.total | currency:'MXN' }}</span>
+                        </div>
+                        <div class="dato-secundario">
+                            <span class="pill">
+                                <mat-icon>inventory_2</mat-icon>
+                                {{ order.itemsCount }} producto{{ order.itemsCount === 1 ? '' : 's' }}
+                            </span>
+                            <span class="pill" *ngIf="order.statusOrden">
+                                <mat-icon>local_shipping</mat-icon>
+                                {{ order.statusOrden }}
+                            </span>
+                        </div>
+                    </div>
+                    <button mat-flat-button color="primary" class="btn-detalle" (click)="openDetail(order)">
+                        Ver detalle
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </div>
+
+            </div>
+        </article>
     </div>
 </div>

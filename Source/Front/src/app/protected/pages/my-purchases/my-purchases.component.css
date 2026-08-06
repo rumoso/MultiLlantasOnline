@@ -1,0 +1,318 @@
+.compras-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 16px 48px;
+}
+
+/* ---------- Header ---------- */
+.compras-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.titulo {
+    margin: 0;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #0f1b2d;
+    letter-spacing: -0.02em;
+}
+
+.subtitulo {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.contador {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eef2f7;
+    color: #475569;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.contador mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* ---------- Skeleton de carga ---------- */
+.skeleton-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.skeleton-card {
+    height: 148px;
+    border-radius: 14px;
+    background: linear-gradient(100deg, #f1f5f9 30%, #e6ecf3 50%, #f1f5f9 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.3s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ---------- Estado vacio ---------- */
+.estado-vacio {
+    text-align: center;
+    padding: 56px 24px;
+    background: #fff;
+    border: 1px solid #eef2f7;
+    border-radius: 16px;
+}
+
+.vacio-icono {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e0f2fe, #eef2ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vacio-icono mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #3b82f6;
+}
+
+.estado-vacio h3 {
+    margin: 0 0 6px;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.estado-vacio p {
+    color: #64748b;
+    margin: 0 0 22px;
+}
+
+/* ---------- Lista de ordenes ---------- */
+.ordenes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.orden-card {
+    display: flex;
+    background: #fff;
+    border: 1px solid #eaeef3;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15, 27, 45, 0.04);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.orden-card:hover {
+    box-shadow: 0 8px 24px rgba(15, 27, 45, 0.08);
+    transform: translateY(-2px);
+}
+
+/* Franja lateral de color por estado */
+.franja-estado {
+    width: 5px;
+    flex-shrink: 0;
+    background: #cbd5e1;
+}
+
+.orden-card.estado-aprobado .franja-estado { background: #16a34a; }
+.orden-card.estado-pendiente .franja-estado { background: #f59e0b; }
+.orden-card.estado-fallido .franja-estado { background: #ef4444; }
+.orden-card.estado-neutro .franja-estado { background: #6366f1; }
+
+.orden-cuerpo {
+    flex: 1;
+    padding: 18px 20px;
+    min-width: 0;
+}
+
+/* Encabezado de la orden */
+.orden-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.orden-id {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+}
+
+.label-orden {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.num-orden {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f1b2d;
+}
+
+/* Chip de estado */
+.chip-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px 5px 8px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.chip-estado mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.chip-estado.estado-aprobado { background: #dcfce7; color: #15803d; }
+.chip-estado.estado-pendiente { background: #fef3c7; color: #b45309; }
+.chip-estado.estado-fallido { background: #fee2e2; color: #b91c1c; }
+.chip-estado.estado-neutro { background: #e0e7ff; color: #4338ca; }
+
+.orden-fecha {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0 14px;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.orden-fecha mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Aviso pendiente */
+.aviso-pendiente {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92600a;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    font-size: 0.83rem;
+    line-height: 1.4;
+}
+
+.aviso-pendiente mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: #d97706;
+}
+
+mat-divider {
+    margin: 4px 0 14px;
+}
+
+/* Pie de la orden */
+.orden-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dato-total {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.dato-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.dato-valor {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f1b2d;
+}
+
+.dato-secundario {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.pill mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+}
+
+.btn-detalle {
+    border-radius: 10px;
+    font-weight: 600;
+    padding-right: 8px;
+}
+
+.btn-detalle mat-icon {
+    margin-left: 2px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 560px) {
+    .compras-container {
+        padding: 20px 12px 40px;
+    }
+
+    .orden-bottom {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-detalle {
+        width: 100%;
+        justify-content: center;
+    }
+}

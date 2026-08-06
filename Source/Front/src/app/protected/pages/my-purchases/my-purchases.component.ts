@@ -12,53 +12,7 @@ import { ServicesGService } from '../../../servicesG/servicesG.service';
     standalone: true,
     imports: [CommonModule, MaterialModule, SharedModule],
     templateUrl: './my-purchases.component.html',
-    styles: [`
-        .order-card {
-            margin-bottom: 20px;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .order-header {
-            background-color: #f5f5f5;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: white;
-            white-space: nowrap;
-        }
-        .aviso-pendiente {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            background: #fff8e1;
-            color: #8d6e00;
-            border-radius: 6px;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            line-height: 1.35;
-        }
-        .aviso-pendiente mat-icon {
-            font-size: 18px;
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-        }
-        @media (max-width: 480px) {
-            .order-header {
-                padding: 12px;
-            }
-        }
-    `]
+    styleUrls: ['./my-purchases.component.css']
 })
 export default class MyPurchasesComponent implements OnInit {
 
@@ -92,6 +46,29 @@ export default class MyPurchasesComponent implements OnInit {
         });
     }
 
+    /** Clase de estado a partir del codigo/nombre del status de pago. */
+    estadoClase(order: any): string {
+        const s = (order.statusPago || '').toLowerCase();
+        if (s.includes('aprob')) return 'estado-aprobado';
+        if (s.includes('pend') || s.includes('proceso')) return 'estado-pendiente';
+        if (s.includes('rechaz') || s.includes('cancel') || s.includes('expir')) return 'estado-fallido';
+        if (s.includes('reembol') || s.includes('media')) return 'estado-neutro';
+        return 'estado-neutro';
+    }
+
+    esPendiente(order: any): boolean {
+        const s = (order.statusPago || '').toLowerCase();
+        return s.includes('pend') || s.includes('proceso');
+    }
+
+    iconoEstado(order: any): string {
+        const c = this.estadoClase(order);
+        if (c === 'estado-aprobado') return 'check_circle';
+        if (c === 'estado-pendiente') return 'schedule';
+        if (c === 'estado-fallido') return 'cancel';
+        return 'info';
+    }
+
     openDetail(order: any) {
         this.dialog.open(PurchaseDetailDialogComponent, {
             data: {
@@ -99,7 +76,8 @@ export default class MyPurchasesComponent implements OnInit {
                 total: order.total,
                 date: order.createDate
             },
-            width: '600px'
+            width: '600px',
+            maxWidth: '95vw'
         });
     }
 }
