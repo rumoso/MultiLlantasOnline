@@ -16,9 +16,9 @@
                 <div class="producto-linea" *ngFor="let it of resumen.items">
                     <div class="producto-info">
                         <span class="producto-nombre">{{ it.nombre }}</span>
-                        <span class="producto-cant">{{ it.cantidad }} x {{ it.precio | currency:'MXN' }}</span>
+                        <span class="producto-cant">{{ it.cantidad }} x {{ it.precio | currency:'MXN':'symbol-narrow' }}</span>
                     </div>
-                    <span class="producto-sub">{{ it.subtotal | currency:'MXN' }}</span>
+                    <span class="producto-sub">{{ it.subtotal | currency:'MXN':'symbol-narrow' }}</span>
                 </div>
 
             </mat-card>
@@ -87,13 +87,13 @@
 
                 <div class="resumen-linea">
                     <span>Productos</span>
-                    <span>{{ resumen.subtotal | currency:'MXN' }}</span>
+                    <span>{{ resumen.subtotal | currency:'MXN':'symbol-narrow' }}</span>
                 </div>
                 <div class="resumen-linea">
                     <span>Envío</span>
                     <span *ngIf="metodoEntrega === RETIRO" class="gratis">Gratis</span>
                     <span *ngIf="metodoEntrega === ENVIO && resumen.envioDisponible">
-                        {{ resumen.costoEnvio | currency:'MXN' }}
+                        {{ resumen.costoEnvio | currency:'MXN':'symbol-narrow' }}
                     </span>
                     <span *ngIf="metodoEntrega === ENVIO && !resumen.envioDisponible" class="no-disp">
                         No disponible
@@ -104,7 +104,7 @@
 
                 <div class="resumen-total">
                     <span>Total</span>
-                    <span>{{ resumen.total | currency:'MXN' }}</span>
+                    <span>{{ resumen.total | currency:'MXN':'symbol-narrow' }}</span>
                 </div>
 
                 <button mat-raised-button color="primary" class="btn-pagar" (click)="pagar()"

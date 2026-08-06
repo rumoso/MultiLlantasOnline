@@ -14,7 +14,7 @@
 
                     <div class="item-details">
                         <h3 class="item-name">{{ item.descripcion }}</h3>
-                        <p class="item-price">{{ item.precio | currency:'MXN' }}</p>
+                        <p class="item-price">{{ item.precio | currency:'MXN':'symbol-narrow' }}</p>
                     </div>
 
                     <div class="item-quantity">
@@ -30,7 +30,7 @@
 
                     <div class="item-subtotal">
                         <p class="subtotal-label">Subtotal</p>
-                        <p class="subtotal-value">{{ (item.precio * item.cantidad) | currency:'MXN' }}</p>
+                        <p class="subtotal-value">{{ (item.precio * item.cantidad) | currency:'MXN':'symbol-narrow' }}</p>
                     </div>
 
                     <div class="item-actions">
@@ -49,12 +49,12 @@
 
                 <div class="summary-row">
                     <span>Productos ({{ cartItems.length }})</span>
-                    <span>{{ total | currency:'MXN' }}</span>
+                    <span>{{ total | currency:'MXN':'symbol-narrow' }}</span>
                 </div>
 
                 <div class="summary-row total-row">
                     <span>Total</span>
-                    <span class="total-amount">{{ total | currency:'MXN' }}</span>
+                    <span class="total-amount">{{ total | currency:'MXN':'symbol-narrow' }}</span>
                 </div>
 
                 <div class="summary-actions">

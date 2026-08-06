@@ -39,10 +39,10 @@
             </div>
 
             <div class="price-card-section">
-                <span class="original-price" *ngIf="producto.precioOriginal">{{ producto.precioOriginal | currency:'MXN'
+                <span class="original-price" *ngIf="producto.precioOriginal">{{ producto.precioOriginal | currency:'MXN':'symbol-narrow'
                     }}</span>
                 <div class="current-price-row">
-                    <span class="current-price">{{ producto.precio | currency:'MXN' }}</span>
+                    <span class="current-price">{{ producto.precio | currency:'MXN':'symbol-narrow' }}</span>
                     <span class="discount-pill" *ngIf="producto.descuento">{{ producto.descuento }}% OFF</span>
                 </div>
                 <p class="shipping-info"><mat-icon>local_shipping</mat-icon> Envío a todo el país</p>

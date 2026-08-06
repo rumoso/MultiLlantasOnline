@@ -41,7 +41,7 @@
                 <p class="item-model" *ngIf="item.modelo">{{ item.modelo }}</p>
 
                 <div class="item-controls">
-                    <span class="item-price">{{ item.precio | currency:'MXN' }}</span>
+                    <span class="item-price">{{ item.precio | currency:'MXN':'symbol-narrow' }}</span>
                     <button class="btn-add" (click)="addToCart(item)">
                         <mat-icon>add_shopping_cart</mat-icon>
                         <span>Agregar</span>

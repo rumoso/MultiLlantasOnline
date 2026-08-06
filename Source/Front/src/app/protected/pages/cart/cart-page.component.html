@@ -42,7 +42,7 @@
                                 </button>
                             </div>
 
-                            <span class="item-subtotal">{{ (item.precio * item.cantidad) | currency:'MXN' }}</span>
+                            <span class="item-subtotal">{{ (item.precio * item.cantidad) | currency:'MXN':'symbol-narrow' }}</span>
                         </div>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                 <div class="summary-detail">
                     <div class="sum-row">
                         <span>Productos ({{cartItems.length}})</span>
-                        <span>{{ total | currency:'MXN' }}</span>
+                        <span>{{ total | currency:'MXN':'symbol-narrow' }}</span>
                     </div>
                     <div class="sum-row">
                         <span>Envío</span>
@@ -69,7 +69,7 @@
 
                 <div class="total-row">
                     <span>Total</span>
-                    <span class="total-value">{{ total | currency:'MXN' }}</span>
+                    <span class="total-value">{{ total | currency:'MXN':'symbol-narrow' }}</span>
                 </div>
 
                 <div class="actions-block">
