@@ -108,6 +108,14 @@
                 </button>
             </div>
 
+            <!-- Marcas (barra horizontal sobre las tarjetas) -->
+            <div class="marcas-top" *ngIf="marcas.length > 0">
+                <button class="marca-chip" [class.active]="!filtroMarca"
+                    (click)="filtroMarca = null; aplicarFiltros()">Todas</button>
+                <button class="marca-chip" *ngFor="let m of marcas" [class.active]="filtroMarca === m"
+                    (click)="seleccionarMarca(m)">{{ m }}</button>
+            </div>
+
             <!-- Skeletons de carga -->
             <div class="productos-grid" *ngIf="loadingProductos">
                 <div class="skeleton-card" *ngFor="let s of [1,2,3,4,5,6,7,8]">

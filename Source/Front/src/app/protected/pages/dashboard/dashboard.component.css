@@ -286,6 +286,39 @@
     color: var(--ml-text-on-primary);
 }
 
+/* ---------- Marcas (barra horizontal sobre las tarjetas) ---------- */
+.marcas-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ml-space-2);
+    margin-bottom: var(--ml-space-4);
+}
+
+.marca-chip {
+    padding: 6px 16px;
+    border: 1.5px solid var(--ml-border-strong);
+    border-radius: var(--ml-radius-pill);
+    background: var(--ml-bg-surface);
+    color: var(--ml-text-secondary);
+    font-family: var(--ml-font-sans);
+    font-size: var(--ml-fs-sm);
+    font-weight: var(--ml-fw-medium);
+    cursor: pointer;
+    transition: all var(--ml-transition);
+    white-space: nowrap;
+}
+
+.marca-chip:hover {
+    border-color: var(--ml-primary-400);
+    color: var(--ml-primary-600);
+}
+
+.marca-chip.active {
+    background: var(--ml-primary-500);
+    border-color: var(--ml-primary-500);
+    color: var(--ml-text-on-primary);
+}
+
 /* ---------- Grid de productos ---------- */
 .productos-grid {
     display: grid;
