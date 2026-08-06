@@ -60,6 +60,13 @@ export default class DashboardComponent {
   filtroMarca: string | null = null;
   textoBusqueda: string = '';   // termino que llega del buscador del header
 
+  // Mini-buscador encima de cada grupo de tags (filtra las opciones visibles)
+  textoFiltroAncho: string = '';
+  textoFiltroPerfil: string = '';
+  textoFiltroRin: string = '';
+  textoFiltroMarca: string = '';
+  mostrarFiltrosMobile: boolean = false;   // panel de filtros en mobile
+
   constructor(
     private servicesGServ: ServicesGService
     , private authServ: AuthService
@@ -149,6 +156,33 @@ export default class DashboardComponent {
     this.aplicarFiltros();
   }
 
+  toggleAncho(v: string): void {
+    this.filtroAncho = this.filtroAncho === v ? null : v;
+    this.aplicarFiltros();
+  }
+
+  togglePerfil(v: string): void {
+    this.filtroPerfil = this.filtroPerfil === v ? null : v;
+    this.aplicarFiltros();
+  }
+
+  toggleRin(v: string): void {
+    this.filtroRin = this.filtroRin === v ? null : v;
+    this.aplicarFiltros();
+  }
+
+  // Filtra las opciones de un grupo segun el texto de su mini-buscador
+  private filtrarOpciones(lista: any[], texto: string): any[] {
+    const t = (texto || '').trim().toLowerCase();
+    if (!t) return lista;
+    return lista.filter(x => String(x).toLowerCase().includes(t));
+  }
+
+  get anchosFiltrados(): any[] { return this.filtrarOpciones(this.medidas.anchos, this.textoFiltroAncho); }
+  get perfilesFiltrados(): any[] { return this.filtrarOpciones(this.medidas.perfiles, this.textoFiltroPerfil); }
+  get rinesFiltrados(): any[] { return this.filtrarOpciones(this.medidas.rines, this.textoFiltroRin); }
+  get marcasFiltradas(): string[] { return this.filtrarOpciones(this.marcas, this.textoFiltroMarca); }
+
   get hayFiltrosActivos(): boolean {
     return !!(this.filtroAncho || this.filtroPerfil || this.filtroRin || this.filtroMarca);
   }
@@ -158,6 +192,10 @@ export default class DashboardComponent {
     this.filtroPerfil = null;
     this.filtroRin = null;
     this.filtroMarca = null;
+    this.textoFiltroAncho = '';
+    this.textoFiltroPerfil = '';
+    this.textoFiltroRin = '';
+    this.textoFiltroMarca = '';
     this.aplicarFiltros();
   }
 

@@ -1,145 +1,180 @@
 <!-- ===================================================================
-     CATÁLOGO DE LLANTAS
+     CATÁLOGO DE LLANTAS — sidebar de filtros + grid
      =================================================================== -->
 <div class="catalogo">
 
-    <!-- Hero + buscador por medida -->
-    <section class="hero">
-        <div class="hero-inner">
-            <div class="hero-copy">
-                <h1 class="hero-title">Encuentra la llanta exacta para tu auto</h1>
-                <p class="hero-sub">Busca por medida o marca. Envío a domicilio, pago seguro.</p>
-            </div>
+    <!-- Barra superior (mobile): abre/cierra el panel de filtros -->
+    <div class="mobile-bar">
+        <button class="filtros-toggle" (click)="mostrarFiltrosMobile = !mostrarFiltrosMobile">
+            <mat-icon>tune</mat-icon>
+            Filtros
+            <span class="filtros-dot" *ngIf="hayFiltrosActivos"></span>
+        </button>
+        <span class="resultados-count">
+            <strong>{{ totalProductos }}</strong>
+            {{ totalProductos === 1 ? 'llanta' : 'llantas' }}
+        </span>
+    </div>
 
-            <div class="finder">
-                <div class="finder-title">
-                    <mat-icon>tune</mat-icon>
-                    <span>Buscar por medida</span>
-                </div>
-                <div class="finder-fields">
-                    <div class="finder-field">
-                        <label>Ancho</label>
-                        <select [(ngModel)]="filtroAncho">
-                            <option [ngValue]="null">Todos</option>
-                            <option *ngFor="let a of medidas.anchos" [ngValue]="a">{{ a }}</option>
-                        </select>
-                    </div>
-                    <span class="finder-sep">/</span>
-                    <div class="finder-field">
-                        <label>Perfil</label>
-                        <select [(ngModel)]="filtroPerfil">
-                            <option [ngValue]="null">Todos</option>
-                            <option *ngFor="let p of medidas.perfiles" [ngValue]="p">{{ p }}</option>
-                        </select>
-                    </div>
-                    <span class="finder-sep">R</span>
-                    <div class="finder-field">
-                        <label>Rin</label>
-                        <select [(ngModel)]="filtroRin">
-                            <option [ngValue]="null">Todos</option>
-                            <option *ngFor="let r of medidas.rines" [ngValue]="r">{{ r }}</option>
-                        </select>
-                    </div>
-                    <button class="finder-btn" (click)="aplicarFiltros()">
-                        <mat-icon>search</mat-icon>
-                        <span>Buscar</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="catalogo-layout">
 
-    <div class="catalogo-body">
-
-        <!-- Filtro por marca -->
-        <div class="marcas-bar" *ngIf="marcas.length > 0">
-            <span class="marcas-label">Marcas:</span>
-            <div class="marcas-chips">
-                <button class="marca-chip" [class.active]="!filtroMarca" (click)="filtroMarca = null; aplicarFiltros()">
-                    Todas
-                </button>
-                <button class="marca-chip" *ngFor="let m of marcas" [class.active]="filtroMarca === m"
-                    (click)="seleccionarMarca(m)">
-                    {{ m }}
+        <!-- ============ Sidebar de filtros ============ -->
+        <aside class="filtros" [class.abierto]="mostrarFiltrosMobile">
+            <div class="filtros-top">
+                <h2 class="filtros-title"><mat-icon>tune</mat-icon> Filtros</h2>
+                <button class="btn-limpiar" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">
+                    Limpiar
                 </button>
             </div>
-        </div>
 
-        <!-- Barra de resultados -->
-        <div class="resultados-bar" *ngIf="!loadingProductos">
-            <span class="resultados-count">
-                <strong>{{ totalProductos }}</strong>
-                {{ totalProductos === 1 ? 'llanta encontrada' : 'llantas encontradas' }}
-            </span>
-            <button class="btn-limpiar" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">
-                <mat-icon>close</mat-icon> Limpiar filtros
-            </button>
-        </div>
-
-        <!-- Skeletons de carga -->
-        <div class="productos-grid" *ngIf="loadingProductos">
-            <div class="skeleton-card" *ngFor="let s of [1,2,3,4,5,6,7,8]">
-                <div class="skeleton-img"></div>
-                <div class="skeleton-body">
-                    <div class="skeleton-line w60"></div>
-                    <div class="skeleton-line w90"></div>
-                    <div class="skeleton-line w40"></div>
-                    <div class="skeleton-line btn"></div>
+            <!-- Grupo: Ancho -->
+            <div class="filtro-grupo">
+                <div class="grupo-head">
+                    <span class="grupo-title">Ancho</span>
+                    <span class="grupo-sel" *ngIf="filtroAncho">{{ filtroAncho }}</span>
+                </div>
+                <div class="mini-filtro">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" [(ngModel)]="textoFiltroAncho" placeholder="Filtrar ancho…" />
+                </div>
+                <div class="tags">
+                    <button class="tag" *ngFor="let a of anchosFiltrados" [class.active]="filtroAncho === a"
+                        (click)="toggleAncho(a)">{{ a }}</button>
+                    <span class="tags-vacio" *ngIf="anchosFiltrados.length === 0">Sin coincidencias</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Grid de productos -->
-        <div class="productos-grid" *ngIf="!loadingProductos && productos.length > 0">
-            <article class="producto-card" *ngFor="let producto of productos"
-                [class.disabled]="producto.activo === 0" (click)="verDetalleProducto(producto)">
-
-                <div class="card-media">
-                    <img [src]="producto.imagen_url || 'assets/img/default-tire.png'" [alt]="producto.nombre"
-                        class="card-img" (error)="$any($event.target).src='assets/img/default-tire.png'" />
-                    <span class="card-marca">{{ producto.marca }}</span>
-                    <button class="card-fav" [class.is-favorite]="producto.isFavorite"
-                        (click)="$event.stopPropagation(); toggleFavorite(producto)"
-                        [attr.aria-label]="producto.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'">
-                        <mat-icon>{{ producto.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
-                    </button>
+            <!-- Grupo: Perfil -->
+            <div class="filtro-grupo">
+                <div class="grupo-head">
+                    <span class="grupo-title">Perfil</span>
+                    <span class="grupo-sel" *ngIf="filtroPerfil">{{ filtroPerfil }}</span>
                 </div>
+                <div class="mini-filtro">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" [(ngModel)]="textoFiltroPerfil" placeholder="Filtrar perfil…" />
+                </div>
+                <div class="tags">
+                    <button class="tag" *ngFor="let p of perfilesFiltrados" [class.active]="filtroPerfil === p"
+                        (click)="togglePerfil(p)">{{ p }}</button>
+                    <span class="tags-vacio" *ngIf="perfilesFiltrados.length === 0">Sin coincidencias</span>
+                </div>
+            </div>
 
-                <div class="card-body">
-                    <span class="card-medida">
-                        <mat-icon>straighten</mat-icon>
-                        {{ producto.ancho }}/{{ producto.perfil }} R{{ producto.rin }}
-                    </span>
-                    <h3 class="card-nombre" [title]="producto.nombre">{{ producto.nombre }}</h3>
-                    <p class="card-modelo" *ngIf="producto.modelo">{{ producto.modelo }}</p>
+            <!-- Grupo: Rin -->
+            <div class="filtro-grupo">
+                <div class="grupo-head">
+                    <span class="grupo-title">Rin</span>
+                    <span class="grupo-sel" *ngIf="filtroRin">R{{ filtroRin }}</span>
+                </div>
+                <div class="mini-filtro">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" [(ngModel)]="textoFiltroRin" placeholder="Filtrar rin…" />
+                </div>
+                <div class="tags">
+                    <button class="tag" *ngFor="let r of rinesFiltrados" [class.active]="filtroRin === r"
+                        (click)="toggleRin(r)">R{{ r }}</button>
+                    <span class="tags-vacio" *ngIf="rinesFiltrados.length === 0">Sin coincidencias</span>
+                </div>
+            </div>
 
-                    <div class="card-footer">
-                        <span class="card-precio">{{ producto.precio | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
-                        <button class="card-add" (click)="$event.stopPropagation(); agregarAlCarrito(producto)">
-                            <mat-icon>add_shopping_cart</mat-icon>
-                            <span>Agregar</span>
+            <!-- Grupo: Marca -->
+            <div class="filtro-grupo" *ngIf="marcas.length > 0">
+                <div class="grupo-head">
+                    <span class="grupo-title">Marca</span>
+                    <span class="grupo-sel" *ngIf="filtroMarca">{{ filtroMarca }}</span>
+                </div>
+                <div class="mini-filtro">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" [(ngModel)]="textoFiltroMarca" placeholder="Filtrar marca…" />
+                </div>
+                <div class="tags">
+                    <button class="tag" *ngFor="let m of marcasFiltradas" [class.active]="filtroMarca === m"
+                        (click)="seleccionarMarca(m)">{{ m }}</button>
+                    <span class="tags-vacio" *ngIf="marcasFiltradas.length === 0">Sin coincidencias</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============ Contenido: grid de productos ============ -->
+        <div class="catalogo-main">
+
+            <!-- Barra de resultados (desktop) -->
+            <div class="resultados-bar" *ngIf="!loadingProductos">
+                <span class="resultados-count">
+                    <strong>{{ totalProductos }}</strong>
+                    {{ totalProductos === 1 ? 'llanta encontrada' : 'llantas encontradas' }}
+                </span>
+                <button class="btn-limpiar" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">
+                    <mat-icon>close</mat-icon> Limpiar filtros
+                </button>
+            </div>
+
+            <!-- Skeletons de carga -->
+            <div class="productos-grid" *ngIf="loadingProductos">
+                <div class="skeleton-card" *ngFor="let s of [1,2,3,4,5,6,7,8]">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-body">
+                        <div class="skeleton-line w60"></div>
+                        <div class="skeleton-line w90"></div>
+                        <div class="skeleton-line w40"></div>
+                        <div class="skeleton-line btn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de productos -->
+            <div class="productos-grid" *ngIf="!loadingProductos && productos.length > 0">
+                <article class="producto-card" *ngFor="let producto of productos"
+                    [class.disabled]="producto.activo === 0" (click)="verDetalleProducto(producto)">
+
+                    <div class="card-media">
+                        <img [src]="producto.imagen_url || 'assets/img/default-tire.png'" [alt]="producto.nombre"
+                            class="card-img" (error)="$any($event.target).src='assets/img/default-tire.png'" />
+                        <span class="card-marca">{{ producto.marca }}</span>
+                        <button class="card-fav" [class.is-favorite]="producto.isFavorite"
+                            (click)="$event.stopPropagation(); toggleFavorite(producto)"
+                            [attr.aria-label]="producto.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'">
+                            <mat-icon>{{ producto.isFavorite ? 'favorite' : 'favorite_border' }}</mat-icon>
                         </button>
                     </div>
-                </div>
-            </article>
+
+                    <div class="card-body">
+                        <span class="card-medida">
+                            <mat-icon>straighten</mat-icon>
+                            {{ producto.ancho }}/{{ producto.perfil }} R{{ producto.rin }}
+                        </span>
+                        <h3 class="card-nombre" [title]="producto.nombre">{{ producto.nombre }}</h3>
+                        <p class="card-modelo" *ngIf="producto.modelo">{{ producto.modelo }}</p>
+
+                        <div class="card-footer">
+                            <span class="card-precio">{{ producto.precio | currency:'MXN':'symbol-narrow':'1.2-2' }}</span>
+                            <button class="card-add" (click)="$event.stopPropagation(); agregarAlCarrito(producto)">
+                                <mat-icon>add_shopping_cart</mat-icon>
+                                <span>Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Paginador -->
+            <mat-paginator *ngIf="!loadingProductos && totalProductos > 0" class="catalogo-paginator"
+                [length]="totalProductos" [pageSize]="pagination.pageSize" [pageIndex]="pagination.pageIndex"
+                [pageSizeOptions]="pagination.pageSizeOptions" (page)="onPageChange($event)"
+                aria-label="Seleccionar página">
+            </mat-paginator>
+
+            <!-- Sin productos -->
+            <div class="sin-productos" *ngIf="!loadingProductos && productos.length === 0">
+                <mat-icon class="sin-productos-icon">search_off</mat-icon>
+                <h3>No encontramos llantas con esos filtros</h3>
+                <p>Prueba con otra medida o marca.</p>
+                <button class="btn-limpiar solid" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">
+                    Limpiar filtros
+                </button>
+            </div>
+
         </div>
-
-        <!-- Paginador -->
-        <mat-paginator *ngIf="!loadingProductos && totalProductos > 0" class="catalogo-paginator"
-            [length]="totalProductos" [pageSize]="pagination.pageSize" [pageIndex]="pagination.pageIndex"
-            [pageSizeOptions]="pagination.pageSizeOptions" (page)="onPageChange($event)"
-            aria-label="Seleccionar página">
-        </mat-paginator>
-
-        <!-- Sin productos -->
-        <div class="sin-productos" *ngIf="!loadingProductos && productos.length === 0">
-            <mat-icon class="sin-productos-icon">search_off</mat-icon>
-            <h3>No encontramos llantas con esos filtros</h3>
-            <p>Prueba con otra medida o marca.</p>
-            <button class="btn-limpiar solid" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">
-                Limpiar filtros
-            </button>
-        </div>
-
     </div>
 </div>

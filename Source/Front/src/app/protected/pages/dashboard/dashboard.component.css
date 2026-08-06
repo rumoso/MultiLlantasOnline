@@ -1,5 +1,5 @@
 /* ===================================================================
-   CATÁLOGO DE LLANTAS — usa los tokens del sistema de diseño (--ml-*)
+   CATÁLOGO DE LLANTAS — sidebar de filtros + grid (tokens --ml-*)
    =================================================================== */
 
 .catalogo {
@@ -7,185 +7,177 @@
     min-height: 100%;
 }
 
-/* ---------- Hero + buscador por medida (banda compacta) ---------- */
-.hero {
-    background: linear-gradient(135deg, var(--ml-primary-800) 0%, var(--ml-primary-600) 100%);
-    padding: var(--ml-space-4);
-    position: relative;
-}
-
-.hero-inner {
+.catalogo-layout {
     max-width: var(--ml-container);
     margin: 0 auto;
     display: flex;
+    align-items: flex-start;
+    gap: var(--ml-space-5);
+    padding: var(--ml-space-5) var(--ml-space-4) var(--ml-space-10);
+}
+
+/* ---------- Barra mobile (abre filtros) ---------- */
+.mobile-bar {
+    display: none;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ml-space-5);
-    flex-wrap: wrap;
-}
-
-.hero-copy {
-    color: var(--ml-text-on-primary);
-    flex: 1 1 200px;
-    min-width: 0;
-}
-
-.hero-title {
-    margin: 0;
-    font-size: var(--ml-fs-lg);
-    font-weight: var(--ml-fw-bold);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-}
-
-.hero-sub {
-    margin: 2px 0 0;
-    font-size: var(--ml-fs-sm);
-    color: var(--ml-accent-100);
-    font-weight: var(--ml-fw-regular);
-}
-
-/* Tarjeta del buscador por medida — compacta, en la misma fila */
-.finder {
-    background: var(--ml-bg-surface);
-    border-radius: var(--ml-radius);
+    gap: var(--ml-space-3);
     padding: var(--ml-space-3) var(--ml-space-4);
-    box-shadow: var(--ml-shadow-md);
-    flex: 0 1 auto;
+    background: var(--ml-bg-surface);
+    border-bottom: 1px solid var(--ml-border);
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 
-.finder-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: var(--ml-fw-medium);
-    font-size: var(--ml-fs-xs);
-    color: var(--ml-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-}
-
-.finder-title mat-icon {
-    color: var(--ml-primary-500);
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-}
-
-.finder-fields {
-    display: flex;
-    align-items: flex-end;
-    gap: var(--ml-space-2);
-    flex-wrap: wrap;
-}
-
-.finder-field {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    min-width: 84px;
-}
-
-.finder-field label {
-    font-size: var(--ml-fs-xs);
-    font-weight: var(--ml-fw-medium);
-    color: var(--ml-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-.finder-field select {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 100%;
-    padding: 8px 28px 8px 10px;
-    border: 1.5px solid var(--ml-border-strong);
-    border-radius: var(--ml-radius);
-    background: var(--ml-bg-surface) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 8px center;
-    font-family: var(--ml-font-sans);
-    font-size: var(--ml-fs-base);
-    color: var(--ml-text-primary);
-    cursor: pointer;
-    transition: border-color var(--ml-transition);
-}
-
-.finder-field select:hover {
-    border-color: var(--ml-primary-400);
-}
-
-.finder-field select:focus {
-    outline: none;
-    border-color: var(--ml-primary-500);
-    box-shadow: 0 0 0 3px var(--ml-primary-50);
-}
-
-.finder-sep {
-    font-weight: var(--ml-fw-bold);
-    color: var(--ml-text-muted);
-    padding-bottom: 10px;
-    font-size: var(--ml-fs-lg);
-}
-
-.finder-btn {
+.filtros-toggle {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 6px;
-    padding: 9px 18px;
-    border: none;
-    border-radius: var(--ml-radius);
-    background: var(--ml-primary-500);
-    color: var(--ml-text-on-primary);
+    padding: 8px 16px;
+    border: 1.5px solid var(--ml-primary-500);
+    border-radius: var(--ml-radius-pill);
+    background: var(--ml-primary-50);
+    color: var(--ml-primary-700);
     font-family: var(--ml-font-sans);
-    font-size: var(--ml-fs-base);
+    font-size: var(--ml-fs-sm);
     font-weight: var(--ml-fw-bold);
     cursor: pointer;
-    transition: background var(--ml-transition), transform var(--ml-transition);
-    white-space: nowrap;
+    position: relative;
 }
 
-.finder-btn:hover {
-    background: var(--ml-primary-600);
-    transform: translateY(-1px);
+.filtros-toggle mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
 }
 
-.finder-btn mat-icon {
+.filtros-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ml-accent-500);
+}
+
+/* ---------- Sidebar de filtros ---------- */
+.filtros {
+    flex: 0 0 250px;
+    width: 250px;
+    background: var(--ml-bg-surface);
+    border: 1px solid var(--ml-border);
+    border-radius: var(--ml-radius-lg);
+    padding: var(--ml-space-4);
+    position: sticky;
+    top: var(--ml-space-4);
+    box-shadow: var(--ml-shadow-sm);
+}
+
+.filtros-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--ml-space-3);
+    margin-bottom: var(--ml-space-3);
+    border-bottom: 1px solid var(--ml-border);
+}
+
+.filtros-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: var(--ml-fs-base);
+    font-weight: var(--ml-fw-bold);
+    color: var(--ml-text-primary);
+}
+
+.filtros-title mat-icon {
+    color: var(--ml-primary-500);
     font-size: 20px;
     width: 20px;
     height: 20px;
 }
 
-/* ---------- Cuerpo del catálogo ---------- */
-.catalogo-body {
-    max-width: var(--ml-container);
-    margin: 0 auto;
-    padding: var(--ml-space-6) var(--ml-space-4) var(--ml-space-10);
+/* Grupo de filtro */
+.filtro-grupo {
+    padding: var(--ml-space-3) 0;
+    border-bottom: 1px solid var(--ml-border);
 }
 
-/* Filtro por marca */
-.marcas-bar {
+.filtro-grupo:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.grupo-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--ml-space-2);
+}
+
+.grupo-title {
+    font-size: var(--ml-fs-sm);
+    font-weight: var(--ml-fw-bold);
+    color: var(--ml-text-primary);
+}
+
+.grupo-sel {
+    font-size: var(--ml-fs-xs);
+    font-weight: var(--ml-fw-bold);
+    color: var(--ml-primary-600);
+    background: var(--ml-primary-50);
+    padding: 2px 8px;
+    border-radius: var(--ml-radius-pill);
+}
+
+/* Mini-buscador sobre cada grupo */
+.mini-filtro {
     display: flex;
     align-items: center;
-    gap: var(--ml-space-3);
-    margin-bottom: var(--ml-space-5);
-    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 8px;
+    border: 1px solid var(--ml-border-strong);
+    border-radius: var(--ml-radius-sm);
+    background: var(--ml-bg-page);
+    margin-bottom: var(--ml-space-2);
+    transition: border-color var(--ml-transition);
 }
 
-.marcas-label {
+.mini-filtro:focus-within {
+    border-color: var(--ml-primary-500);
+    background: var(--ml-bg-surface);
+}
+
+.mini-filtro mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: var(--ml-text-muted);
+    flex-shrink: 0;
+}
+
+.mini-filtro input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-family: var(--ml-font-sans);
     font-size: var(--ml-fs-sm);
-    font-weight: var(--ml-fw-medium);
-    color: var(--ml-text-secondary);
+    color: var(--ml-text-primary);
 }
 
-.marcas-chips {
+/* Tags de opciones */
+.tags {
     display: flex;
-    gap: var(--ml-space-2);
     flex-wrap: wrap;
+    gap: 6px;
+    max-height: 132px;
+    overflow-y: auto;
 }
 
-.marca-chip {
-    padding: 6px 16px;
+.tag {
+    padding: 4px 12px;
     border: 1.5px solid var(--ml-border-strong);
     border-radius: var(--ml-radius-pill);
     background: var(--ml-bg-surface);
@@ -195,25 +187,37 @@
     font-weight: var(--ml-fw-medium);
     cursor: pointer;
     transition: all var(--ml-transition);
+    white-space: nowrap;
 }
 
-.marca-chip:hover {
+.tag:hover {
     border-color: var(--ml-primary-400);
     color: var(--ml-primary-600);
 }
 
-.marca-chip.active {
+.tag.active {
     background: var(--ml-primary-500);
     border-color: var(--ml-primary-500);
     color: var(--ml-text-on-primary);
 }
 
-/* Barra de resultados */
+.tags-vacio {
+    font-size: var(--ml-fs-xs);
+    color: var(--ml-text-muted);
+    font-style: italic;
+}
+
+/* ---------- Contenido ---------- */
+.catalogo-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
 .resultados-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--ml-space-5);
+    margin-bottom: var(--ml-space-4);
     gap: var(--ml-space-3);
 }
 
@@ -271,11 +275,10 @@
 /* ---------- Grid de productos ---------- */
 .productos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: var(--ml-space-5);
 }
 
-/* Tarjeta de producto */
 .producto-card {
     background: var(--ml-bg-surface);
     border: 1px solid var(--ml-border);
@@ -362,7 +365,6 @@
     height: 20px;
 }
 
-/* Cuerpo de la tarjeta */
 .card-body {
     display: flex;
     flex-direction: column;
@@ -452,7 +454,6 @@
     height: 18px;
 }
 
-/* Tarjeta deshabilitada (producto inactivo) */
 .producto-card.disabled {
     opacity: 0.55;
     pointer-events: none;
@@ -530,13 +531,37 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 768px) {
-    .finder {
-        flex: 1 1 100%;
+@media (max-width: 900px) {
+    .mobile-bar {
+        display: flex;
     }
 
+    .catalogo-layout {
+        display: block;
+        padding: var(--ml-space-4);
+    }
+
+    /* El sidebar se colapsa; se muestra al tocar "Filtros" */
+    .filtros {
+        display: none;
+        position: static;
+        width: auto;
+        margin-bottom: var(--ml-space-4);
+    }
+
+    .filtros.abierto {
+        display: block;
+    }
+
+    /* La barra de resultados de escritorio se oculta (ya esta en la mobile-bar) */
+    .catalogo-main > .resultados-bar {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
     .productos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: var(--ml-space-3);
     }
 
@@ -554,24 +579,7 @@
     }
 }
 
-@media (max-width: 560px) {
-    .finder {
-        padding: var(--ml-space-4);
-    }
-
-    .finder-fields {
-        gap: var(--ml-space-2);
-    }
-
-    .finder-sep {
-        display: none;
-    }
-
-    .finder-btn {
-        flex: 1 0 100%;
-        margin-top: var(--ml-space-2);
-    }
-
+@media (max-width: 480px) {
     .productos-grid {
         grid-template-columns: repeat(2, 1fr);
     }
