@@ -42,6 +42,13 @@ export class CartOverlayComponent implements OnInit {
         return this.cartItems.reduce((acc: number, item: any) => acc + (item.precio * item.cantidad), 0);
     }
 
+    /** Extrae la medida (ej. "205/55 R16") del nombre del producto para el chip.
+     *  Devuelve null si el nombre no la contiene. */
+    medida(item: any): string | null {
+        const m = (item?.descripcion || '').match(/(\d{3})\s*\/\s*(\d{2})\s*R\s*(\d{2})/i);
+        return m ? `${m[1]}/${m[2]} R${m[3]}` : null;
+    }
+
     updateQuantity(item: any, change: number): void {
         const newQuantity = item.cantidad + change;
         if (newQuantity < 1) return;
