@@ -1,6 +1,7 @@
 const { response } = require('express');
 const { dbConnection } = require('../database/config');
 const { STATUS_ORDEN, STATUS_PAGO } = require('../utils/constantes');
+const { getConfig } = require('../utils/appConfig');
 const {
     mapearEstado,
     transicionPermitida,
@@ -377,7 +378,7 @@ const webhookMercadoPago = async (req, res = response) => {
             xSignature: req.headers['x-signature'],
             xRequestId: req.headers['x-request-id'],
             dataId,
-            secret: process.env.MP_WEBHOOK_SECRET
+            secret: await getConfig('MP_WEBHOOK_SECRET', 'MP_WEBHOOK_SECRET')
         });
 
         if (!firmaValida) {

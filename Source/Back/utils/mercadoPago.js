@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const { STATUS_ORDEN, STATUS_PAGO } = require('./constantes');
+const { getConfig } = require('./appConfig');
 
 /**
  * Utilidades de Mercado Pago: mapeo de estados, verificacion de firma del
@@ -110,10 +111,12 @@ const verificarFirmaWebhook = ({ xSignature, xRequestId, dataId, secret }) => {
 // ---------------------------------------------------------------------------
 // Cliente de la API
 // ---------------------------------------------------------------------------
-const getClient = () => {
-    const accessToken = process.env.MP_ACCESS_TOKEN;
+const getClient = async () => {
+    // Se lee de la tabla `constantes` (administrable desde el Admin); si falta,
+    // cae al .env (MP_ACCESS_TOKEN).
+    const accessToken = await getConfig('MP_ACCESS_TOKEN', 'MP_ACCESS_TOKEN');
     if (!accessToken) {
-        throw new Error('MP_ACCESS_TOKEN no esta configurado en el .env');
+        throw new Error('MP_ACCESS_TOKEN no esta configurado (ni en constantes ni en .env)');
     }
     return new MercadoPagoConfig({ accessToken });
 };
@@ -124,7 +127,7 @@ const getClient = () => {
  * real se obtiene aqui (analisis 006, criterio 10).
  */
 const consultarPago = async (paymentId) => {
-    const payment = new Payment(getClient());
+    const payment = new Payment(await getClient());
     return await payment.get({ id: paymentId });
 };
 
@@ -138,12 +141,19 @@ const consultarPago = async (paymentId) => {
  * panel de la cuenta. No basta con este archivo (analisis 006, criterio 16).
  */
 const crearPreferencia = async ({ idOrder, items, total, costoEnvio = 0, emailComprador }) => {
-    const preference = new Preference(getClient());
+    const preference = new Preference(await getClient());
 
-    const horas = parseInt(process.env.MP_EXPIRACION_HORAS || '72', 10);
+    // Config leída de `constantes` (Admin) con respaldo al .env.
+    const [horasRaw, successUrl, failureUrl, pendingUrl, notificationUrl] = await Promise.all([
+        getConfig('MP_EXPIRACION_HORAS', 'MP_EXPIRACION_HORAS'),
+        getConfig('MP_SUCCESS_URL', 'MP_SUCCESS_URL'),
+        getConfig('MP_FAILURE_URL', 'MP_FAILURE_URL'),
+        getConfig('MP_PENDING_URL', 'MP_PENDING_URL'),
+        getConfig('MP_NOTIFICATION_URL', 'MP_NOTIFICATION_URL')
+    ]);
+
+    const horas = parseInt(horasRaw || '72', 10);
     const expiraEn = new Date(Date.now() + horas * 60 * 60 * 1000);
-
-    const successUrl = process.env.MP_SUCCESS_URL;
     // Mercado Pago rechaza auto_return si la URL de retorno es localhost:
     // exige una direccion publicamente alcanzable. En desarrollo se omite
     // (el usuario regresa con el boton "Volver al sitio") y en produccion,
@@ -163,15 +173,15 @@ const crearPreferencia = async ({ idOrder, items, total, costoEnvio = 0, emailCo
         payer: emailComprador ? { email: emailComprador } : undefined,
         back_urls: {
             success: successUrl,
-            failure: process.env.MP_FAILURE_URL,
-            pending: process.env.MP_PENDING_URL
+            failure: failureUrl,
+            pending: pendingUrl
         },
         ...(esLocal ? {} : { auto_return: 'approved' }),
         // A donde Mercado Pago notifica el resultado del pago (servidor a
         // servidor). Sin esto la orden nunca pasa de PENDIENTE. En produccion
         // es el dominio real del backend; en local, el tunel publico.
-        ...(process.env.MP_NOTIFICATION_URL
-            ? { notification_url: process.env.MP_NOTIFICATION_URL }
+        ...(notificationUrl
+            ? { notification_url: notificationUrl }
             : {}),
         // El costo de envio se cobra aparte de los items. Sin esto Mercado Pago
         // solo cobraria la suma de los productos y el envio saldria gratis.
