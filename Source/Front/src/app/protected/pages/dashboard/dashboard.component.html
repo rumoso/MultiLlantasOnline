@@ -31,7 +31,7 @@
             <div class="filtro-grupo">
                 <div class="grupo-head">
                     <span class="grupo-title">Ancho</span>
-                    <span class="grupo-sel" *ngIf="filtroAncho">{{ filtroAncho }}</span>
+                    <span class="grupo-sel" *ngIf="filtroAnchos.length">{{ filtroAnchos.length }}</span>
                 </div>
                 <div class="mini-filtro">
                     <mat-icon>search</mat-icon>
@@ -40,7 +40,7 @@
                 <div class="tags">
                     <button class="tag"
                         *ngFor="let a of (anchosFiltrados | slice:0:(expandidoAncho ? anchosFiltrados.length : limiteTags))"
-                        [class.active]="filtroAncho === a" (click)="toggleAncho(a)">{{ a }}</button>
+                        [class.active]="filtroAnchos.includes(a)" (click)="toggleAncho(a)">{{ a }}</button>
                     <span class="tags-vacio" *ngIf="anchosFiltrados.length === 0">Sin coincidencias</span>
                 </div>
                 <button class="ver-mas" *ngIf="anchosFiltrados.length > limiteTags"
@@ -53,7 +53,7 @@
             <div class="filtro-grupo">
                 <div class="grupo-head">
                     <span class="grupo-title">Perfil</span>
-                    <span class="grupo-sel" *ngIf="filtroPerfil">{{ filtroPerfil }}</span>
+                    <span class="grupo-sel" *ngIf="filtroPerfiles.length">{{ filtroPerfiles.length }}</span>
                 </div>
                 <div class="mini-filtro">
                     <mat-icon>search</mat-icon>
@@ -62,7 +62,7 @@
                 <div class="tags">
                     <button class="tag"
                         *ngFor="let p of (perfilesFiltrados | slice:0:(expandidoPerfil ? perfilesFiltrados.length : limiteTags))"
-                        [class.active]="filtroPerfil === p" (click)="togglePerfil(p)">{{ p }}</button>
+                        [class.active]="filtroPerfiles.includes(p)" (click)="togglePerfil(p)">{{ p }}</button>
                     <span class="tags-vacio" *ngIf="perfilesFiltrados.length === 0">Sin coincidencias</span>
                 </div>
                 <button class="ver-mas" *ngIf="perfilesFiltrados.length > limiteTags"
@@ -75,7 +75,7 @@
             <div class="filtro-grupo">
                 <div class="grupo-head">
                     <span class="grupo-title">Rin</span>
-                    <span class="grupo-sel" *ngIf="filtroRin">R{{ filtroRin }}</span>
+                    <span class="grupo-sel" *ngIf="filtroRines.length">{{ filtroRines.length }}</span>
                 </div>
                 <div class="mini-filtro">
                     <mat-icon>search</mat-icon>
@@ -84,7 +84,7 @@
                 <div class="tags">
                     <button class="tag"
                         *ngFor="let r of (rinesFiltrados | slice:0:(expandidoRin ? rinesFiltrados.length : limiteTags))"
-                        [class.active]="filtroRin === r" (click)="toggleRin(r)">R{{ r }}</button>
+                        [class.active]="filtroRines.includes(r)" (click)="toggleRin(r)">R{{ r }}</button>
                     <span class="tags-vacio" *ngIf="rinesFiltrados.length === 0">Sin coincidencias</span>
                 </div>
                 <button class="ver-mas" *ngIf="rinesFiltrados.length > limiteTags"
@@ -108,11 +108,11 @@
                 </button>
             </div>
 
-            <!-- Marcas (barra horizontal sobre las tarjetas) -->
+            <!-- Marcas (barra horizontal sobre las tarjetas, multiseleccion) -->
             <div class="marcas-top" *ngIf="marcas.length > 0">
-                <button class="marca-chip" [class.active]="!filtroMarca"
-                    (click)="filtroMarca = null; aplicarFiltros()">Todas</button>
-                <button class="marca-chip" *ngFor="let m of marcas" [class.active]="filtroMarca === m"
+                <button class="marca-chip" [class.active]="filtroMarcas.length === 0"
+                    (click)="filtroMarcas = []; aplicarFiltros()">Todas</button>
+                <button class="marca-chip" *ngFor="let m of marcas" [class.active]="filtroMarcas.includes(m)"
                     (click)="seleccionarMarca(m)">{{ m }}</button>
             </div>
 

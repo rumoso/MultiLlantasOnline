@@ -221,6 +221,103 @@ const getMarcas = async (req, res = response_express.response) => {
 };
 
 /**
+ * Catalogo con filtros MULTISELECCION. Recibe arreglos de marcas/anchos/
+ * perfiles/rines (ademas del texto libre del buscador) y arma la consulta con
+ * `col IN (...)` por dimension: OR dentro de cada grupo, AND entre grupos.
+ * Ej: (ancho IN 195,205) AND (marca IN Michelin,Pirelli).
+ * Todo parametrizado (sin interpolacion). Devuelve el mismo shape que
+ * getProductsPag: { count, rows } con el id encriptado en sIdP.
+ */
+const getProductsFiltered = async (req, res = response_express.response) => {
+    let {
+        search = ''
+        , marcas = []
+        , anchos = []
+        , perfiles = []
+        , rines = []
+        , start = 0
+        , limiter = 12
+    } = req.body;
+
+    // Normaliza a arreglo de strings no vacios
+    const toArr = (v) => {
+        if (!Array.isArray(v)) v = (v === null || v === undefined || v === '') ? [] : [v];
+        return v.map(x => String(x).trim()).filter(x => x.length > 0);
+    };
+    marcas = toArr(marcas);
+    anchos = toArr(anchos);
+    perfiles = toArr(perfiles);
+    rines = toArr(rines);
+
+    const nStart = Number.isInteger(Number(start)) && Number(start) >= 0 ? Number(start) : 0;
+    let nLimiter = parseInt(limiter, 10);
+    if (!Number.isInteger(nLimiter) || nLimiter <= 0 || nLimiter > 100) nLimiter = 12;
+
+    try {
+        const where = ['p.activo = 1'];
+        const params = [];
+
+        // Texto libre del buscador (cada palabra debe aparecer en el texto
+        // concatenado, igual que getProductsPag).
+        const words = String(search || '').trim().split(/\s+/).filter(Boolean);
+        for (const w of words) {
+            where.push(
+                `CONCAT_WS(' ', IFNULL(p.nombre,''), IFNULL(p.marca,''), IFNULL(p.modelo,''), ` +
+                `IFNULL(p.descripcion,''), IFNULL(p.ancho,''), IFNULL(p.perfil,''), IFNULL(p.rin,'')) LIKE ?`
+            );
+            params.push(`%${w}%`);
+        }
+
+        const addIn = (col, arr) => {
+            if (arr.length > 0) {
+                where.push(`p.${col} IN (${arr.map(() => '?').join(',')})`);
+                params.push(...arr);
+            }
+        };
+        addIn('marca', marcas);
+        addIn('ancho', anchos);
+        addIn('perfil', perfiles);
+        addIn('rin', rines);
+
+        const whereSql = where.join(' AND ');
+
+        const [countRows] = await dbSPConnection.query(
+            `SELECT COUNT(*) AS iRows FROM productos p WHERE ${whereSql}`,
+            params
+        );
+        const iRows = countRows[0].iRows;
+
+        const [rows] = await dbSPConnection.query(
+            `SELECT p.idProducto, p.nombre, p.descripcion, p.marca, p.modelo,
+                    p.ancho, p.perfil, p.rin, p.precio, p.imagen_url, p.activo
+             FROM productos p
+             WHERE ${whereSql}
+             ORDER BY p.nombre ASC
+             LIMIT ?, ?`,
+            [...params, nStart, nLimiter]
+        );
+
+        rows.forEach(r => {
+            r.sIdP = encrypt(r.idProducto);
+            delete r.idProducto;
+        });
+
+        res.json({
+            status: 0,
+            message: 'Ejecutado correctamente.',
+            data: { count: iRows, rows }
+        });
+
+    } catch (error) {
+        res.json({
+            status: 2,
+            message: 'Sucedió un error inesperado',
+            data: error.message
+        });
+    }
+};
+
+/**
  * Obtiene las medidas distintas disponibles (ancho / perfil / rin) para
  * poblar el buscador por medida del catalogo. Solo lectura, sin parametros.
  */
@@ -337,5 +434,6 @@ module.exports = {
     getProductsByMarca,
     getMarcas,
     getMedidas,
+    getProductsFiltered,
     agregarAlCarrito
 };

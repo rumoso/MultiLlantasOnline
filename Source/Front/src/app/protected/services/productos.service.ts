@@ -36,6 +36,26 @@ export class ProductosService {
     return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/getProductsPag`, data);
   }
 
+  /**
+   * Catalogo con filtros multiseleccion. Recibe arreglos de
+   * marcas/anchos/perfiles/rines (ademas del texto libre y la paginacion).
+   */
+  getProductsFiltered(pagination: Pagination, filtros: {
+    marcas?: string[]; anchos?: string[]; perfiles?: string[]; rines?: string[];
+  }): Observable<ResponseGet> {
+    const data = {
+      search: pagination.search || '',
+      marcas: filtros.marcas || [],
+      anchos: filtros.anchos || [],
+      perfiles: filtros.perfiles || [],
+      rines: filtros.rines || [],
+      start: pagination.pageIndex * pagination.pageSize,
+      limiter: pagination.pageSize
+    };
+
+    return this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/getProductsFiltered`, data);
+  }
+
 
 
   /**

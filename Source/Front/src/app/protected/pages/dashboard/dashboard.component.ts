@@ -47,17 +47,15 @@ export default class DashboardComponent {
     pageSizeOptions: [12, 24, 36, 48]
   };
 
-  // Filtros del catalogo
-  // El SP getProductsPag ya busca dentro de un texto que concatena
-  // nombre/marca/modelo/descripcion/ancho/perfil/rin, asi que tanto el
-  // buscador por medida como el filtro por marca se resuelven armando un
-  // termino de busqueda y reutilizando el mismo endpoint (sin backend extra).
+  // Filtros del catalogo — MULTISELECCION.
+  // El endpoint getProductsFiltered recibe arreglos y arma `col IN (...)` por
+  // dimension: OR dentro de cada grupo, AND entre grupos.
   medidas: { anchos: any[]; perfiles: any[]; rines: any[] } = { anchos: [], perfiles: [], rines: [] };
   marcas: string[] = [];
-  filtroAncho: string | null = null;
-  filtroPerfil: string | null = null;
-  filtroRin: string | null = null;
-  filtroMarca: string | null = null;
+  filtroAnchos: string[] = [];
+  filtroPerfiles: string[] = [];
+  filtroRines: string[] = [];
+  filtroMarcas: string[] = [];
   textoBusqueda: string = '';   // termino que llega del buscador del header
 
   // Mini-buscador encima de cada grupo de tags (filtra las opciones visibles)
@@ -130,51 +128,23 @@ export default class DashboardComponent {
     });
   }
 
-  /**
-   * Arma el termino de busqueda combinando texto libre + medida + marca.
-   * Cada token calza contra el texto concatenado que arma el SP.
-   */
-  private construirBusqueda(): string {
-    const tokens: string[] = [];
-    if (this.textoBusqueda && this.textoBusqueda.trim()) {
-      tokens.push(this.textoBusqueda.trim());
-    }
-    if (this.filtroAncho && this.filtroPerfil) {
-      tokens.push(`${this.filtroAncho}/${this.filtroPerfil}`);
-    } else {
-      if (this.filtroAncho) tokens.push(this.filtroAncho);
-      if (this.filtroPerfil) tokens.push(this.filtroPerfil);
-    }
-    if (this.filtroRin) tokens.push(`R${this.filtroRin}`);
-    if (this.filtroMarca) tokens.push(this.filtroMarca);
-    return tokens.join(' ');
-  }
-
   aplicarFiltros(): void {
-    this.pagination.search = this.construirBusqueda();
+    this.pagination.search = (this.textoBusqueda || '').trim();
     this.pagination.pageIndex = 0;
     this.loadProductos();
   }
 
-  seleccionarMarca(marca: string): void {
-    this.filtroMarca = this.filtroMarca === marca ? null : marca;
+  /** Agrega o quita un valor del arreglo (multiseleccion) y recarga. */
+  private toggleEn(arr: string[], v: string): void {
+    const i = arr.indexOf(v);
+    if (i >= 0) arr.splice(i, 1); else arr.push(v);
     this.aplicarFiltros();
   }
 
-  toggleAncho(v: string): void {
-    this.filtroAncho = this.filtroAncho === v ? null : v;
-    this.aplicarFiltros();
-  }
-
-  togglePerfil(v: string): void {
-    this.filtroPerfil = this.filtroPerfil === v ? null : v;
-    this.aplicarFiltros();
-  }
-
-  toggleRin(v: string): void {
-    this.filtroRin = this.filtroRin === v ? null : v;
-    this.aplicarFiltros();
-  }
+  toggleAncho(v: string): void { this.toggleEn(this.filtroAnchos, v); }
+  togglePerfil(v: string): void { this.toggleEn(this.filtroPerfiles, v); }
+  toggleRin(v: string): void { this.toggleEn(this.filtroRines, v); }
+  seleccionarMarca(marca: string): void { this.toggleEn(this.filtroMarcas, marca); }
 
   // Filtra las opciones de un grupo segun el texto de su mini-buscador
   private filtrarOpciones(lista: any[], texto: string): any[] {
@@ -188,14 +158,15 @@ export default class DashboardComponent {
   get rinesFiltrados(): any[] { return this.filtrarOpciones(this.medidas.rines, this.textoFiltroRin); }
 
   get hayFiltrosActivos(): boolean {
-    return !!(this.filtroAncho || this.filtroPerfil || this.filtroRin || this.filtroMarca);
+    return this.filtroAnchos.length > 0 || this.filtroPerfiles.length > 0
+      || this.filtroRines.length > 0 || this.filtroMarcas.length > 0;
   }
 
   limpiarFiltros(): void {
-    this.filtroAncho = null;
-    this.filtroPerfil = null;
-    this.filtroRin = null;
-    this.filtroMarca = null;
+    this.filtroAnchos = [];
+    this.filtroPerfiles = [];
+    this.filtroRines = [];
+    this.filtroMarcas = [];
     this.textoFiltroAncho = '';
     this.textoFiltroPerfil = '';
     this.textoFiltroRin = '';
@@ -213,7 +184,12 @@ export default class DashboardComponent {
   loadProductos(): void {
     this.loadingProductos = true;
 
-    this.productosService.getProductsPag(this.pagination).subscribe({
+    this.productosService.getProductsFiltered(this.pagination, {
+      marcas: this.filtroMarcas,
+      anchos: this.filtroAnchos,
+      perfiles: this.filtroPerfiles,
+      rines: this.filtroRines
+    }).subscribe({
       next: (response: any) => {
         if (response.status == 0) {
           this.productos = response.data.rows || [];

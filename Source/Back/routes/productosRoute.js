@@ -9,6 +9,7 @@ const {
     getProductsByMarca,
     getMarcas,
     getMedidas,
+    getProductsFiltered,
     agregarAlCarrito,
 } = require('../controllers/productosController');
 
@@ -23,6 +24,16 @@ router.post('/getProductsPag', [
     check('limiter').optional().isInt({ min: 1, max: 100 }),
     validarCampos
 ], getProductsPag);
+
+/**
+ * Obtener productos con filtros multiseleccion (marcas/anchos/perfiles/rines)
+ * POST /api/productos/getProductsFiltered
+ */
+router.post('/getProductsFiltered', [
+    check('start').optional().isInt({ min: 0 }),
+    check('limiter').optional().isInt({ min: 1, max: 100 }),
+    validarCampos
+], getProductsFiltered);
 
 /**
  * Obtener producto por ID
