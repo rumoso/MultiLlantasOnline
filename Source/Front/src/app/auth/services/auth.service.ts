@@ -91,9 +91,7 @@ export class AuthService {
 
 
   logout(bRedirect: boolean) {
-    // Best-effort: le pide al backend que borre la cookie httpOnly del JWT.
-    this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/logout`, {}).subscribe();
-
+    // Limpia el estado local de la sesion de inmediato.
     localStorage.removeItem('user');
     localStorage.removeItem('idUser');
     localStorage.removeItem('idSucursalPrincipal');
@@ -103,8 +101,20 @@ export class AuthService {
     localStorage.removeItem('infoSucursal');
     localStorage.removeItem('turnoActivo');
 
-    if (bRedirect)
-      this.servicesGServ.changeRoute('/login');
+    // Best-effort: le pide al backend que borre la cookie httpOnly del JWT.
+    // Cuando responde (o falla) y corresponde redirigir, se recarga TODO el
+    // sistema (equivalente a un Ctrl+F5) para limpiar cualquier estado en
+    // memoria (carrito, favoritos, permisos, etc.). La recarga se hace DESPUES
+    // de la respuesta para no cancelar el borrado de la cookie.
+    const finalizarConRefresco = () => {
+      if (bRedirect) {
+        window.location.href = `${window.location.origin}${window.location.pathname}#/login`;
+        window.location.reload();
+      }
+    };
+
+    this.http.post<ResponseGet>(`${this.baseURL}/${this._api}/logout`, {})
+      .subscribe({ next: finalizarConRefresco, error: finalizarConRefresco });
   }
 
   validaAuth(): Observable<boolean> {
