@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SpinnerComponent } from '../components/spinner/spinner.component';
 import { PaginationComponent } from '../components/pagination/pagination.component';
+import { NoAutocompleteDirective } from './directives/no-autocomplete.directive';
 import { NGX_MASK_CONFIG, provideNgxMask, NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
 @NgModule({
@@ -11,6 +12,7 @@ import { NGX_MASK_CONFIG, provideNgxMask, NgxMaskDirective, NgxMaskPipe } from '
 
         SpinnerComponent
         , PaginationComponent
+        , NoAutocompleteDirective
 
     ],
     exports: [
@@ -21,6 +23,7 @@ import { NGX_MASK_CONFIG, provideNgxMask, NgxMaskDirective, NgxMaskPipe } from '
 
         , SpinnerComponent
         , PaginationComponent
+        , NoAutocompleteDirective
 
     ],
 })
