@@ -7,6 +7,8 @@ import { ServicesGService } from '../../../servicesG/servicesG.service';
 import { GuestService } from '../../../shared/services/guest.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import LoginComponent from '../../../auth/pages/login/login.component';
 
 @Component({
     selector: 'app-cart-overlay',
@@ -24,6 +26,7 @@ export class CartOverlayComponent implements OnInit {
     cartService = inject(CartService);
     servicesGServ = inject(ServicesGService);
     guestService = inject(GuestService);
+    private dialog = inject(MatDialog);
 
     get isGuest(): boolean {
         return this.guestService.isGuest();
@@ -86,14 +89,27 @@ export class CartOverlayComponent implements OnInit {
         if (!this.cartItems.length) return;
 
         if (this.isGuest) {
-            if (confirm('Debes iniciar sesión para procesar tu compra. ¿Quieres ir al login?')) {
-                this.closeCart();
-                this.servicesGServ.changeRoute('/login');
-            }
+            // Abrir el modal de login (no navega). Al iniciar sesion el dialogo
+            // cierra con `true`; entonces se continua al checkout.
+            const ref = this.dialog.open(LoginComponent, {
+                width: '100%',
+                maxWidth: '420px',
+                panelClass: 'login-dialog-panel',
+                autoFocus: false
+            });
+
+            ref.afterClosed().subscribe((logueado: any) => {
+                if (logueado === true || !this.isGuest) {
+                    this.irAlCheckout();
+                }
+            });
             return;
         }
 
-        // La compra ya no se procesa aqui: se va a la pantalla de checkout.
+        this.irAlCheckout();
+    }
+
+    private irAlCheckout(): void {
         this.closeCart();
         this.servicesGServ.changeRoute(`/${this._appMain}/checkout`);
     }
