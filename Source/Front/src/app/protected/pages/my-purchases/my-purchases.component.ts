@@ -6,6 +6,8 @@ import { OrdersService } from '../../services/orders.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PurchaseDetailDialogComponent } from '../../components/purchase-detail-dialog/purchase-detail-dialog.component';
 import { ServicesGService } from '../../../servicesG/servicesG.service';
+import { AuthService } from '../../../auth/services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-my-purchases',
@@ -18,12 +20,19 @@ export default class MyPurchasesComponent implements OnInit {
 
     ordersService = inject(OrdersService);
     servicesGServ = inject(ServicesGService);
+    authService = inject(AuthService);
     dialog = inject(MatDialog);
 
     orders: any[] = [];
     loading: boolean = true;
 
     ngOnInit(): void {
+        // "Mis compras" requiere sesion: un invitado no tiene pedidos. Si entra
+        // por URL directa se le regresa al catalogo (sin dialogo de error).
+        if (this.authService.getIdUserSession() === 0) {
+            this.servicesGServ.changeRoute(`/${environment.appMain}/dashboard`);
+            return;
+        }
         this.loadOrders();
     }
 

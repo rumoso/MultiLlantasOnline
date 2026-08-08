@@ -24,7 +24,7 @@
 
         <!-- Sección de botones -->
         <div class="header-actions">
-            <button mat-button class="action-button" routerLink="./my-purchases">
+            <button mat-button class="action-button" routerLink="./my-purchases" *ngIf="userLogin">
                 <mat-icon>shopping_bag</mat-icon>
                 <span class="action-text">Mis compras</span>
             </button>
@@ -96,7 +96,7 @@
             </button>
         </div>
         <mat-nav-list>
-            <a mat-list-item routerLink="./my-purchases" (click)="toggleNavMenu()">
+            <a mat-list-item routerLink="./my-purchases" (click)="toggleNavMenu()" *ngIf="userLogin">
                 <mat-icon matListItemIcon>shopping_bag</mat-icon>
                 <span matListItemTitle>Mis compras</span>
             </a>
